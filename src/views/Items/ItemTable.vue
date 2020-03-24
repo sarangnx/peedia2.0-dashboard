@@ -228,7 +228,7 @@ export default {
             // Get list of brands for drop down list.
             this.$axios({
                 method: 'get',
-                url: '/api/inventory/brands',
+                url: '/inventory/brands',
             }).then((response) => {
                 if( response.data.status === 'success' ){
                     this.brands = response.data.data.brands;
@@ -244,7 +244,7 @@ export default {
             // Get list of categories for drop down list
             this.$axios({
                 method: 'get',
-                url: '/api/inventory/categories/all',
+                url: '/inventory/categories/all',
             }).then((response) => {
                 if( response.data.status === 'success' ){
 
@@ -300,7 +300,7 @@ export default {
             // Get list of categories for drop down list
             this.$axios({
                 method: 'get',
-                url: '/api/inventory/categories',
+                url: '/inventory/categories',
             }).then((response) => {
                 if( response.data.status === 'success' ){
                     this.categories = Object.assign({}, this.categories, response.data.data.categories);
@@ -330,7 +330,7 @@ export default {
             // Get list of sub categories for drop down list
             this.$axios({
                 method: 'get',
-                url: `/api/inventory/subcategory/${category_id}`,
+                url: `/inventory/subcategory/${category_id}`,
             }).then((response) => {
                 if( response.data.status === 'success' ){
                     this.subCategories = Object.assign({}, this.subCategories, {
@@ -360,7 +360,7 @@ export default {
             // Get list of sub categories for drop down list
             this.$axios({
                 method: 'get',
-                url: `/api/inventory/subsubcategory/${sub_category_id}`,
+                url: `/inventory/subsubcategory/${sub_category_id}`,
             }).then((response) => {
                 this.subSubCategories = Object.assign({}, this.subSubCategories, {
                     [sub_category_id]: response.data.data.sub_sub_categories
@@ -381,7 +381,7 @@ export default {
 
             this.$axios({
                 method: 'post',
-                url: `/api/inventory/store/${this.storeId}`,
+                url: `/inventory/store/${this.storeId}`,
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },

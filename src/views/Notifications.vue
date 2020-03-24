@@ -98,7 +98,7 @@ export default {
 
                 self.$axios({
                     method: 'get',
-                    url: '/api/offers/suggest',
+                    url: '/offers/suggest',
                     params: {
                         search: search,
                     }
@@ -130,7 +130,7 @@ export default {
 
             this.$axios({
                 method: 'post',
-                url: '/api/notifications/send',
+                url: '/notifications/send',
                 data: data
             }).then((response) => {
                 if(response.data && response.data.status === 'success'){

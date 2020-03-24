@@ -84,7 +84,7 @@
         getStats(store_id) {
             this.$axios({
                 method: 'get',
-                url: '/api/store/dashboard',
+                url: '/store/dashboard',
                 params: {
                     store_id: store_id,
                 },

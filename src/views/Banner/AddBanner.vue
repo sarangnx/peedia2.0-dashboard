@@ -138,7 +138,7 @@ export default {
 
                 self.$axios({
                     method: 'get',
-                    url: '/api/offers/suggest',
+                    url: '/offers/suggest',
                     params: {
                         search: search,
                     }
@@ -239,7 +239,7 @@ export default {
 
             this.$axios({
                 method: "post",
-                url: `/api/banners/new`,
+                url: `/banners/new`,
                 headers: {
                     "Content-Type": "multipart/form-data"
                 },

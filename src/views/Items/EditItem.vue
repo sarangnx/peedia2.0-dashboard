@@ -194,7 +194,7 @@ export default {
             // Get list of brands for drop down list.
             this.$axios({
                 method: "get",
-                url: "/api/inventory/brands"
+                url: "/inventory/brands"
             }).then(response => {
                 if (response.data.status === "success") {
                     this.brands = response.data.data.brands;
@@ -210,7 +210,7 @@ export default {
             // Get list of categories for drop down list
             this.$axios({
                 method: 'get',
-                url: '/api/inventory/categories/all',
+                url: '/inventory/categories/all',
             }).then((response) => {
                 if( response.data.status === 'success' ){
 
@@ -300,7 +300,7 @@ export default {
 
             this.$axios({
                 method: "patch",
-                url: `/api/inventory/item/${this.item_id}`,
+                url: `/inventory/item/${this.item_id}`,
                 headers: {
                     "Content-Type": "multipart/form-data"
                 },
@@ -334,7 +334,7 @@ export default {
         loadItem(item_id) {
             this.$axios({
                 method: 'get',
-                url: `/api/inventory/items/${item_id}`
+                url: `/inventory/items/${item_id}`
             }).then((response) => {
                 const data = response.data.data.item;
                 

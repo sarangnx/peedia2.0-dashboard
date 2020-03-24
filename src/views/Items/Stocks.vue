@@ -157,7 +157,7 @@ export default {
 
             this.$axios({
                 method: 'get',
-                url: `/api/inventory/items/${item_id}`,
+                url: `/inventory/items/${item_id}`,
             }).then((response) => {
                 if( response.data.data && response.data.data.item){
                     const item = response.data.data.item;
@@ -179,7 +179,7 @@ export default {
         deleteStock(stock_id) {
             this.$axios({
                 method: 'delete',
-                url: `/api/stocks/${stock_id}`
+                url: `/stocks/${stock_id}`
             }).then((response) => {
                 if (response.data && response.data.status === "success") {
                     this.$notify({

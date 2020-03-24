@@ -161,7 +161,7 @@ export default {
         getOffers(page, per_page) {
             this.$axios({
                 method: 'get',
-                url: '/api/offers/view',
+                url: '/offers/view',
                 params: {
                     status: this.status,
                     page,
@@ -184,7 +184,7 @@ export default {
 
             this.$axios({
                 method: 'patch',
-                url: '/api/offers/deactivate',
+                url: '/offers/deactivate',
                 params: {
                     offer_id
                 }
@@ -213,7 +213,7 @@ export default {
 
             this.$axios({
                 method: 'delete',
-                url: '/api/offers/delete',
+                url: '/offers/delete',
                 params: {
                     offer_id: this.deleteID
                 }

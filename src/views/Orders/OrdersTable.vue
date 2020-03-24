@@ -171,7 +171,7 @@ export default {
 
             this.$axios({
                 method: 'get',
-                url: '/api/orders/view',
+                url: '/orders/view',
                 params: {
                     store_id: store_id,
                     page: page,
@@ -225,7 +225,7 @@ export default {
 
             this.$axios({
                 method: 'patch',
-                url: '/api/orders/status',
+                url: '/orders/status',
                 data: {
                     order_id: order_id,
                     status: status

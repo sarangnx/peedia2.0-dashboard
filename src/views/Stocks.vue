@@ -123,7 +123,7 @@ export default {
 
             this.$axios({
                 method: 'get',
-                url: '/api/stocks/all',
+                url: '/stocks/all',
                 params: {
                     page,
                     per_page
@@ -140,7 +140,7 @@ export default {
         deleteStock(stock_id) {
             this.$axios({
                 method: 'delete',
-                url: `/api/stocks/${stock_id}`
+                url: `/stocks/${stock_id}`
             }).then((response) => {
                 if (response.data && response.data.status === "success") {
                     this.$notify({
@@ -169,7 +169,7 @@ export default {
         expireStock(stock_id) {
             this.$axios({
                 method: 'patch',
-                url: `/api/stocks/expire/${stock_id}`
+                url: `/stocks/expire/${stock_id}`
             }).then((response) => {
                 if (response.data && response.data.status === "success") {
                     this.$notify({
