@@ -84,7 +84,7 @@ export default {
         getUsers(page, per_page) {
             this.$axios({
                 method: 'get',
-                url: '/api/users/profiles',
+                url: '/users/profiles',
                 params: {
                     page,
                     per_page

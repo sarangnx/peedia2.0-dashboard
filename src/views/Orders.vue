@@ -80,7 +80,7 @@ export default {
 
             this.$axios({
                 method: 'get',
-                url: '/api/orders/stats',
+                url: '/orders/stats',
                 params: {
                     store_id: store_id,
                 },

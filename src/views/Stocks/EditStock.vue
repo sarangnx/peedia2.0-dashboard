@@ -105,7 +105,7 @@ export default {
         getStock(stock_id) {
             this.$axios({
                 method: 'get',
-                url: `/api/stocks/${stock_id}`
+                url: `/stocks/${stock_id}`
             }).then((response) => {
                 if( response.data.data && response.data.data.stock ){
                     const stock = response.data.data.stock;
@@ -150,7 +150,7 @@ export default {
 
             this.$axios({
                 method: 'patch',
-                url: '/api/stocks/edit',
+                url: '/stocks/edit',
                 data: stock
             }).then((response) => {
                 if(response.data && response.data.status === 'success'){

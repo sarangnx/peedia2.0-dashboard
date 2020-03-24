@@ -109,7 +109,7 @@ export default {
 
             this.$axios({
                 method: 'get',
-                url: '/api/banners/all'
+                url: '/banners/all'
             }).then((response) => {
                 const data = response.data.data;
 
@@ -129,7 +129,7 @@ export default {
             // send delete request
             this.$axios({
                 method: 'delete',
-                url: `/api/banners/${banner_id}`
+                url: `/banners/${banner_id}`
             }).then((response) => {
                 if (response.data && response.data.status === "success") {
                     this.$notify({

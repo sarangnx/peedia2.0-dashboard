@@ -377,7 +377,7 @@ export default {
         getItemsByCategory({category_id, sub_category_id, sub_sub_category_id, page, per_page, stock}) {
             this.$axios({
                 method: 'get',
-                url: '/api/inventory/items/category',
+                url: '/inventory/items/category',
                 params: {
                     category_id,
                     sub_category_id,
@@ -402,7 +402,7 @@ export default {
 
             this.$axios({
                 method: 'get',
-                url: '/api/inventory/items/all',
+                url: '/inventory/items/all',
                 params: {
                     page,
                     per_page,
@@ -431,7 +431,7 @@ export default {
             // Get list of categories for drop down list
             this.$axios({
                 method: 'get',
-                url: "/api/inventory/categories"
+                url: "/inventory/categories"
             }).then((response) => {
                 if (response.data.status === "success") {
                     this.categories = Object.assign({}, this.categories, response.data.data.categories);
@@ -449,7 +449,7 @@ export default {
             // Get list of sub categories for drop down list
             this.$axios({
                 method: 'get',
-                url: `/api/inventory/subcategory/${category_id}`
+                url: `/inventory/subcategory/${category_id}`
             }).then((response) => {
                 if (response.data.status === "success") {
                     // vue cannot track changes when values are assigned directly.
@@ -470,7 +470,7 @@ export default {
             // Get list of sub categories for drop down list
             this.$axios({
                 method: 'get',
-                url: `/api/inventory/subsubcategory/${sub_category_id}`
+                url: `/inventory/subsubcategory/${sub_category_id}`
             }).then((response) => {
                 if (response.data.status === "success") {
                     this.subSubCategories = Object.assign({}, this.subSubCategories, {
@@ -488,7 +488,7 @@ export default {
             // send delete request
             this.$axios({
                 method: 'delete',
-                url: `/api/inventory/item/${item_id}`
+                url: `/inventory/item/${item_id}`
             }).then((response) => {
                 if (response.data && response.data.status === "success") {
                     this.$notify({
