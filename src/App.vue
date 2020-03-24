@@ -8,7 +8,8 @@
 
 export default {
     mounted() {
-        this.$store.commit('setUrl', 'https://ashokanzonline.com');
+        const api = process.env.VUE_APP_API_URL || 'http://localhost:3000'
+        this.$store.commit('setUrl', api);
     }
 }
 </script>
