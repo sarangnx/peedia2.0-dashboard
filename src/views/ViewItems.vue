@@ -10,21 +10,6 @@
                             <h3>Items</h3>
                             <div>
                                 <span class="pr-3">Filter</span>
-                                <base-dropdown position="right">
-                                    <base-button slot="title" type="success" class="dropdown-toggle" size="sm">
-                                        {{ outOfStock ? 'Out Of Stock': 'All' }}
-                                    </base-button>
-                                    <a class="dropdown-item"
-                                        @click.stop="outOfStock = false"
-                                    >
-                                        All
-                                    </a>
-                                    <a class="dropdown-item"
-                                        @click.stop="outOfStock = true"
-                                    >
-                                        Out Of Stock
-                                    </a>
-                                </base-dropdown>
                                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                                 <base-dropdown v-else position="right">
                                     <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
@@ -103,7 +88,6 @@
                                 :key="item.item_id"
                                 class="card col-md-4 mb-2 p-1"
                             >
-                                <span v-if="item.total_stock" :class="['badge', `badge-${badgeClass(item.total_stock.available)}`]" >{{ item.total_stock.message }}</span>
                                 <div class="card-header d-flex justify-content-center">
                                     <img v-if="item.image_path" :src="`${baseUrl}/images/inventory/${item.image_path}`" class="item-image">
                                     <i v-else class="ni ni-image ni-5x"></i> <!-- Alt Image -->
@@ -129,19 +113,8 @@
                                         <h4 class="inline m-0 pr-2">Offer Price:</h4>
                                         <span>{{ parseFloat(item.offer_price) }}</span>
                                     </div>
-                                    <div v-if="item.total_stock" :class="['badge', `badge-${badgeClass(item.total_stock.available)}`]">
-                                        <h5 class="inline m-0 pr-2 text-capitalize">Stocks:</h5>
-                                        <span class="mr-1">{{ parseFloat(item.total_stock.quantity) }}</span>
-                                        <span>{{ item.total_stock.unit }}</span>
-                                    </div>
                                 </div>
                                 <div class="card-footer d-flex justify-content-end">
-                                    <base-button size="sm" type="success"
-                                        @click="stockItemID = item.item_id; stockModal = true"
-                                    >
-                                        Manage Stocks
-                                    </base-button>
-
                                     <base-button size="sm" type="danger"
                                         @click="deleteID = item.item_id; deleteModal = true; deleteIndex = index"
                                     >
@@ -187,22 +160,6 @@
                             </template>
                             <edit-item :item_id="editID" :edit="editModal" @close-edit="closeEdit()"></edit-item>
                         </modal>
-                        <!-- stocks modal -->
-                        <modal :show.sync="stockModal" modalClasses="modal-xl">
-                            <template slot="header">
-                                <h1 class="modal-title">Stocks</h1>
-                            </template>
-                            <template slot="close-button">
-                                <base-button
-                                    @click="closeStocks()"
-                                    icon="fa fa-times"
-                                    size="sm"
-                                    type="danger"
-                                >
-                                </base-button>
-                            </template>
-                            <stocks :item_id="stockItemID" :modal="stockModal" @close-stock="stockItemID = null; stockModal = false"></stocks>
-                        </modal>
                         <div class="card-footer">
                             <base-pagination 
                                 :page-count="total_pages"
@@ -218,13 +175,11 @@
 </template>
 <script>
 import EditItem from './Items/EditItem';
-import Stocks from './Items/Stocks';
 
 export default {
     name: 'view-items',
     components: {
         EditItem,
-        Stocks,
     },
     data: () => ({
         items: [],
@@ -248,14 +203,11 @@ export default {
             name: 'All',
             id: 0
         }, // selected sub sub category,
-        outOfStock: false,
         deleteID: null, // ID of item to be deleted.
         deleteIndex: null, // Index of item to be deleted.
         deleteModal: false,
         editModal: false,
         editID: null,
-        stockModal: false,
-        stockItemID: null
     }),
     computed: {
         storeId() {
@@ -277,7 +229,7 @@ export default {
             this.getSubCategories(this.category.id);
 
             if( !this.category.id ){
-                this.getAllItems(this.page, this.per_page, this.outOfStock);
+                this.getAllItems(this.page, this.per_page);
                 return;
             }
 
@@ -289,7 +241,6 @@ export default {
                 category_id: this.category.id,
                 page: this.page,
                 per_page: this.per_page,
-                stock: this.outOfStock
             });
         },
         subCategory() {
@@ -316,7 +267,6 @@ export default {
                 sub_category_id: this.subCategory.id || null,
                 page: this.page,
                 per_page: this.per_page,
-                stock: this.outOfStock
             });
 
         },
@@ -337,12 +287,11 @@ export default {
                 sub_sub_category_id: this.subSubCategory.id || null,
                 page: this.page,
                 per_page: this.per_page,
-                stock: this.outOfStock
             });
         },
         page() {
             if( this.category.name === 'All' ){
-                this.getAllItems(this.page, this.per_page, this.outOfStock);
+                this.getAllItems(this.page, this.per_page);
             } else {
                 this.getItemsByCategory({
                     category_id: this.category.id,
@@ -350,31 +299,12 @@ export default {
                     sub_sub_category_id: this.subSubCategory.id || null,
                     page: this.page,
                     per_page: this.per_page,
-                    stock: this.outOfStock
                 });
             }
         },
-        outOfStock() {
-            // Reset page number
-            this.page = 1;
-
-            if( this.category.name === 'All' ){
-                this.getAllItems(this.page, this.per_page, this.outOfStock);
-            } else {
-                this.getItemsByCategory({
-                    category_id: this.category.id,
-                    sub_category_id: this.subCategory.id || null,
-                    sub_sub_category_id: this.subSubCategory.id || null,
-                    page: this.page,
-                    per_page: this.per_page,
-                    stock: this.outOfStock
-                });
-            }
-        }
-
     },
     methods: {
-        getItemsByCategory({category_id, sub_category_id, sub_sub_category_id, page, per_page, stock}) {
+        getItemsByCategory({category_id, sub_category_id, sub_sub_category_id, page, per_page}) {
             this.$axios({
                 method: 'get',
                 url: '/inventory/items/category',
@@ -384,7 +314,6 @@ export default {
                     sub_sub_category_id,
                     page,
                     per_page,
-                    stock
                 }
             }).then((response) => {
                 const data = response.data.data;
@@ -398,7 +327,7 @@ export default {
                 this.modals = Array.from({length: this.count}, () => false);
             });
         },
-        getAllItems(page, per_page = 12, stock = false){
+        getAllItems(page, per_page = 12){
 
             this.$axios({
                 method: 'get',
@@ -406,7 +335,6 @@ export default {
                 params: {
                     page,
                     per_page,
-                    stock
                 }
             }).then((response) => {
                 const data = response.data.data;
@@ -525,16 +453,10 @@ export default {
 
             this.reloadData();
         },
-        closeStocks() {
-            this.stockModal = false;
-            this.stockItemID = null;
-
-            this.reloadData();
-        },
         reloadData() {
             // reload data.
             if( this.category.name === 'All' ){
-                this.getAllItems(this.page, this.per_page, this.outOfStock);
+                this.getAllItems(this.page, this.per_page);
             } else {
                 this.getItemsByCategory({
                     category_id: this.category.id,

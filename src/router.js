@@ -47,30 +47,6 @@ const router = new Router({
                     },
                 },
                 {
-                    path: '/stocks',
-                    name: 'stocks',
-                    component: () => import(/* webpackChunkName: "stocks" */ './views/Stocks.vue'),
-                    meta: {
-                        requiresAuth: true,
-                    },
-                },
-                {
-                    path: '/offers',
-                    name: 'offers',
-                    component: () => import(/* webpackChunkName: "offers" */ './views/Offers.vue'),
-                    meta: {
-                        requiresAuth: true,
-                    },
-                },
-                {
-                    path: '/banner',
-                    name: 'banner',
-                    component: () => import(/* webpackChunkName: "banner" */ './views/Banner.vue'),
-                    meta: {
-                        requiresAuth: true,
-                    },
-                },
-                {
                     path: '/category',
                     name: 'category',
                     component: () => import(/* webpackChunkName: "banner" */ './views/Category/Category.vue'),
