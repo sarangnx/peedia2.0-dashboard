@@ -71,6 +71,14 @@ const router = new Router({
                     },
                 },
                 {
+                    path: '/category',
+                    name: 'category',
+                    component: () => import(/* webpackChunkName: "banner" */ './views/Category/Category.vue'),
+                    meta: {
+                        requiresAuth: true,
+                    },
+                },
+                {
                     path: '/notifications',
                     name: 'notifications',
                     component: () => import(/* webpackChunkName: "notifications" */ './views/Notifications.vue'),
