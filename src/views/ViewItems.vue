@@ -215,7 +215,7 @@ export default {
         },
         baseUrl() {
             // base url of api server where images are uploaded.
-            return this.$store.getters.apiUrl;
+            return this.$store.getters.serverUrl;
         },
     },
     watch: {

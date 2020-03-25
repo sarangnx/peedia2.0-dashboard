@@ -7,10 +7,14 @@ export default {
         token: '',
         user: null,
         api_url: '',
+        serverUrl: '',
     },
     mutations: {
         setUrl(state, apiUrl) {
             state.api_url = apiUrl;
+        },
+        setServerUrl(state, serverUrl) {
+            state.serverUrl = serverUrl;
         },
         setToken(state, token) {
             state.token = token;
@@ -33,6 +37,9 @@ export default {
         apiUrl(state) {
             return state.api_url;
         },
+        serverUrl(state) {
+            return state.serverUrl;
+        },
         getUser(state) {
             return state.user;
         },
@@ -42,6 +49,8 @@ export default {
             return new Promise((resolve, reject) => {
                 // Store the base URL of the API for future use.
                 localStorage.setItem('api', state.api_url);
+                localStorage.setItem('server', state.serverUrl);
+
                 this._vm.$axios.defaults.baseURL = state.api_url;
 
                 const apiUrl = new window.URL('/api/auth/login', state.api_url);
@@ -86,6 +95,7 @@ export default {
                 commit('logout');
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('api');
+                localStorage.removeItem('server');
                 delete this._vm.$axios.defaults.headers.common.Authorization;
                 resolve();
             }).catch((err) => {
