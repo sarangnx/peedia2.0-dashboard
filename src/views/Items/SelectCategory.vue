@@ -102,7 +102,6 @@ export default {
                     this.$set(this.categories[index].sub_category[index2], 'rotate', 90);
                 }
             }
-            console.log(this.categories);
         },
         selectCategory(category) {
             this.$emit('category', category);

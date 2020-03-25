@@ -100,7 +100,7 @@ export default {
         category: {
             category_name: ''
         }, // selected category
-        selectCategoryModal: true,
+        selectCategoryModal: false,
     }),
     computed: {
         storeId() {
