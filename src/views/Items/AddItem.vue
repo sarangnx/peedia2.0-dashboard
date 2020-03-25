@@ -44,15 +44,11 @@
                 @focus="selectCategoryModal = true"
             >
             </base-input>
-            <modal :show.sync="selectCategoryModal">
+            <modal :show.sync="selectCategoryModal" bodyClasses="pt-0">
                 <template slot="header">
-                    <h5 class="modal-title">Select Category</h5>
+                    <h3 class="modal-title">Select Category</h3>
                 </template>
                 <select-category></select-category>
-                <template slot="footer">
-                    <base-button type="secondary" @click="selectCategoryModal = false">Close</base-button>
-                    <base-button type="primary">Save changes</base-button>
-                </template>
             </modal>
             
         </div>
