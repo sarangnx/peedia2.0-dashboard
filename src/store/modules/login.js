@@ -44,7 +44,7 @@ export default {
                 localStorage.setItem('api', state.api_url);
                 this._vm.$axios.defaults.baseURL = state.api_url;
 
-                const apiUrl = new window.URL('/auth/login', state.api_url);
+                const apiUrl = new window.URL('/api/auth/login', state.api_url);
 
                 this._vm.$axios({
                     method: 'post',
