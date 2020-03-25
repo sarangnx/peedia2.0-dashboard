@@ -39,7 +39,7 @@
         <!-- CATEGORY -->
         <div class="form-group col-12 col-md-6">
             <base-input
-                v-model="item.category_id"
+                v-model="category.category_name"
                 class="mr-sm-2"
                 @focus="selectCategoryModal = true"
             >
@@ -48,7 +48,10 @@
                 <template slot="header">
                     <h3 class="modal-title">Select Category</h3>
                 </template>
-                <select-category></select-category>
+                <select-category
+                    @category="selectCategory"
+                    @close="selectCategoryModal = false"
+                ></select-category>
             </modal>
             
         </div>
@@ -96,6 +99,9 @@ export default {
         item: {
             category_id: 0,
         },
+        category: {
+            category_name: ''
+        }, // selected category
         categories: [],
         selectCategoryModal: true,
     }),
@@ -119,6 +125,9 @@ export default {
                 // assign to this.categories.
                 this.categories = response.data.data.categories;
             });
+        },
+        selectCategory(category) {
+            this.category = Object.assign({}, this.category, category);
         },
         loadImage(event) {
             this.item.image = event.target.files[0];
