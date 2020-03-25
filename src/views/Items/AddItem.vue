@@ -38,20 +38,23 @@
 
         <!-- CATEGORY -->
         <div class="form-group col-12 col-md-6">
-            <select
+            <base-input
                 v-model="item.category_id"
-                class="custom-select mr-sm-2"
-                @change="item.sub_category_id = 0;item.sub_sub_category_id = 0;"
+                class="mr-sm-2"
+                @focus="selectCategoryModal = true"
             >
-                <option selected="selected" :value="0">None</option>
-                <option
-                    v-for="category in categories"
-                    :key="category.category_id"
-                    :value="category.category_id"
-                >
-                    {{category.category_name}}
-                </option>
-            </select>
+            </base-input>
+            <modal :show.sync="selectCategoryModal">
+                <template slot="header">
+                    <h5 class="modal-title">Select Category</h5>
+                </template>
+                <select-category></select-category>
+                <template slot="footer">
+                    <base-button type="secondary" @click="selectCategoryModal = false">Close</base-button>
+                    <base-button type="primary">Save changes</base-button>
+                </template>
+            </modal>
+            
         </div>
         <!-- CATEGORY -->
 
@@ -86,13 +89,19 @@
 </div>
 </template>
 <script>
+import SelectCategory from './SelectCategory';
+
 export default {
     name: "add-item",
+    components: {
+        SelectCategory,
+    },
     data: () => ({
         item: {
             category_id: 0,
         },
         categories: [],
+        selectCategoryModal: true,
     }),
     computed: {
         storeId() {
