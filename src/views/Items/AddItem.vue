@@ -38,20 +38,22 @@
 
         <!-- CATEGORY -->
         <div class="form-group col-12 col-md-6">
-            <select
-                v-model="item.category_id"
-                class="custom-select mr-sm-2"
-                @change="item.sub_category_id = 0;item.sub_sub_category_id = 0;"
+            <base-input
+                v-model="category.category_name"
+                class="mr-sm-2"
+                @focus="selectCategoryModal = true"
             >
-                <option selected="selected" :value="0">None</option>
-                <option
-                    v-for="category in categories"
-                    :key="category.category_id"
-                    :value="category.category_id"
-                >
-                    {{category.category_name}}
-                </option>
-            </select>
+            </base-input>
+            <modal :show.sync="selectCategoryModal" bodyClasses="pt-0">
+                <template slot="header">
+                    <h3 class="modal-title">Select Category</h3>
+                </template>
+                <select-category
+                    @category="selectCategory"
+                    @close="selectCategoryModal = false"
+                ></select-category>
+            </modal>
+            
         </div>
         <!-- CATEGORY -->
 
@@ -86,13 +88,19 @@
 </div>
 </template>
 <script>
+import SelectCategory from './SelectCategory';
+
 export default {
     name: "add-item",
+    components: {
+        SelectCategory,
+    },
     data: () => ({
-        item: {
-            category_id: 0,
-        },
-        categories: [],
+        item: {},
+        category: {
+            category_name: ''
+        }, // selected category
+        selectCategoryModal: false,
     }),
     computed: {
         storeId() {
@@ -100,20 +108,8 @@ export default {
         },
     },
     methods: {
-        getAllCategories() {
-            // return if already loaded.
-            if (Object.entries(this.categories).length !== 0) {
-                return;
-            }
-
-            // Get list of all categories and sub categories
-            this.$axios({
-                method: 'get',
-                url: '/inventory/categories/all',
-            }).then((response) => {
-                // assign to this.categories.
-                this.categories = response.data.data.categories;
-            });
+        selectCategory(category) {
+            this.category = Object.assign({}, this.category, category);
         },
         loadImage(event) {
             this.item.image = event.target.files[0];
@@ -187,9 +183,5 @@ export default {
             });
         }
     },
-    mounted() {
-        // load category
-        this.getAllCategories();
-    }
 };
 </script>
