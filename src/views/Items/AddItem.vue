@@ -96,13 +96,10 @@ export default {
         SelectCategory,
     },
     data: () => ({
-        item: {
-            category_id: 0,
-        },
+        item: {},
         category: {
             category_name: ''
         }, // selected category
-        categories: [],
         selectCategoryModal: true,
     }),
     computed: {
@@ -111,21 +108,6 @@ export default {
         },
     },
     methods: {
-        getAllCategories() {
-            // return if already loaded.
-            if (Object.entries(this.categories).length !== 0) {
-                return;
-            }
-
-            // Get list of all categories and sub categories
-            this.$axios({
-                method: 'get',
-                url: '/inventory/categories/all',
-            }).then((response) => {
-                // assign to this.categories.
-                this.categories = response.data.data.categories;
-            });
-        },
         selectCategory(category) {
             this.category = Object.assign({}, this.category, category);
         },
@@ -201,9 +183,5 @@ export default {
             });
         }
     },
-    mounted() {
-        // load category
-        this.getAllCategories();
-    }
 };
 </script>
