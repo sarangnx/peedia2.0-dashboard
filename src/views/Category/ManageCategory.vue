@@ -1,20 +1,27 @@
 <template>
     <div class="container">
         <div class="row">
-            <div class="col-md-12" v-for="(item, index) in category" :key="item.name">
+            <div class="col-md-12" v-for="(item, index) in categories" :key="item.category_id">
                 <div class="p-2">
                     <font-awesome-icon icon="caret-right" :transform="{ rotate: item.rotate || 0 }"/>
-                    {{item.rotate || 0}}
                     <span class="pl-1 pointer" @click="toggle(index);">
-                        {{ item.name }}
+                        {{ item.category_name }}
                     </span>
                 </div>
-                <div class="pl-4">
-                    <div v-for="item2 in item.children" :key="item2.name">
+                <div class="pl-4" v-show="item.rotate">
+                    <div v-for="item2 in item.sub_category" :key="item2.name">
                         <button class="btn btn-link">
-                            {{ item2.name }}
+                            {{ item2.category_name }}
                         </button>
                     </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="p-2">
+                    <base-button type="primary">
+                        <font-awesome-icon icon="plus" class="mr-2"/>
+                        Add Category
+                    </base-button>
                 </div>
             </div>
         </div>
@@ -24,49 +31,30 @@
 export default {
     name: 'manage-category',
     data: () => ({
-        category: [
-            {
-                name: 'cat 1',
-                level: 0,
-                rotate: 0,
-                children: [
-                    {
-                        name: 'sub cat1',
-                        level: 1,
-                    }
-                ]
-            },
-            {
-                name: 'cat 2',
-                level: 0,
-                children: [
-                    {
-                        name: 'sub cat1',
-                        level: 1,
-                    }
-                ]
-            },
-            {
-                name: 'cat 3',
-                level: 0,
-                children: [
-                    {
-                        name: 'sub cat1',
-                        level: 1,
-                    }
-                ]
-            },
-        ]
+        categories: [],
     }),
     methods: {
+        getCategories() {
+            // Get list of all categories and sub categories
+            this.$axios({
+                method: 'get',
+                url: '/inventory/categories/all',
+            }).then((response) => {
+                // assign to this.categories.
+                this.categories = response.data.data.categories;
+            });
+        },
         toggle(index) {
-            if(this.category[index].rotate) {
-                this.category[index].rotate = 0;
+            if(this.categories[index].rotate) {
+                this.$set(this.categories[index], 'rotate', 0);
             } else {
-                this.category[index].rotate = 90;
+                this.$set(this.categories[index], 'rotate', 90);
             }
-        }
-    }
+        },
+    },
+    mounted() {
+        this.getCategories();
+    },
 }
 </script>
 <style scoped>
