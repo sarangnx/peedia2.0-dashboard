@@ -13,11 +13,12 @@
         />
 
         <sidebar-item :link="{name: 'Orders', icon: 'fa fa-shopping-basket text-blue', path: '/orders'}"/>
+        <sidebar-item :link="{name: 'Category', icon: 'fa fa-th text-blue', path: '/category'}"/>
         <sidebar-item :link="{name: 'Items', icon: 'fa fa-book text-blue', path: '/items'}"/>
         <sidebar-item :link="{name: 'View Items', icon: 'fa fa-th-list text-blue', path: '/viewitems'}"/>
-        <sidebar-item :link="{name: 'Stocks', icon: 'fa fa-database text-blue', path: '/stocks'}"/>
-        <sidebar-item :link="{name: 'Offers', icon: 'fa fa-percent text-blue', path: '/offers'}"/>
-        <sidebar-item :link="{name: 'Banners', icon: 'fa fa-images text-blue', path: '/banner'}"/>
+        <!-- <sidebar-item :link="{name: 'Stocks', icon: 'fa fa-database text-blue', path: '/stocks'}"/> -->
+        <!-- <sidebar-item :link="{name: 'Offers', icon: 'fa fa-percent text-blue', path: '/offers'}"/> -->
+        <!-- <sidebar-item :link="{name: 'Banners', icon: 'fa fa-images text-blue', path: '/banner'}"/> -->
         <sidebar-item :link="{name: 'Notifications', icon: 'fa fa-bell text-blue', path: '/notifications'}"/>
         <sidebar-item :link="{name: 'Users', icon: 'fa fa-user text-blue', path: '/users'}"/>
 
