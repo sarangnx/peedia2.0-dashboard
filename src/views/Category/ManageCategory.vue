@@ -8,12 +8,20 @@
                         {{ item.category_name }}
                     </span>
                 </div>
-                <div class="pl-4">
+                <div class="pl-4" v-show="item.rotate">
                     <div v-for="item2 in item.sub_category" :key="item2.name">
                         <button class="btn btn-link">
                             {{ item2.category_name }}
                         </button>
                     </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="p-2">
+                    <base-button type="primary">
+                        <font-awesome-icon icon="plus" class="mr-2"/>
+                        Add Category
+                    </base-button>
                 </div>
             </div>
         </div>
