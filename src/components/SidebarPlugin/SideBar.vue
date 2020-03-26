@@ -27,7 +27,7 @@
                         <a slot="title" class="nav-link" href="#" role="button">
                             <div class="media align-items-center">
                               <span class="avatar avatar-sm rounded-circle">
-                                <img alt="Image placeholder" src="img/theme/team-1-800x800.jpg">
+                                <img alt="Image placeholder" src="img/theme/logo.png">
                               </span>
                             </div>
                         </a>
@@ -95,7 +95,7 @@
       logo: {
         type: String,
         default: 'img/brand/icon.png',
-        description: 'Ashokanz Online'
+        description: 'Peedika'
       },
       autoClose: {
         type: Boolean,

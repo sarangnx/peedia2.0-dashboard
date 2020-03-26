@@ -11,7 +11,7 @@ module.exports = {
     ]
   },
   pwa: {
-    name: 'Ashokanz Online Dashboard',
+    name: 'Peedika',
     themeColor: '#172b4d',
     msTileColor: '#172b4d',
     appleMobileWebAppCapable: 'yes',
