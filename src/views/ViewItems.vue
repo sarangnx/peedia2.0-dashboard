@@ -34,52 +34,6 @@
                                         {{ item.category_name }}
                                     </a>
                                 </base-dropdown>
-                                <base-dropdown v-if="category.id" position="right">
-                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
-                                        {{ subCategory.name }}
-                                    </base-button>
-                                    <a class="dropdown-item"
-                                        @click.stop="subCategory={
-                                            name: 'All',
-                                            id: 0
-                                        }"
-                                    >
-                                        All
-                                    </a>
-                                    <a class="dropdown-item"
-                                        v-for="item in subCategories[category.id]"
-                                        :key="item.sub_category_id"
-                                        @click.stop="subCategory={
-                                            name: item.sub_category_name,
-                                            id: item.sub_category_id
-                                        }"
-                                    >
-                                        {{ item.sub_category_name }}
-                                    </a>
-                                </base-dropdown>
-                                <base-dropdown v-if="subCategory.id" position="right">
-                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
-                                        {{ subSubCategory.name }}
-                                    </base-button>
-                                    <a class="dropdown-item"
-                                        @click.stop="subSubCategory={
-                                            name: 'All',
-                                            id: 0
-                                        }"
-                                    >
-                                        All
-                                    </a>
-                                    <a class="dropdown-item"
-                                        v-for="item in subSubCategories[subCategory.id]"
-                                        :key="item.sub_sub_category_id"
-                                        @click.stop="subSubCategory={
-                                            name: item.sub_sub_category_name,
-                                            id: item.sub_sub_category_id
-                                        }"
-                                    >
-                                        {{ item.sub_sub_category_name }}
-                                    </a>
-                                </base-dropdown>
                             </div> <!-- Filter -->
                         </div> <!-- Card Header -->
                         <div class="card-body d-flex flex-row justify-content-start flex-wrap">
@@ -189,20 +143,10 @@ export default {
         per_page: 12,
         pageLoading: false, // during pagination & filter
         categories: {},
-        subCategories: {},
-        subSubCategories: {},
         category: {
             name: 'All',
             id: 0
         }, // selected category
-        subCategory: {
-            name: 'All',
-            id: 0
-        }, // selected sub category
-        subSubCategory: {
-            name: 'All',
-            id: 0
-        }, // selected sub sub category,
         deleteID: null, // ID of item to be deleted.
         deleteIndex: null, // Index of item to be deleted.
         deleteModal: false,
@@ -220,13 +164,6 @@ export default {
     },
     watch: {
         category() {
-            // clear sub category
-            this.subCategory = {
-                name: 'All',
-                id: 0
-            };
-            // get sub categories
-            this.getSubCategories(this.category.id);
 
             if( !this.category.id ){
                 this.getAllItems(this.page, this.per_page);
@@ -243,60 +180,12 @@ export default {
                 per_page: this.per_page,
             });
         },
-        subCategory() {
-            // clear sub sub category
-            this.subSubCategory = {
-                name: 'All',
-                id: 0
-            }
-
-            // reset page number
-            // this also triggers getItemsByCategoryID request.
-            this.page = 1;
-
-            // exit if 'all' is selected in sub catgeory or category
-            if( !this.category.id || !this.subCategory.id ){
-                return
-            }
-
-            // get sub sub categories
-            this.getSubSubCategories(this.subCategory.id);
-
-            this.getItemsByCategory({
-                category_id: this.category.id,
-                sub_category_id: this.subCategory.id || null,
-                page: this.page,
-                per_page: this.per_page,
-            });
-
-        },
-        subSubCategory() {
-
-            // exit if 'all' is selected in category or sub catgeory or sub sub category
-            if( !this.category.id || !this.subCategory.id || !this.subSubCategory.id){
-                return
-            }
-
-            // reset page number
-            // this also triggers getItemsByCategoryID request.
-            this.page = 1;
-
-            this.getItemsByCategory({
-                category_id: this.category.id,
-                sub_category_id: this.subCategory.id || null,
-                sub_sub_category_id: this.subSubCategory.id || null,
-                page: this.page,
-                per_page: this.per_page,
-            });
-        },
         page() {
             if( this.category.name === 'All' ){
                 this.getAllItems(this.page, this.per_page);
             } else {
                 this.getItemsByCategory({
                     category_id: this.category.id,
-                    sub_category_id: this.subCategory.id || null,
-                    sub_sub_category_id: this.subSubCategory.id || null,
                     page: this.page,
                     per_page: this.per_page,
                 });
@@ -304,14 +193,12 @@ export default {
         },
     },
     methods: {
-        getItemsByCategory({category_id, sub_category_id, sub_sub_category_id, page, per_page}) {
+        getItemsByCategory({category_id, page, per_page}) {
             this.$axios({
                 method: 'get',
                 url: '/inventory/items/category',
                 params: {
                     category_id,
-                    sub_category_id,
-                    sub_sub_category_id,
                     page,
                     per_page,
                 }
@@ -363,47 +250,6 @@ export default {
             }).then((response) => {
                 if (response.data.status === "success") {
                     this.categories = Object.assign({}, this.categories, response.data.data.categories);
-                }
-            });
-
-        },
-        getSubCategories(category_id) {
-
-            // return if already loaded.
-            if (this.subCategories[category_id] || category_id === '') {
-                return;
-            }
-
-            // Get list of sub categories for drop down list
-            this.$axios({
-                method: 'get',
-                url: `/inventory/subcategory/${category_id}`
-            }).then((response) => {
-                if (response.data.status === "success") {
-                    // vue cannot track changes when values are assigned directly.
-                    this.subCategories = Object.assign({}, this.subCategories, {
-                        [category_id]: response.data.data.sub_categories
-                    });
-                }
-            });
-
-        },
-        getSubSubCategories(sub_category_id) {
-
-            // return if already loaded.
-            if (this.subSubCategories[sub_category_id] || sub_category_id === '') {
-                return;
-            }
-
-            // Get list of sub categories for drop down list
-            this.$axios({
-                method: 'get',
-                url: `/inventory/subsubcategory/${sub_category_id}`
-            }).then((response) => {
-                if (response.data.status === "success") {
-                    this.subSubCategories = Object.assign({}, this.subSubCategories, {
-                        [sub_category_id]: response.data.data.sub_sub_categories
-                    });
                 }
             });
 
@@ -460,8 +306,6 @@ export default {
             } else {
                 this.getItemsByCategory({
                     category_id: this.category.id,
-                    sub_category_id: this.subCategory.id || null,
-                    sub_sub_category_id: this.subSubCategory.id || null,
                     page: this.page,
                     per_page: this.per_page
                 });
