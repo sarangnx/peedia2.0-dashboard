@@ -21,10 +21,18 @@
                                 ></base-input>
                             </div>
                             <div class="col-12 mt-3">
-                                <base-button icon="fa fa-paper-plane" type="success"
-                                    :disabled="disabled"
+                                <base-button icon="fas fa-paper-plane" type="success"
+                                    v-if="!loading"
                                     @click="sendNotification"
-                                >Send Notification</base-button>
+                                    block
+                                >
+                                    Send Notification
+                                </base-button>
+                                <base-button icon="fas fa-circle-notch fa-spin" type="success"
+                                    v-else
+                                    block
+                                    disabled
+                                ></base-button>
                             </div>
                         </div>
                     </div>
@@ -39,11 +47,11 @@ export default {
     data: () => ({
         notif_title: '',
         notif_body: '',
-        disabled: false
+        loading: false
     }),
     methods: {
         sendNotification() {
-            this.disabled = true;
+            this.loading = true;
 
             const data = {
                 notif_title: this.notif_title,
@@ -63,7 +71,7 @@ export default {
                         message: 'Notifications sent successfully'
                     });
 
-                    this.disabled = false;
+                    this.loading = false;
                     this.notif_title = '';
                     this.notif_body = '';
                 }
@@ -74,7 +82,7 @@ export default {
                     title: 'Something went wrong!',
                     message: 'Notification not sent'
                 });
-                this.disabled = false;
+                this.loading = false;
             });
 
         },
