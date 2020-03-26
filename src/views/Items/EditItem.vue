@@ -197,6 +197,7 @@ export default {
                 const item = response.data.data.item;
 
                 this.item = Object.assign({}, this.item, item);
+                this.category = Object.assign({}, this.category, item.category[0]);
                 // set the image src link on loading an item info from the server.
                 if(this.item.image_path){
                     this.$refs.image.setAttribute('src',`${this.baseUrl}/images/inventory/${this.item.image_path}`);
