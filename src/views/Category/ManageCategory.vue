@@ -1,18 +1,53 @@
 <template>
     <div class="container">
         <div class="row">
-            <div class="col-md-12" v-for="(item, index) in categories" :key="item.category_id">
-                <div class="p-2">
-                    <font-awesome-icon icon="caret-right" :transform="{ rotate: item.rotate || 0 }"/>
-                    <span class="pl-1 pointer" @click="toggle(index);">
-                        {{ item.category_name }}
+            <div v-for="(category, index) in categories" :key="index" class="col-12">
+                <!-- LEVEL 1 -->
+                <div class="p-1">
+                    <font-awesome-icon
+                        icon="caret-right"
+                        :transform="{ rotate: category.rotate || 0 }"
+                        :class="{ transparent: !category.sub_category.length }"
+                    />
+                    <span
+                        class="pl-1 pointer"
+                        @click="toggle(index)"
+                    >
+                        {{ category.category_name }}
                     </span>
                 </div>
-                <div class="pl-4" v-show="item.rotate">
-                    <div v-for="item2 in item.sub_category" :key="item2.name">
-                        <button class="btn btn-link">
-                            {{ item2.category_name }}
-                        </button>
+                <div class="pl-4" v-show="category.rotate">
+                    <div v-for="(subcategory, index2) in category.sub_category" :key="index2">
+                        <!-- LEVEL 2 -->
+                        <div class="p-1">
+                            <font-awesome-icon
+                                icon="caret-right"
+                                :transform="{ rotate: subcategory.rotate || 0 }"
+                                :class="{ transparent: !subcategory.sub_category.length }"
+                            />
+                            <span
+                                class="pl-1 pointer"
+                                @click="toggle(index, index2)"
+                            >
+                                {{ subcategory.category_name }}
+                            </span>
+                        </div>
+                        <div class="pl-4" v-show="subcategory.rotate">
+                            <div v-for="(subsubcategory, index3) in subcategory.sub_category" :key="index3">
+                                <!-- LEVEL 3 -->
+                                <div class="p-1">
+                                    <font-awesome-icon
+                                        icon="caret-right"
+                                        class="transparent"
+                                    />
+                                    <span
+                                        class="pl-1 pointer"
+                                    >
+                                        {{ subsubcategory.category_name }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -44,11 +79,19 @@ export default {
                 this.categories = response.data.data.categories;
             });
         },
-        toggle(index) {
-            if(this.categories[index].rotate) {
-                this.$set(this.categories[index], 'rotate', 0);
+        toggle(index, index2) {
+            if(index2 === undefined){
+                if(this.categories[index].rotate) {
+                    this.$set(this.categories[index], 'rotate', 0);
+                } else {
+                    this.$set(this.categories[index], 'rotate', 90);
+                }
             } else {
-                this.$set(this.categories[index], 'rotate', 90);
+                if(this.categories[index].sub_category[index2].rotate) {
+                    this.$set(this.categories[index].sub_category[index2], 'rotate', 0);
+                } else {
+                    this.$set(this.categories[index].sub_category[index2], 'rotate', 90);
+                }
             }
         },
     },
@@ -66,5 +109,9 @@ export default {
 .pointer:hover {
     color: #233dd2;
     cursor: pointer;
+}
+
+.transparent {
+    opacity: 0;
 }
 </style>
