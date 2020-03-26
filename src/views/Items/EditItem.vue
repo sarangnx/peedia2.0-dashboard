@@ -142,6 +142,8 @@ export default {
         },
         upload() {
             const data = this.item;
+            // assign category id from selected category
+            data.category_id = this.category.category_id;
 
             // remove keys with null or undefined or 0 value.
             for (let key in data) {
