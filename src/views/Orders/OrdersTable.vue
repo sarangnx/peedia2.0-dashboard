@@ -81,8 +81,6 @@
                                 <template slot="columns">
                                     <th>Item Name</th>
                                     <th>Quantity</th>
-                                    <th>Unit</th>
-                                    <th class="text-right">Total Price</th>
                                 </template>
                                 <template slot-scope="{row}">
                                     <td>
@@ -90,18 +88,10 @@
                                     </td>
                                     <td>
                                         {{ parseFloat(row.quantity) }}
-                                    </td>
-                                    <td>
-                                        {{ row.unit }}
-                                    </td>
-                                    <td class="text-right">
-                                        {{ parseFloat(row.total_price) }}
+                                        <span class="text-uppercase font-weight-bold">{{ row.unit }}</span>
                                     </td>
                                 </template>
                             </base-table>
-                        </div>
-                        <div class="p-3 mt-4 font-weight-bold text-right">
-                            <span class="mr-3">Grand Total:</span><span>{{ order.grand_total }}</span>
                         </div>
                     </div>
                     <template slot="footer">
