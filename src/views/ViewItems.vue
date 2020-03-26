@@ -178,6 +178,7 @@ export default {
                 category_id: this.category.id,
                 page: this.page,
                 per_page: this.per_page,
+                recursive: true,
             });
         },
         page() {
@@ -188,12 +189,13 @@ export default {
                     category_id: this.category.id,
                     page: this.page,
                     per_page: this.per_page,
+                    recursive: true,
                 });
             }
         },
     },
     methods: {
-        getItemsByCategory({category_id, page, per_page}) {
+        getItemsByCategory({category_id, page, per_page, recursive}) {
             this.$axios({
                 method: 'get',
                 url: '/inventory/items/category',
@@ -201,6 +203,7 @@ export default {
                     category_id,
                     page,
                     per_page,
+                    recursive,
                 }
             }).then((response) => {
                 const data = response.data.data;
@@ -307,7 +310,8 @@ export default {
                 this.getItemsByCategory({
                     category_id: this.category.id,
                     page: this.page,
-                    per_page: this.per_page
+                    per_page: this.per_page,
+                    recursive: true,
                 });
             }
         },
