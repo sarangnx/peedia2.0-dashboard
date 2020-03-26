@@ -106,6 +106,11 @@ export default {
             // in visible state and item_id is not null.
             if( this.edit === false || this.item_id === null ){
                 this.item = {};
+                this.category = {
+                    category: {
+                        category_name: ''
+                    },
+                };
                 // remove selected image from file input buffer.
                 this.$refs.file.value = this.$refs.file.defaultValue;
                 return;
