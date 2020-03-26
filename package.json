@@ -19,6 +19,7 @@
     "bootstrap-vue": "2.0.0-rc.15",
     "chart.js": "2.8.0",
     "core-js": "2.6.5",
+    "dart-sass": "^1.25.0",
     "flatpickr": "4.5.7",
     "jwt-decode": "^2.2.0",
     "nouislider": "13.1.4",
@@ -44,7 +45,7 @@
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0",
     "sass": "^1.22.10",
-    "sass-loader": "^7.1.0",
+    "sass-loader": "^8.0.2",
     "vue-template-compiler": "2.6.6"
   },
   "eslintConfig": {

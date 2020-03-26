@@ -19,37 +19,37 @@
                 </base-dropdown>
             </div>
         </div>
-        <div class="card-body d-flex flex-row justify-content-between flex-wrap">
+        <div class="card-body d-flex flex-row justify-content-around flex-wrap">
             <div
                 v-for="(order, index) in tableData"
                 :key="order.order_id"
-                class="card border-light col-md-6 mb-2"
+                class="card border-light col-md-5 mb-2"
             >
                 <div class="p-4">
                     <span :class="['badge', `badge-${badgeClass(order.order_status)}`]" >{{ order.order_status }}</span>
                     <div class="d-flex text-muted">
-                        <h3 class="m-0 pr-2 text-muted">Order Date</h3>
+                        <h4 class="m-0 pr-2 text-muted">Order Date</h4>
                         <span>{{ formatDate(order.order_date) }}</span>
                     </div>
                     <div class="d-flex">
-                        <h3 class="m-0 pr-2">Name</h3>
-                        <span>{{order.user.user_profile.name || order.user.email}}</span>
+                        <h4 class="m-0 pr-2">Name</h4>
+                        <span>{{order.user.name || order.user.email || 'not provided'}}</span>
                     </div>
                     <div class="d-flex flex-column">
-                        <h3 class="m-0 pr-2">Address</h3>
-                        <div class="d-flex flex-column">
-                        <span>{{order.delivery_address.address1}}</span>
-                        <span>{{order.delivery_address.address2}}</span>
-                        <span>{{order.delivery_address.address3}}</span>
-                        <span>{{order.delivery_address.city}}</span>
-                        <span>{{order.delivery_address.distrcit}}</span>
-                        <span>{{order.delivery_address.state}}</span>
-                        <span>{{order.delivery_address.pincode}}</span>
-                        <span><small class="font-weight-bold">Landmark:</small> {{order.delivery_address.landmark}}</span>
+                        <h4 class="m-0 pr-2">Address</h4>
+                        <div class="d-flex flex-column" v-if="order.delivery_address">
+                            <span>{{order.delivery_address.house}}</span>
+                            <span>{{order.delivery_address.area}}</span>
+                            <span>{{order.delivery_address.distrcit}}</span>
+                            <span>{{order.delivery_address.pincode}}</span>
+                            <span v-if="order.delivery_address.landmark"><small class="font-weight-bold">Landmark:</small> {{order.delivery_address.landmark}}</span>
+                        </div>
+                        <div class="d-flex flex-column" v-else>
+                            <span>Not Provided</span>
                         </div>
                     </div>
                     <div class="d-flex">
-                        <h3 class="m-0 pr-2">Phone</h3>
+                        <h4 class="m-0 pr-2">Phone</h4>
                         <span>{{ order.delivery_address.phone || order.user.phone }}</span>
                     </div>
                 </div>
@@ -81,8 +81,6 @@
                                 <template slot="columns">
                                     <th>Item Name</th>
                                     <th>Quantity</th>
-                                    <th>Unit</th>
-                                    <th class="text-right">Total Price</th>
                                 </template>
                                 <template slot-scope="{row}">
                                     <td>
@@ -90,18 +88,10 @@
                                     </td>
                                     <td>
                                         {{ parseFloat(row.quantity) }}
-                                    </td>
-                                    <td>
-                                        {{ row.unit }}
-                                    </td>
-                                    <td class="text-right">
-                                        {{ parseFloat(row.total_price) }}
+                                        <span class="text-uppercase font-weight-bold">{{ row.unit }}</span>
                                     </td>
                                 </template>
                             </base-table>
-                        </div>
-                        <div class="p-3 mt-4 font-weight-bold text-right">
-                            <span class="mr-3">Grand Total:</span><span>{{ order.grand_total }}</span>
                         </div>
                     </div>
                     <template slot="footer">
