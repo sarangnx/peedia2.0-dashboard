@@ -33,100 +33,30 @@
         <div class="col-12">
             <h3>Price</h3>
         </div>
-        <base-input v-model="item.market_price" label="Market Price" class="col-6"></base-input>
-
-        <base-input v-model="item.offer_price" label="Offer Price" class="col-6"></base-input>
+        <base-input v-model="item.market_price" class="col-6"></base-input>
 
         <div class="col-12">
-            <h3>Brand & Category</h3>
-        </div>
-        <!-- BRAND -->
-        <div class="form-group col-12 col-md-6">
-            <label class="form-control-label">Brand</label>
-            <select v-model="item.brand_id" class="custom-select mr-sm-2">
-                <option selected="selected" :value="0">None</option>
-                <option
-                    v-for="brand in brands"
-                    :key="brand.brand_id"
-                    :value="brand.brand_id"
-                >
-                    {{brand.brand_name}}
-                </option>
-            </select>
-        </div>
-        <!-- BRAND -->
-
-        <!-- CATEGORY -->
-        <div class="form-group col-12 col-md-6">
-            <label class="form-control-label">Category</label>
-            <select
-                v-model="item.category_id"
-                class="custom-select mr-sm-2"
-                @change="item.sub_category_id = 0;item.sub_sub_category_id = 0;"
-            >
-                <option selected="selected" :value="0">None</option>
-                <option
-                    v-for="category in categories"
-                    :key="category.category_id"
-                    :value="category.category_id"
-                >
-                    {{category.category_name}}
-                </option>
-            </select>
+            <h3>Category</h3>
         </div>
         <!-- CATEGORY -->
-
-        <!-- SUB CATEGORY -->
         <div class="form-group col-12 col-md-6">
-            <label class="form-control-label">Sub Category</label>
-            <select
-                v-model="item.sub_category_id"
-                class="custom-select mr-sm-2"
-                @change="item.sub_sub_category_id = 0;"
+            <base-input
+                v-model="category.category_name"
+                class="mr-sm-2"
+                @focus="selectCategoryModal = true"
             >
-                <option selected="selected" :value="0">None</option>
-                <option
-                    v-for="subCategory in subCategories[item.category_id]"
-                    :key="subCategory.sub_category_id"
-                    :value="subCategory.sub_category_id"
-                >
-                    {{subCategory.sub_category_name}}
-                </option>
-            </select>
+            </base-input>
+            <modal :show.sync="selectCategoryModal" bodyClasses="pt-0">
+                <template slot="header">
+                    <h3 class="modal-title">Select Category</h3>
+                </template>
+                <select-category
+                    @category="selectCategory"
+                    @close="selectCategoryModal = false"
+                ></select-category>
+            </modal>
         </div>
-        <!-- SUB CATEGORY -->
-
-        <!-- SUB SUB CATEGORY -->
-        <div class="form-group col-12 col-md-6">
-            <label class="form-control-label">Sub Sub Category</label>
-            <select v-model="item.sub_sub_category_id" class="custom-select mr-sm-2">
-                <option selected="selected" :value="0">None</option>
-                <option
-                    v-for="subSubCategory in subSubCategories[item.sub_category_id]"
-                    :key="subSubCategory.sub_sub_category_id"
-                    :value="subSubCategory.sub_sub_category_id"
-                >
-                    {{subSubCategory.sub_sub_category_name}}
-                </option>
-            </select>
-        </div>
-        <!-- SUB SUB CATEGORY -->
-
-        <!-- <div class="form-group col-12">
-            <div class="input-group">
-                <div class="custom-file">
-                    <label class="custom-file-label" ref="image">Product Image</label>
-                </div>
-                <div class="input-group-append">
-                    <base-button 
-                        type="danger"
-                        icon="ni ni-lg ni-fat-remove"
-                        @click.prevent="removeImage()"
-                    >
-                    </base-button>
-                </div>
-            </div>
-        </div> -->
+        <!-- CATEGORY -->
 
         <div class="form-group col">
             <base-button
@@ -138,8 +68,13 @@
     </div>
 </template>
 <script>
+import SelectCategory from './SelectCategory';
+
 export default {
     name: "edit-item",
+    components: {
+        SelectCategory,
+    },
     props: {
         item_id: {
             type: [String, Number],
@@ -150,16 +85,11 @@ export default {
         }
     },
     data: () => ({
-        item: {
-            brand_id: 0,
-            category_id: 0,
-            sub_category_id: 0,
-            sub_sub_category_id: 0,
-        },
-        brands: {},
-        categories: {},
-        subCategories: {},
-        subSubCategories: {}
+        item: {},
+        category: {
+            category_name: ''
+        }, // selected category
+        selectCategoryModal: false,
     }),
     computed: {
         storeId() {
@@ -167,7 +97,7 @@ export default {
         },
         baseUrl() {
             // base url of api server where images are uploaded.
-            return this.$store.getters.apiUrl;
+            return this.$store.getters.serverUrl;
         },
     },
     watch: {
@@ -175,13 +105,7 @@ export default {
             // send request to server only when the modal is
             // in visible state and item_id is not null.
             if( this.edit === false || this.item_id === null ){
-                this.item = null;
-                this.item = {
-                    brand_id: 0,
-                    category_id: 0,
-                    sub_category_id: 0,
-                    sub_sub_category_id: 0,
-                };
+                this.item = {};
                 // remove selected image from file input buffer.
                 this.$refs.file.value = this.$refs.file.defaultValue;
                 return;
@@ -190,72 +114,8 @@ export default {
         },
     },
     methods: {
-        getBrands() {
-            // Get list of brands for drop down list.
-            this.$axios({
-                method: "get",
-                url: "/inventory/brands"
-            }).then(response => {
-                if (response.data.status === "success") {
-                    this.brands = response.data.data.brands;
-                }
-            });
-        },
-        getAllCategories() {
-            // return if already loaded.
-            if (Object.entries(this.subCategories).length !== 0) {
-                return;
-            }
-
-            // Get list of categories for drop down list
-            this.$axios({
-                method: 'get',
-                url: '/inventory/categories/all',
-            }).then((response) => {
-                if( response.data.status === 'success' ){
-
-                    // assign to this.categories.
-                    this.categories = Object.assign(
-                        {},
-                        this.categories,
-                        response.data.data.categories.map((item) => {
-                            return {
-                                category_id: item.category_id,
-                                category_name: item.category_name
-                            }
-                        })
-                    );
-
-                    response.data.data.categories.forEach((item) => {
-                        // Assign to sub category.
-                        const sub_categories = item.sub_category.map((sub_item) => {
-                            return {
-                                sub_category_id: sub_item.sub_category_id,
-                                sub_category_name: sub_item.sub_category_name,
-                            }
-                        });
-
-                        this.subCategories = Object.assign({}, this.subCategories,{
-                            [item.category_id]: sub_categories
-                        });
-
-                        // assign to sub sub categories.
-                        item.sub_category.forEach((sub_item) => {
-                            const sub_sub_categories = sub_item.sub_sub_category.map((sub_sub_item) => {
-                                return {
-                                    sub_sub_category_id: sub_sub_item.sub_sub_category_id,
-                                    sub_sub_category_name: sub_sub_item.sub_sub_category_name,
-                                }
-                            });
-
-                            this.subSubCategories = Object.assign({}, this.subSubCategories,{
-                                [sub_item.sub_category_id]: sub_sub_categories
-                            });
-                        });
-
-                    });
-                }
-            });
+        selectCategory(category) {
+            this.category = Object.assign({}, this.category, category);
         },
         loadImage(event) {
             this.item.image = event.target.files[0];
@@ -273,9 +133,7 @@ export default {
                 };
 
                 reader.readAsDataURL(event.target.files[0]);
-                
-            } else {
-                // this.$refs.image.innerHTML = 'Product Image';
+
             }
         },
         openImage() {
@@ -336,26 +194,8 @@ export default {
                 method: 'get',
                 url: `/inventory/items/${item_id}`
             }).then((response) => {
-                const data = response.data.data.item;
-                
-                const category_id = data.category && data.category[0] ? data.category[0].category_id : 0;
-                const sub_category_id = data.sub_category && data.sub_category[0] ? data.sub_category[0].sub_category_id : 0;
-                const sub_sub_category_id = data.sub_sub_category && data.sub_sub_category[0] ? data.sub_sub_category[0].sub_sub_category_id : 0;
+                const item = response.data.data.item;
 
-                const item = {
-                    item_id: data.item_id,
-                    item_name: data.item_name,
-                    market_price: data.market_price,
-                    offer_price: data.offer_price,
-                    quantity: data.quantity,
-                    unit: data.unit,
-                    store_id: data.store_id,
-                    category_id,
-                    sub_category_id,
-                    sub_sub_category_id,
-                    image_path: data.image_path
-                };
-                
                 this.item = Object.assign({}, this.item, item);
                 // set the image src link on loading an item info from the server.
                 if(this.item.image_path){
@@ -364,11 +204,6 @@ export default {
             });
         }
     },
-    mounted() {
-        // load category and brand list.
-        this.getBrands();
-        this.getAllCategories();
-    }
 };
 </script>
 <style scoped>
