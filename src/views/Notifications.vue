@@ -20,47 +20,19 @@
                                     placeholder="Limit to 1 or 2 sentences."
                                 ></base-input>
                             </div>
-                            <div class="col-12">
-                                <label class="form-control-label">Offer</label>
-                                <div v-if="selected.offer_id" class="selected d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <span class="pr-3">{{ selected.offer_name }}</span>
-                                        <span v-if="selected.offer_status" class="badge badge-success">
-                                            Active
-                                        </span>
-                                        <span v-else class="badge badge-danger">
-                                            Inactive
-                                        </span>
-                                    </div>
-                                    <base-button type="danger" size="sm" icon="fa fa-times" @click="clearSelected()"></base-button>
-                                </div>
-                                <input v-else @keyup="suggest()" ref="suggest" class="form-control" 
-                                    placeholder="Search for Offers"
-                                >
-                                <div v-if="searchDropdown" class="search-container">
-                                    <div class="search-results">
-                                        <span class="px-2 py-1 text-muted">Search results</span>
-                                        <a class="px-2 py-1 d-flex justify-content-between align-items-center"
-                                            v-for="(item, index) in offers"
-                                            :key="item.offer_id"
-                                            @click="selectItem(index)"
-                                        >
-                                            <span class="pl-3">{{ item.offer_name }}</span>
-                                            <span v-if="item.offer_status" class="badge badge-success">
-                                                Active
-                                            </span>
-                                            <span v-else class="badge badge-danger">
-                                                Inactive
-                                            </span>
-                                        </a>
-                                    </div>
-                                </div> <!-- dropdown -->
-                            </div> <!-- col-12 -->
                             <div class="col-12 mt-3">
-                                <base-button icon="fa fa-paper-plane" type="success"
-                                    :disabled="disabled"
+                                <base-button icon="fas fa-paper-plane" type="success"
+                                    v-if="!loading"
                                     @click="sendNotification"
-                                >Send Notification</base-button>
+                                    block
+                                >
+                                    Send Notification
+                                </base-button>
+                                <base-button icon="fas fa-circle-notch fa-spin" type="success"
+                                    v-else
+                                    block
+                                    disabled
+                                ></base-button>
                             </div>
                         </div>
                     </div>
@@ -73,59 +45,17 @@
 export default {
     name: 'notifications',
     data: () => ({
-        selected: {},
-        searchDropdown: false,
-        debounce: null, // for debounced search
-        offers: [],
         notif_title: '',
         notif_body: '',
-        disabled: false
+        loading: false
     }),
     methods: {
-        suggest() {
-            clearTimeout(this.debounce);
-
-            const self = this;
-
-            // send server request only when user stops typing.
-            this.debounce = setTimeout(() => {
-                const search = self.$refs.suggest.value;
-
-                if(search === ''){
-                    this.searchDropdown = false;
-                    return;
-                }
-
-                self.$axios({
-                    method: 'get',
-                    url: '/offers/suggest',
-                    params: {
-                        search: search,
-                    }
-                }).then((response) => {
-                    const data = response.data.data;
-
-                    this.offers = data.offers;
-                    this.count = data.count;
-                    this.searchDropdown = true;
-                });
-
-            }, 700);
-        },
-        selectItem(index) {
-            this.selected = Object.assign({}, this.offers[index]);
-            this.searchDropdown = false;
-        },
-        clearSelected() {
-            this.selected = Object.assign({}, {});
-        },
         sendNotification() {
-            this.disabled = true;
+            this.loading = true;
 
             const data = {
                 notif_title: this.notif_title,
                 notif_body: this.notif_body,
-                offer_id: this.selected ? this.selected.offer_id: null
             }
 
             this.$axios({
@@ -141,9 +71,7 @@ export default {
                         message: 'Notifications sent successfully'
                     });
 
-                    this.disabled = false;
-                    this.selected = Object.assign({}, {});
-                    this.offers = [];
+                    this.loading = false;
                     this.notif_title = '';
                     this.notif_body = '';
                 }
@@ -154,7 +82,7 @@ export default {
                     title: 'Something went wrong!',
                     message: 'Notification not sent'
                 });
-                this.disabled = false;
+                this.loading = false;
             });
 
         },
@@ -202,11 +130,5 @@ export default {
 }
 .search-results > a:hover {
     background: #e8e8e8;
-}
-
-.selected {
-    padding: 15px;
-    border: 1px solid #d7d7d7;
-    border-radius: 10px;
 }
 </style>
