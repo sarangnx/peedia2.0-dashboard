@@ -1,7 +1,5 @@
 <template>
-    <div class="card shadow"
-       :class="type === 'dark' ? 'bg-default': ''"
-    >
+    <div>
         <div class="card-header border-0"
             :class="type === 'dark' ? 'bg-transparent': ''"
         >
@@ -28,89 +26,88 @@
                 </div>
             </div>
         </div>
+        <div class="table-responsive">
+            <base-table class="table align-items-center table-flush"
+                :class="type === 'dark' ? 'table-dark': ''"
+                :thead-classes="type === 'dark' ? 'thead-dark': 'thead-light'"
+                tbody-classes="list"
+                :data="excel"
+            >
+                <template slot="columns">
+                    <th class="minwidth">Product Name</th>
+                    <th class="minwidth">Quantity</th>
+                    <th class="minwidth">Unit</th>
+                    <th class="minwidth">Market Price</th>
+                    <th class="minwidth">Category</th>
+                    <th class="minwidth">Product Image</th>
+                    <th class="minwidth">Actions</th>
+                </template>
 
-    <div class="table-responsive">
-        <base-table class="table align-items-center table-flush"
-            :class="type === 'dark' ? 'table-dark': ''"
-            :thead-classes="type === 'dark' ? 'thead-dark': 'thead-light'"
-            tbody-classes="list"
-            :data="excel"
-        >
-            <template slot="columns">
-                <th class="minwidth">Product Name</th>
-                <th class="minwidth">Quantity</th>
-                <th class="minwidth">Unit</th>
-                <th class="minwidth">Market Price</th>
-                <th class="minwidth">Category</th>
-                <th class="minwidth">Product Image</th>
-                <th class="minwidth">Actions</th>
-            </template>
-
-            <template slot-scope="{row, index}">
-                <td>
-                    <base-input v-model="row.item_name"></base-input>
-                </td>
-                <td>
-                    <base-input v-model="row.quantity"></base-input>
-                </td>
-                <td>
-                    <div class="form-group">
-                        <select v-model="row.unit" class="custom-select mr-sm-2">
-                            <option>kg</option>
-                            <option>g</option>
-                            <option>l</option>
-                            <option>ml</option>
-                            <option>count</option>
-                        </select>
-                    </div>
-                </td>
-                <td>
-                    <base-input v-model="row.market_price"></base-input>
-                </td>
-                <td>
-                    <div class="form-group">
-                        <select v-model="row.category_id" 
-                            class="custom-select mr-sm-2"
-                            @change="getSubCategories(row.category_id)"
-                        >
-                            <option selected="selected" value="">None</option>
-                            <option
-                                v-for="category in categories"
-                                :key="category.category_id"
-                                :value="category.category_id"
+                <template slot-scope="{row, index}">
+                    <td>
+                        <base-input v-model="row.item_name"></base-input>
+                    </td>
+                    <td>
+                        <base-input v-model="row.quantity"></base-input>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <select v-model="row.unit" class="custom-select mr-sm-2">
+                                <option>kg</option>
+                                <option>g</option>
+                                <option>l</option>
+                                <option>ml</option>
+                                <option>count</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <base-input v-model="row.market_price"></base-input>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <select v-model="row.category_id" 
+                                class="custom-select mr-sm-2"
+                                @change="getSubCategories(row.category_id)"
                             >
-                                {{category.category_name}}
-                            </option>
-                        </select>
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <div class="custom-file">
-                                <input type="file"
-                                    @change="loadImage($event, index)"
-                                    class="custom-file-input"
+                                <option selected="selected" value="">None</option>
+                                <option
+                                    v-for="category in categories"
+                                    :key="category.category_id"
+                                    :value="category.category_id"
                                 >
-                                <label class="custom-file-label">Choose file</label>
+                                    {{category.category_name}}
+                                </option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file"
+                                        @change="loadImage($event, index)"
+                                        class="custom-file-input"
+                                    >
+                                    <label class="custom-file-label">Choose file</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </td>
+                    </td>
 
-                <td>
-                    <div class="form-group">
-                        <base-button
-                            type="success"
-                            icon="ni ni-cloud-upload-96"
-                            @click.prevent.stop="uploadSingle(index)"
-                        ></base-button>
-                    </div>
-                </td>
-            </template>
-        </base-table>
+                    <td>
+                        <div class="form-group">
+                            <base-button
+                                type="success"
+                                icon="ni ni-cloud-upload-96"
+                                @click.prevent.stop="uploadSingle(index)"
+                            ></base-button>
+                        </div>
+                    </td>
+                </template>
+            </base-table>
+        </div>
     </div>
-</div>
 </template>
 <script>
 import XLSX from 'xlsx';
