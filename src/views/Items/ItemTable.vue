@@ -6,7 +6,7 @@
                     <h3 class="mb-0">
                         Add Items
                     </h3>
-                    <div class="col-6">
+                    <div class="col-md-6 col-12 p-0">
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="custom-file">
@@ -62,19 +62,12 @@
                     </td>
                     <td>
                         <div class="form-group">
-                            <select v-model="row.category_id" 
-                                class="custom-select mr-sm-2"
-                                @change="getSubCategories(row.category_id)"
+                            <base-input
+                                v-model="row.category_name"
+                                class="mr-sm-2"
+                                @focus="selectCategoryModal = true;selectedIndex = index;"
                             >
-                                <option selected="selected" value="">None</option>
-                                <option
-                                    v-for="category in categories"
-                                    :key="category.category_id"
-                                    :value="category.category_id"
-                                >
-                                    {{category.category_name}}
-                                </option>
-                            </select>
+                            </base-input>
                         </div>
                     </td>
                     <td>
@@ -90,7 +83,6 @@
                             </div>
                         </div>
                     </td>
-
                     <td>
                         <div class="form-group">
                             <base-button
@@ -103,19 +95,33 @@
                 </template>
             </base-table>
         </div>
+        <modal :show.sync="selectCategoryModal" bodyClasses="pt-0">
+            <template slot="header">
+                <h3 class="modal-title">Select Category</h3>
+            </template>
+            <select-category
+                @category="selectCategory($event, selectedIndex)"
+                @close="selectCategoryModal = false"
+            ></select-category>
+        </modal>
     </div>
 </template>
 <script>
 import XLSX from 'xlsx';
+import SelectCategory from './SelectCategory';
 
 export default {
     name: 'item-table',
+    components: {
+        SelectCategory,
+    },
     data: () => ({
         excel: [],
         category: {
             category_name: ''
         }, // selected category
         selectCategoryModal: false,
+        selectedIndex: null,
     }),
     computed: {
         storeId() {
@@ -150,13 +156,16 @@ export default {
                  * First Line ( row ) is considered as the header row.
                  * Everything else is data.
                  * Excel Format:
-                 * [ item_name | market_price | offer_price | quantity | unit ]
+                 * [ item_name | market_price | quantity | unit ]
                  */
 
-                console.log(jsonData)
-                // this.excel = jsonData;
+                this.excel = jsonData;
             };
             reader.readAsArrayBuffer(f);
+        },
+        selectCategory(category, index) {
+            this.$set(this.excel[index], 'category', category);
+            this.$set(this.excel[index], 'category_name', category.category_name);
         },
         loadImage(event, index) {
             this.excel[index].image = event.target.files[0];
