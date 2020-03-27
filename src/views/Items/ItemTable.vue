@@ -169,7 +169,7 @@ export default {
             this.$set(this.excel[index], 'category_name', category.category_name);
         },
         loadImage(event, index) {
-            this.excel[index].image = event.target.files[0];
+            this.$set(this.excel[index], 'image', event.target.files[0]);
         },
         uploadSingle(index) {
 
