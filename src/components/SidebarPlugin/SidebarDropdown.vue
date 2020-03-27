@@ -5,24 +5,24 @@
             <span>{{ title }}</span>
         </a>
         <collapse-transition>
-        <ul class="dropdown___menu"
-            v-show="isOpen"
-        >
-            <router-link
-                v-for="child in children"
-                :key="child.name"
-                :to="child.path"
-                @click.native="linkClick"
-                class="nav-link"
-                :target="child.target"
-                :href="child.path"
-                exact-active-class="active__link"
+            <ul class="dropdown___menu"
+                v-show="isOpen"
             >
-                <template>
-                    <span class="nav-link-text">{{ child.name }}</span>
-                </template>
-            </router-link>
-        </ul>
+                <router-link
+                    v-for="child in children"
+                    :key="child.name"
+                    :to="child.path"
+                    @click.native="linkClick"
+                    class="nav-link"
+                    :target="child.target"
+                    :href="child.path"
+                    exact-active-class="active__link"
+                >
+                    <template>
+                        <span class="nav-link-text">{{ child.name }}</span>
+                    </template>
+                </router-link>
+            </ul>
         </collapse-transition>
     </li>
 </template>
