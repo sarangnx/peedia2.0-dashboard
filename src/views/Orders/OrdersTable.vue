@@ -67,6 +67,13 @@
                         <a :class="['dropdown-item', `text-${badgeClass('DELIVERED')}`]" @click="changeStatus('DELIVERED', index)">DELIVERED</a>
                         <a :class="['dropdown-item', `text-${badgeClass('CANCELLED')}`]" @click="changeStatus('CANCELLED', index)">CANCELLED</a>
                     </base-dropdown>
+                    <base-button 
+                        @click="deleteID = order.order_id; deleteModal = true; deleteIndex = index"
+                        size="sm"
+                        type="danger"
+                    >
+                        <font-awesome-icon icon="trash-alt"/>
+                    </base-button>
                 </div>
                 <!-- Modal -->
                 <modal :show.sync="modals[index]">
@@ -108,6 +115,30 @@
                 align="center">
             </base-pagination>
         </div>
+        <!-- Delete Modal -->
+        <modal :show.sync="deleteModal" gradient="danger">
+            <template slot="header">
+                <h5 class="modal-title">Delete Order</h5>
+            </template>
+            <div class="py-1 text-center">
+                <h4 class="heading mt-4">Are you sure you want to delete this order?</h4>
+                <p class="text-white">This action cannot be reverted.</p>
+            </div>
+            <template slot="footer">
+                <base-button type="white"
+                    @click="deleteOrder()"
+                >
+                    Ok, Delete
+                </base-button>
+                <base-button type="link"
+                    text-color="white"
+                    class="ml-auto"
+                    @click="deleteID = null; deleteModal = false; deleteIndex = null"
+                >
+                    Close
+                </base-button>
+            </template>
+        </modal> <!-- Delete Modal -->
     </div> <!-- Card -->
 </template>
 <script>
@@ -130,7 +161,10 @@ export default {
             total_pages: 0,
             per_page: 10,
             page: 1,
-            status: 'ALL'
+            status: 'ALL',
+            deleteModal: false,
+            deleteID: null,
+            deleteIndex: null,
         }
     },
     computed: {
@@ -243,6 +277,40 @@ export default {
             }).finally(() => {
                 this.$set(this.loading, index, false);
                 this.$set(this.tableData[index], 'order_status', status);
+            });
+        },
+        deleteOrder() {
+            const order_id = this.deleteID;
+            const index = this.deleteIndex;
+
+            // send delete request
+            this.$axios({
+                method: 'delete',
+                url: `/orders/order/${order_id}`
+            }).then((response) => {
+                if (response.data && response.data.status === "success") {
+                    this.$notify({
+                        type: "success",
+                        title: "Success",
+                        message: "Order Deleted."
+                    });
+
+                    // Delete the order from the array.
+                    this.tableData.splice(index, 1);
+
+                } else {
+                    throw new Error('Order not deleted');
+                }
+            }).catch(() => {
+                this.$notify({
+                    type: "danger",
+                    title: "Something went Wrong!",
+                    message: "Order not deleted."
+                });
+            }).finally(() => {
+                this.deleteID = null;
+                this.deleteModal = false;
+                this.deleteIndex = null;
             });
         }
     },
