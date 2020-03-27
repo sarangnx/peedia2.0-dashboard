@@ -174,6 +174,8 @@ export default {
         uploadSingle(index) {
 
             const data = this.excel[index];
+            data.category_id = data.category? data.category.category_id : null;
+            delete data.category;
 
             const formdata = new FormData();
             Object.keys(data).forEach((key) => {
