@@ -68,7 +68,8 @@
                         <a :class="['dropdown-item', `text-${badgeClass('CANCELLED')}`]" @click="changeStatus('CANCELLED', index)">CANCELLED</a>
                     </base-dropdown>
                     <base-button 
-                        @click="deleteID = order.order_id; deleteModal = true; deleteIndex = index"
+                        @click.stop.prevent="deleteID = order.order_id; deleteModal = true; deleteIndex = index"
+                        :disabled="deleteLoading"
                         size="sm"
                         type="danger"
                     >
@@ -165,6 +166,7 @@ export default {
             deleteModal: false,
             deleteID: null,
             deleteIndex: null,
+            deleteLoading: null,
         }
     },
     computed: {
@@ -297,6 +299,7 @@ export default {
 
                     // Delete the order from the array.
                     this.tableData.splice(index, 1);
+                    this.getOrders(this.storeId, this.page, this.per_page, this.status);
 
                 } else {
                     throw new Error('Order not deleted');
