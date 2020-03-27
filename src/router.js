@@ -37,14 +37,24 @@ const router = new Router({
                     meta: {
                         requiresAuth: true,
                     },
-                },
-                {
-                    path: '/viewitems',
-                    name: 'view-items',
-                    component: () => import(/* webpackChunkName: "viewitems" */ './views/ViewItems.vue'),
-                    meta: {
-                        requiresAuth: true,
-                    },
+                    redirect: '/items/view-item',
+                    children: [
+                        {
+                            path: 'add-item',
+                            name: 'add-item',
+                            component: () => import(/* webpackChunkName: "items" */ './views/Items/AddItem.vue'),
+                        },
+                        {
+                            path: 'add-excel',
+                            name: 'add-excel',
+                            component: () => import(/* webpackChunkName: "items" */ './views/Items/ItemTable.vue'),
+                        },
+                        {
+                            path: 'view-items',
+                            name: 'view-items',
+                            component: () => import(/* webpackChunkName: "items" */ './views/ViewItems.vue'),
+                        }
+                    ]
                 },
                 {
                     path: '/category',
