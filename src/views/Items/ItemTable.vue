@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-        <div class="table-responsive">
+        <div class="table-responsive" ref="table">
             <base-table class="table align-items-center table-flush"
                 tbody-classes="list"
                 :data="excel"
@@ -122,6 +122,7 @@ export default {
         }, // selected category
         selectCategoryModal: false,
         selectedIndex: null,
+        eventTarget: null,
     }),
     computed: {
         storeId() {
@@ -209,7 +210,29 @@ export default {
                 });
             });
         },
+        activateHScroll() {
+            const table = this.$refs.table;
+            this.eventTarget = window.addEventListener('wheel', function(e){
+                if (e.deltaY > 0) {
+                    table.scrollLeft += 100;
+                } else {
+                    table.scrollLeft -= 100;
+                }
+            });
+        },
+        deactivateHScroll() {
+            window.removeEventListener('wheel', this.eventTarget);
+        }
     },
+    mounted() {
+        const table = this.$refs.table;
+        table.addEventListener('mouseenter', (e) => {
+            this.activateHScroll();
+        });
+        table.addEventListener('mouseleave', (e) => {
+            this.deactivateHScroll();
+        });
+    }
 };
 </script>
 <style>
