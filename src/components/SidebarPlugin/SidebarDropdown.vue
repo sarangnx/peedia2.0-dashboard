@@ -1,12 +1,10 @@
 <template>
-    <li class="nav-item drop__down"
-        @click="toggleDropDown"
-        v-click-outside="closeDropDown"
-    >
-        <a class="nav-link">
+    <li class="nav-item drop__down">
+        <a class="nav-link" @click="toggleDropDown">
             <i :class="icon"></i>
             <span>{{ title }}</span>
         </a>
+        <collapse-transition>
         <ul class="dropdown___menu"
             v-show="isOpen"
         >
@@ -18,17 +16,24 @@
                 class="nav-link"
                 :target="child.target"
                 :href="child.path"
+                exact-active-class="active__link"
             >
                 <template>
                     <span class="nav-link-text">{{ child.name }}</span>
                 </template>
             </router-link>
         </ul>
+        </collapse-transition>
     </li>
 </template>
 <script>
+import { CollapseTransition } from 'vue2-transitions';
+
 export default {
     name: "sidebar-dropdown",
+    components: {
+        CollapseTransition,
+    },
     props: {
         icon: {
             type: String,
@@ -65,11 +70,11 @@ export default {
         },
         toggleDropDown() {
             this.isOpen = !this.isOpen;
-            this.$emit("change", this.isOpen);
+            this.$emit('change', this.isOpen);
         },
         closeDropDown() {
             this.isOpen = false;
-            this.$emit("change", this.isOpen);
+            this.$emit('change', this.isOpen);
         }
     }
 };
@@ -81,5 +86,10 @@ export default {
 }
 .dropdown___menu{
     list-style-type: none;
+    padding: 0px;
+    background: #ececec;
+}
+.active__link {
+    border-left: 2px solid #5d72e4;
 }
 </style>
