@@ -1,129 +1,119 @@
 <template>
     <div>
-        <base-header type="gradient-success" class="pb-6 pb-8 pt-5 pt-md-8">
-        </base-header>
-        <div class="container-fluid mt--7">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card shadow">
-                        <div  class="card-header d-flex justify-content-between">
-                            <h3>Items</h3>
-                            <div>
-                                <span class="pr-3">Filter</span>
-                                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
-                                <base-dropdown v-else position="right">
-                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
-                                        {{ category.name }}
-                                    </base-button>
-                                    <a class="dropdown-item"
-                                        @click.stop="category={ 
-                                            name: 'All',
-                                            id: 0
-                                        }"
-                                    >
-                                        All
-                                    </a>
-                                    <a class="dropdown-item"
-                                        v-for="item in categories"
-                                        :key="item.category_id"
-                                        @click.stop="category={ 
-                                            name: item.category_name,
-                                            id: item.category_id
-                                        }"
-                                    >
-                                        {{ item.category_name }}
-                                    </a>
-                                </base-dropdown>
-                            </div> <!-- Filter -->
-                        </div> <!-- Card Header -->
-                        <div class="card-body d-flex flex-row justify-content-start flex-wrap">
-                            <div
-                                v-for="(item, index) of items"
-                                :key="item.item_id"
-                                class="card col-md-4 mb-2 p-1"
-                            >
-                                <div class="card-header d-flex justify-content-center">
-                                    <img v-if="item.image_path" :src="`${baseUrl}/images/inventory/${item.image_path}`" class="item-image">
-                                    <i v-else class="ni ni-image ni-5x"></i> <!-- Alt Image -->
-                                </div>
-                                <div class="card-body">
-                                    <div>
-                                        <h4 class="inline m-0 pr-2">Product Name:</h4>
-                                        <span>{{ item.item_name }}</span>
-                                    </div>
-                                    <div>
-                                        <h4 class="inline m-0 pr-2">Quantity:</h4>
-                                        <span>{{ parseFloat(item.quantity) }}</span>
-                                    </div>
-                                    <div>
-                                        <h4 class="inline m-0 pr-2">Unit:</h4>
-                                        <span>{{ item.unit }}</span>
-                                    </div>
-                                    <div>
-                                        <h4 class="inline m-0 pr-2">Market Price:</h4>
-                                        <span>{{ parseFloat(item.market_price) }}</span>
-                                    </div>
-                                    <div v-if="item.offer_price">
-                                        <h4 class="inline m-0 pr-2">Offer Price:</h4>
-                                        <span>{{ parseFloat(item.offer_price) }}</span>
-                                    </div>
-                                </div>
-                                <div class="card-footer d-flex justify-content-end">
-                                    <base-button size="sm" type="danger"
-                                        @click="deleteID = item.item_id; deleteModal = true; deleteIndex = index"
-                                    >
-                                        Delete
-                                    </base-button>
-
-                                    <base-button size="sm" type="primary"
-                                        @click="editID = item.item_id; editModal = true"
-                                    >
-                                        Edit
-                                    </base-button>
-                                </div>
-                            </div>
-                        </div> <!-- outer card body -->
-                        <!-- Delete Modal -->
-                        <modal :show.sync="deleteModal" gradient="danger">
-                            <template slot="header">
-                                <h5 class="modal-title">Delete Item</h5>
-                            </template>
-                            <div class="py-1 text-center">
-                                <h4 class="heading mt-4">Are you sure you want to delete this item?</h4>
-                                <p class="text-white">This action cannot be reverted.</p>
-                            </div>
-                            <template slot="footer">
-                                <base-button type="white"
-                                    @click="deleteItem()"
-                                >
-                                    Ok, Delete
-                                </base-button>
-                                <base-button type="link"
-                                    text-color="white"
-                                    class="ml-auto"
-                                    @click="deleteID = null; deleteModal = false; deleteIndex = null"
-                                >
-                                    Close
-                                </base-button>
-                            </template>
-                        </modal> <!-- Delete Modal -->
-                        <!-- Edit Modal -->
-                        <modal :show.sync="editModal">
-                            <template slot="header">
-                                <h1 class="modal-title">Edit Item</h1>
-                            </template>
-                            <edit-item :item_id="editID" :edit="editModal" @close-edit="closeEdit()"></edit-item>
-                        </modal>
-                        <div class="card-footer">
-                            <base-pagination 
-                                :page-count="total_pages"
-                                v-model="page"
-                                align="center">
-                            </base-pagination>
-                        </div>
-                    </div> <!-- outer card -->
+        <div  class="card-header d-flex justify-content-between">
+            <h3>Items</h3>
+            <div>
+                <span class="pr-3">Filter</span>
+                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                <base-dropdown v-else position="right">
+                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
+                        {{ category.name }}
+                    </base-button>
+                    <a class="dropdown-item"
+                        @click.stop="category={ 
+                            name: 'All',
+                            id: 0
+                        }"
+                    >
+                        All
+                    </a>
+                    <a class="dropdown-item"
+                        v-for="item in categories"
+                        :key="item.category_id"
+                        @click.stop="category={ 
+                            name: item.category_name,
+                            id: item.category_id
+                        }"
+                    >
+                        {{ item.category_name }}
+                    </a>
+                </base-dropdown>
+            </div> <!-- Filter -->
+        </div> <!-- Card Header -->
+        <div class="card-body d-flex flex-row justify-content-start flex-wrap">
+            <div
+                v-for="(item, index) of items"
+                :key="item.item_id"
+                class="card col-md-4 mb-2 p-1"
+            >
+                <div class="card-header d-flex justify-content-center">
+                    <img v-if="item.image_path" :src="`${baseUrl}/images/inventory/${item.image_path}`" class="item-image">
+                    <i v-else class="ni ni-image ni-5x"></i> <!-- Alt Image -->
                 </div>
-            </div> <!-- row -->            
+                <div class="card-body">
+                    <div>
+                        <h4 class="inline m-0 pr-2">Product Name:</h4>
+                        <span>{{ item.item_name }}</span>
+                    </div>
+                    <div>
+                        <h4 class="inline m-0 pr-2">Quantity:</h4>
+                        <span>{{ parseFloat(item.quantity) }}</span>
+                    </div>
+                    <div>
+                        <h4 class="inline m-0 pr-2">Unit:</h4>
+                        <span>{{ item.unit }}</span>
+                    </div>
+                    <div>
+                        <h4 class="inline m-0 pr-2">Market Price:</h4>
+                        <span>{{ parseFloat(item.market_price) }}</span>
+                    </div>
+                    <div v-if="item.offer_price">
+                        <h4 class="inline m-0 pr-2">Offer Price:</h4>
+                        <span>{{ parseFloat(item.offer_price) }}</span>
+                    </div>
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                    <base-button size="sm" type="danger"
+                        @click="deleteID = item.item_id; deleteModal = true; deleteIndex = index"
+                    >
+                        Delete
+                    </base-button>
+
+                    <base-button size="sm" type="primary"
+                        @click="editID = item.item_id; editModal = true"
+                    >
+                        Edit
+                    </base-button>
+                </div>
+            </div>
+        </div> <!-- outer card body -->
+        <!-- Delete Modal -->
+        <modal :show.sync="deleteModal" gradient="danger">
+            <template slot="header">
+                <h5 class="modal-title">Delete Item</h5>
+            </template>
+            <div class="py-1 text-center">
+                <h4 class="heading mt-4">Are you sure you want to delete this item?</h4>
+                <p class="text-white">This action cannot be reverted.</p>
+            </div>
+            <template slot="footer">
+                <base-button type="white"
+                    @click="deleteItem()"
+                >
+                    Ok, Delete
+                </base-button>
+                <base-button type="link"
+                    text-color="white"
+                    class="ml-auto"
+                    @click="deleteID = null; deleteModal = false; deleteIndex = null"
+                >
+                    Close
+                </base-button>
+            </template>
+        </modal> <!-- Delete Modal -->
+        <!-- Edit Modal -->
+        <modal :show.sync="editModal">
+            <template slot="header">
+                <h1 class="modal-title">Edit Item</h1>
+            </template>
+            <edit-item :item_id="editID" :edit="editModal" @close-edit="closeEdit()"></edit-item>
+        </modal>
+        <div class="card-footer">
+            <base-pagination 
+                :page-count="total_pages"
+                v-model="page"
+                align="center">
+                </base-pagination>
         </div>
     </div>       
 </template>
