@@ -74,7 +74,7 @@
     computed: {
         baseUrl() {
             // base url of api server where images are uploaded.
-            return this.$store.getters.apiUrl;
+            return this.$store.getters.serverUrl;
         },
         storeId() {
             return this.$store.getters.getUser.store[0].store_id;
