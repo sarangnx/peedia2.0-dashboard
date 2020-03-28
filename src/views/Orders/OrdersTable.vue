@@ -168,6 +168,8 @@ export default {
             deleteID: null,
             deleteIndex: null,
             deleteLoading: null,
+            localbodies: [],
+            districts: [],
         }
     },
     computed: {
@@ -318,10 +320,23 @@ export default {
                 this.deleteIndex = null;
                 this.deleteLoading = false;
             });
+        },
+        listLocalbodies() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/list',
+            }).then((response) => {
+                const localbodies = response.data.localbodies.rows;
+                
+                this.districts = localbodies.map(item => item.district);
+                this.districts = [ ...new Set(this.districts) ]; // remove duplicates
+                this.localbodies = localbodies;
+            });
         }
     },
     mounted() {
         this.getOrders(this.storeId);
+        this.listLocalbodies();
 
         // create a socket connection to server.
         const socket = io(this.baseUrl);
