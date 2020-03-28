@@ -187,6 +187,7 @@ export default {
             localbodies: [],
             districts: [],
             selectedDistrict: null,
+            activeLocalbodies: [], // localbodies in a district
         }
     },
     computed: {
@@ -210,6 +211,7 @@ export default {
             this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
         },
         selectedDistrict() {
+            this.filterLocalbodies();
             this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
         }
     },
@@ -353,6 +355,13 @@ export default {
                 this.districts = localbodies.map(item => item.district);
                 this.districts = [ ...new Set(this.districts) ]; // remove duplicates
                 this.localbodies = localbodies;
+            });
+        },
+        filterLocalbodies() {
+            this.activeLocalbodies = this.localbodies.filter((item) => {
+                if (item.district === this.selectedDistrict) {
+                    return item;
+                }
             });
         }
     },
