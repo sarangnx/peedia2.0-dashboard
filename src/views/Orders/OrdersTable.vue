@@ -1,12 +1,11 @@
 <template>
     <div class="card shadow">
-        <div  class="card-header d-flex justify-content-between">
+        <div  class="card-header d-flex justify-content-between flex-column flex-md-row align-items-center">
             <h3>Orders</h3>
-            <div>
-                <span class="pr-3">Filter</span>
+            <div class="d-flex align-items-center justify-content-around flex-column flex-md-row">
                 <!-- FILTER BY DISTRICT -->
                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
-                <base-dropdown v-else position="right">
+                <base-dropdown v-else position="right" class="mb-2 mb-md-0">
                     <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
                         {{ selectedDistrict || 'District' }}
                     </base-button>
@@ -21,7 +20,7 @@
                 </base-dropdown>
                 <!-- FILTER BY LOCALBODY -->
                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
-                <base-dropdown v-else-if="activeLocalbodies.length" position="right">
+                <base-dropdown v-else-if="activeLocalbodies.length" position="right" class="mb-2 mb-md-0">
                     <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
                         {{ selectedLocalbody ? selectedLocalbody.name : 'Panchayath or Municipality' }}
                     </base-button>
@@ -34,9 +33,19 @@
                         {{ localbody.name }}
                     </a>
                 </base-dropdown>
+                <!-- FILTER BY WARD -->
+                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                <base-input v-else-if="selectedLocalbody && selectedLocalbody.localbody_id"
+                    class="m-0 mr-2 input__height mb-2 mb-md-0"
+                    type="number"
+                    min="1"
+                    max="1000"
+                    v-model="ward"
+                >
+                </base-input>
                 <!-- FILTER BY STATUS -->
                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
-                <base-dropdown v-else position="right">
+                <base-dropdown v-else position="right" class="mb-2 mb-md-0">
                     <base-button slot="title" :type="badgeClass(status)" class="dropdown-toggle" size="sm">
                         {{ status || 'Status' }}
                     </base-button>
@@ -204,6 +213,9 @@ export default {
             selectedDistrict: null,
             activeLocalbodies: [], // localbodies in a district
             selectedLocalbody: null,
+            ward: null,
+            debounce: null, // for debounced request
+            debounceerror: null, // for debounced error notification
         }
     },
     computed: {
@@ -232,6 +244,27 @@ export default {
         },
         selectedLocalbody() {
             this.getOrders();
+        },
+        ward() {
+            clearTimeout(this.debounce);
+            clearTimeout(this.debounceerror);
+            if( this.ward > 0 && this.ward < 200 ) {
+                this.debounce = setTimeout(() => {
+                    this.getOrders();
+                }, 1000);
+            } else if(!this.ward) {
+                this.debounce = setTimeout(() => {
+                    this.getOrders();
+                }, 1000);
+            } else {
+                this.debounceerror = setTimeout(() => {
+                    this.$notify({
+                        type: "danger",
+                        title: "Error",
+                        message: "Invalid ward number."
+                    });
+                }, 1000);
+            }
         }
     },
     methods: {
@@ -243,6 +276,7 @@ export default {
             let status = this.status || 'ALL';
             let district = this.selectedDistrict || 'All';
             let localbody = this.selectedLocalbody ? this.selectedLocalbody.localbody_id : null;
+            let ward = this.ward > 0 && this.ward < 200 ? this.ward : null;
 
             status = status === 'ALL' ? null : status;
             district = district === 'All' ? null : district;
@@ -256,7 +290,8 @@ export default {
                     per_page: per_page,
                     order_status: status,
                     district,
-                    localbody
+                    localbody,
+                    ward,
                 },
             }).then((response) => {
                 let data = response.data.data.orders;
@@ -385,6 +420,7 @@ export default {
             });
         },
         filterLocalbodies() {
+            this.selectedLocalbody = null;
             this.activeLocalbodies = this.localbodies.filter((item) => {
                 if (item.district === this.selectedDistrict) {
                     return item;
@@ -489,5 +525,9 @@ export default {
     box-shadow: 0 -2em;
     height: 5em;
   }
+}
+.input__height > input {
+    height: 2.2em;
+    padding: 0px 10px;
 }
 </style>
