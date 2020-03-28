@@ -4,6 +4,22 @@
             <h3>Orders</h3>
             <div>
                 <span class="pr-3">Filter</span>
+                <!-- FILTER BY DISTRICT -->
+                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                <base-dropdown v-else position="right">
+                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
+                        {{ selectedDistrict || 'Select District' }}
+                    </base-button>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black"
+                        v-for="(district, index) in districts"
+                        :key="index"
+                        @click="selectedDistrict = district"
+                    >
+                        {{ district }}
+                    </a>
+                </base-dropdown>
+                <!-- FILTER BY STATUS -->
                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                 <base-dropdown v-else position="right">
                     <base-button slot="title" :type="badgeClass(status)" class="dropdown-toggle" size="sm">
@@ -40,7 +56,7 @@
                         <div class="d-flex flex-column" v-if="order.delivery_address">
                             <span>{{order.delivery_address.house}}</span>
                             <span>{{order.delivery_address.area}}</span>
-                            <span>{{order.delivery_address.distrcit}}</span>
+                            <span>{{order.delivery_address.district}}</span>
                             <span>{{order.delivery_address.pincode}}</span>
                             <span v-if="order.delivery_address.landmark"><small class="font-weight-bold">Landmark:</small> {{order.delivery_address.landmark}}</span>
                         </div>
@@ -170,6 +186,7 @@ export default {
             deleteLoading: null,
             localbodies: [],
             districts: [],
+            selectedDistrict: null,
         }
     },
     computed: {
@@ -184,19 +201,23 @@ export default {
     watch: {
         // whenever page changes, call getOrders
         page() {
-            this.getOrders(this.storeId, this.page, this.per_page, this.status);
+            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
         },
         per_page() {
-            this.getOrders(this.storeId, this.page, this.per_page, this.status);
+            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
         },
         status() {
-            this.getOrders(this.storeId, this.page, this.per_page, this.status);
+            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
+        },
+        selectedDistrict() {
+            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
         }
     },
     methods: {
-        getOrders(store_id, page = 1, per_page = 10, status = 'ALL') {
+        getOrders(store_id, page = 1, per_page = 10, status = 'ALL', district = 'All') {
 
             status = status === 'ALL' ? null : status;
+            district = district === 'All' ? null : district;
 
             this.$axios({
                 method: 'get',
@@ -205,7 +226,8 @@ export default {
                     store_id: store_id,
                     page: page,
                     per_page: per_page,
-                    order_status: status
+                    order_status: status,
+                    district,
                 },
             }).then((response) => {
                 let data = response.data.data.orders;
