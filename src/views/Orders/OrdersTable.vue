@@ -78,17 +78,31 @@
                     <div class="d-flex flex-column">
                         <h4 class="m-0 pr-2">Address</h4>
                         <div class="d-flex flex-column" v-if="order.delivery_address">
-                            <span>{{order.delivery_address.house}}</span>
-                            <span>{{order.delivery_address.area}}</span>
-                            <span>{{order.delivery_address.district}}</span>
-                            <span>{{order.delivery_address.pincode}}</span>
-                            <span v-if="order.delivery_address.landmark"><small class="font-weight-bold">Landmark:</small> {{order.delivery_address.landmark}}</span>
+                            <span v-if="order.delivery_address.house">{{order.delivery_address.house}},</span>
+                            <span v-if="order.delivery_address.area">{{order.delivery_address.area}},</span>
+                            <span v-if="order.delivery_address.landmark">
+                                <small class="text-muted font-weight-bold">Landmark:</small> {{order.delivery_address.landmark}}
+                            </span>
+                            <span v-if="order.delivery_address.district || order.delivery_address.pincode">
+                                <template v-if="order.delivery_address.district">
+                                    {{order.delivery_address.district}},
+                                </template>
+                                <template v-if="order.delivery_address.pincode">
+                                    {{order.delivery_address.pincode}},
+                                </template>
+                            </span>
+                            <span v-if="order.delivery_address.ward">
+                                <small class="text-muted font-weight-bold">Ward:</small> {{order.delivery_address.ward}}
+                            </span>
+                            <span v-if="order.user.localbody.name">
+                                <small class="text-muted font-weight-bold">Localbody:</small> {{order.user.localbody.name}}
+                            </span>
                         </div>
                         <div class="d-flex flex-column" v-else>
                             <span>Not Provided</span>
                         </div>
                     </div>
-                    <div class="d-flex">
+                    <div class="d-flex" v-if="order.delivery_address.phone || order.user.phone">
                         <h4 class="m-0 pr-2">Phone</h4>
                         <span>{{ order.delivery_address.phone || order.user.phone }}</span>
                     </div>
