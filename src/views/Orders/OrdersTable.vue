@@ -4,6 +4,22 @@
             <h3>Orders</h3>
             <div>
                 <span class="pr-3">Filter</span>
+                <!-- FILTER BY DISTRICT -->
+                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                <base-dropdown v-else position="right">
+                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
+                        {{ selectedDistrict || 'Select District' }}
+                    </base-button>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black"
+                        v-for="(district, index) in districts"
+                        :key="index"
+                        @click="selectedDistrict = district"
+                    >
+                        {{ district }}
+                    </a>
+                </base-dropdown>
+                <!-- FILTER BY STATUS -->
                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                 <base-dropdown v-else position="right">
                     <base-button slot="title" :type="badgeClass(status)" class="dropdown-toggle" size="sm">
@@ -40,7 +56,7 @@
                         <div class="d-flex flex-column" v-if="order.delivery_address">
                             <span>{{order.delivery_address.house}}</span>
                             <span>{{order.delivery_address.area}}</span>
-                            <span>{{order.delivery_address.distrcit}}</span>
+                            <span>{{order.delivery_address.district}}</span>
                             <span>{{order.delivery_address.pincode}}</span>
                             <span v-if="order.delivery_address.landmark"><small class="font-weight-bold">Landmark:</small> {{order.delivery_address.landmark}}</span>
                         </div>
@@ -68,7 +84,8 @@
                         <a :class="['dropdown-item', `text-${badgeClass('CANCELLED')}`]" @click="changeStatus('CANCELLED', index)">CANCELLED</a>
                     </base-dropdown>
                     <base-button 
-                        @click="deleteID = order.order_id; deleteModal = true; deleteIndex = index"
+                        @click.stop.prevent="deleteID = order.order_id; deleteModal = true; deleteIndex = index"
+                        :disabled="deleteLoading"
                         size="sm"
                         type="danger"
                     >
@@ -120,11 +137,12 @@
             <template slot="header">
                 <h5 class="modal-title">Delete Order</h5>
             </template>
-            <div class="py-1 text-center">
+            <div class="py-1 text-center" v-show="!deleteLoading">
                 <h4 class="heading mt-4">Are you sure you want to delete this order?</h4>
                 <p class="text-white">This action cannot be reverted.</p>
             </div>
-            <template slot="footer">
+            <div class="loader" v-if="deleteLoading">Loading...</div>
+            <template slot="footer" v-if="!deleteLoading">
                 <base-button type="white"
                     @click="deleteOrder()"
                 >
@@ -165,6 +183,10 @@ export default {
             deleteModal: false,
             deleteID: null,
             deleteIndex: null,
+            deleteLoading: null,
+            localbodies: [],
+            districts: [],
+            selectedDistrict: null,
         }
     },
     computed: {
@@ -179,19 +201,23 @@ export default {
     watch: {
         // whenever page changes, call getOrders
         page() {
-            this.getOrders(this.storeId, this.page, this.per_page, this.status);
+            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
         },
         per_page() {
-            this.getOrders(this.storeId, this.page, this.per_page, this.status);
+            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
         },
         status() {
-            this.getOrders(this.storeId, this.page, this.per_page, this.status);
+            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
+        },
+        selectedDistrict() {
+            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
         }
     },
     methods: {
-        getOrders(store_id, page = 1, per_page = 10, status = 'ALL') {
+        getOrders(store_id, page = 1, per_page = 10, status = 'ALL', district = 'All') {
 
             status = status === 'ALL' ? null : status;
+            district = district === 'All' ? null : district;
 
             this.$axios({
                 method: 'get',
@@ -200,7 +226,8 @@ export default {
                     store_id: store_id,
                     page: page,
                     per_page: per_page,
-                    order_status: status
+                    order_status: status,
+                    district,
                 },
             }).then((response) => {
                 let data = response.data.data.orders;
@@ -283,6 +310,7 @@ export default {
             const order_id = this.deleteID;
             const index = this.deleteIndex;
 
+            this.deleteLoading = true;
             // send delete request
             this.$axios({
                 method: 'delete',
@@ -297,6 +325,7 @@ export default {
 
                     // Delete the order from the array.
                     this.tableData.splice(index, 1);
+                    this.getOrders(this.storeId, this.page, this.per_page, this.status);
 
                 } else {
                     throw new Error('Order not deleted');
@@ -311,11 +340,25 @@ export default {
                 this.deleteID = null;
                 this.deleteModal = false;
                 this.deleteIndex = null;
+                this.deleteLoading = false;
+            });
+        },
+        listLocalbodies() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/list',
+            }).then((response) => {
+                const localbodies = response.data.localbodies.rows;
+                
+                this.districts = localbodies.map(item => item.district);
+                this.districts = [ ...new Set(this.districts) ]; // remove duplicates
+                this.localbodies = localbodies;
             });
         }
     },
     mounted() {
         this.getOrders(this.storeId);
+        this.listLocalbodies();
 
         // create a socket connection to server.
         const socket = io(this.baseUrl);
@@ -352,4 +395,63 @@ export default {
 };
 </script>
 <style>
+.loader,
+.loader:before,
+.loader:after {
+  background: #ffffff;
+  -webkit-animation: load1 1s infinite ease-in-out;
+  animation: load1 1s infinite ease-in-out;
+  width: 1em;
+  height: 4em;
+}
+.loader {
+  color: #ffffff;
+  text-indent: -9999em;
+  margin: 88px auto;
+  position: relative;
+  font-size: 11px;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+.loader:before,
+.loader:after {
+  position: absolute;
+  top: 0;
+  content: '';
+}
+.loader:before {
+  left: -1.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 1.5em;
+}
+@-webkit-keyframes load1 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}
+@keyframes load1 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}
 </style>
