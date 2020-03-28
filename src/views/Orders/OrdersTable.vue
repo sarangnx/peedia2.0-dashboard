@@ -8,7 +8,7 @@
                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                 <base-dropdown v-else position="right">
                     <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
-                        {{ selectedDistrict || 'Select District' }}
+                        {{ selectedDistrict || 'District' }}
                     </base-button>
                     <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
                     <a class="dropdown-item text-black"
@@ -19,19 +19,34 @@
                         {{ district }}
                     </a>
                 </base-dropdown>
+                <!-- FILTER BY LOCALBODY -->
+                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                <base-dropdown v-else-if="activeLocalbodies.length" position="right">
+                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
+                        {{ selectedLocalbody ? selectedLocalbody.name : 'Panchayath or Municipality' }}
+                    </base-button>
+                    <a class="dropdown-item text-black" @click="selectedLocalbody =  Object.assign({},{ name: 'All' })">All</a>
+                    <a class="dropdown-item text-black"
+                        v-for="(localbody, index) in activeLocalbodies"
+                        :key="index"
+                        @click="selectedLocalbody = Object.assign({}, localbody)"
+                    >
+                        {{ localbody.name }}
+                    </a>
+                </base-dropdown>
                 <!-- FILTER BY STATUS -->
                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                 <base-dropdown v-else position="right">
                     <base-button slot="title" :type="badgeClass(status)" class="dropdown-toggle" size="sm">
-                        {{ status }}
+                        {{ status || 'Status' }}
                     </base-button>
-                    <a :class="['dropdown-item', `text-black`]" @click="status = 'ALL'">ALL</a>
-                    <a :class="['dropdown-item', `text-${badgeClass('PENDING')}`]" @click="status = 'PENDING'">PENDING</a>
-                    <a :class="['dropdown-item', `text-grey`]" @click="status = 'PROCESSING'">PROCESSING</a>
-                    <a :class="['dropdown-item', `text-${badgeClass('READY')}`]" @click="status = 'READY'">READY</a>
-                    <a :class="['dropdown-item', `text-${badgeClass('OUTFORDELIVERY')}`]" @click="status = 'OUTFORDELIVERY'">OUTFORDELIVERY</a>
-                    <a :class="['dropdown-item', `text-${badgeClass('DELIVERED')}`]" @click="status = 'DELIVERED'">DELIVERED</a>
-                    <a :class="['dropdown-item', `text-${badgeClass('CANCELLED')}`]" @click="status = 'CANCELLED'">CANCELLED</a>
+                    <a :class="['dropdown-item', `text-black`]" @click="status = 'ALL'">All</a>
+                    <a :class="['dropdown-item', `text-${badgeClass('PENDING')}`]" @click="status = 'PENDING'">Pending</a>
+                    <a :class="['dropdown-item', `text-grey`]" @click="status = 'PROCESSING'">Processing</a>
+                    <a :class="['dropdown-item', `text-${badgeClass('READY')}`]" @click="status = 'READY'">Ready</a>
+                    <a :class="['dropdown-item', `text-${badgeClass('OUTFORDELIVERY')}`]" @click="status = 'OUTFORDELIVERY'">Out for delivery</a>
+                    <a :class="['dropdown-item', `text-${badgeClass('DELIVERED')}`]" @click="status = 'DELIVERED'">Delivered</a>
+                    <a :class="['dropdown-item', `text-${badgeClass('CANCELLED')}`]" @click="status = 'CANCELLED'">Cancelled</a>
                 </base-dropdown>
             </div>
         </div>
@@ -76,12 +91,12 @@
                         <base-button slot="title" :type="badgeClass(order.order_status)" class="dropdown-toggle" size="sm">
                             {{ order.order_status }}
                         </base-button>
-                        <a :class="['dropdown-item', `text-${badgeClass('PENDING')}`]" @click="changeStatus('PENDING', index)">PENDING</a>
-                        <a :class="['dropdown-item', `text-grey`]" @click="changeStatus('PROCESSING', index)">PROCESSING</a>
-                        <a :class="['dropdown-item', `text-${badgeClass('READY')}`]" @click="changeStatus('READY', index)">READY</a>
-                        <a :class="['dropdown-item', `text-${badgeClass('OUTFORDELIVERY')}`]" @click="changeStatus('OUTFORDELIVERY', index)">OUTFORDELIVERY</a>
-                        <a :class="['dropdown-item', `text-${badgeClass('DELIVERED')}`]" @click="changeStatus('DELIVERED', index)">DELIVERED</a>
-                        <a :class="['dropdown-item', `text-${badgeClass('CANCELLED')}`]" @click="changeStatus('CANCELLED', index)">CANCELLED</a>
+                        <a :class="['dropdown-item', `text-${badgeClass('PENDING')}`]" @click="changeStatus('PENDING', index)">Pending</a>
+                        <a :class="['dropdown-item', `text-grey`]" @click="changeStatus('PROCESSING', index)">Processing</a>
+                        <a :class="['dropdown-item', `text-${badgeClass('READY')}`]" @click="changeStatus('READY', index)">Ready</a>
+                        <a :class="['dropdown-item', `text-${badgeClass('OUTFORDELIVERY')}`]" @click="changeStatus('OUTFORDELIVERY', index)">Out for delivery</a>
+                        <a :class="['dropdown-item', `text-${badgeClass('DELIVERED')}`]" @click="changeStatus('DELIVERED', index)">Delivered</a>
+                        <a :class="['dropdown-item', `text-${badgeClass('CANCELLED')}`]" @click="changeStatus('CANCELLED', index)">Cancelled</a>
                     </base-dropdown>
                     <base-button 
                         @click.stop.prevent="deleteID = order.order_id; deleteModal = true; deleteIndex = index"
@@ -179,7 +194,7 @@ export default {
             total_pages: 0,
             per_page: 10,
             page: 1,
-            status: 'ALL',
+            status: null,
             deleteModal: false,
             deleteID: null,
             deleteIndex: null,
@@ -188,6 +203,7 @@ export default {
             districts: [],
             selectedDistrict: null,
             activeLocalbodies: [], // localbodies in a district
+            selectedLocalbody: null,
         }
     },
     computed: {
@@ -202,21 +218,31 @@ export default {
     watch: {
         // whenever page changes, call getOrders
         page() {
-            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
+            this.getOrders();
         },
         per_page() {
-            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
+            this.getOrders();
         },
         status() {
-            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
+            this.getOrders();
         },
         selectedDistrict() {
             this.filterLocalbodies();
-            this.getOrders(this.storeId, this.page, this.per_page, this.status, this.selectedDistrict);
+            this.getOrders();
+        },
+        selectedLocalbody() {
+            this.getOrders();
         }
     },
     methods: {
-        getOrders(store_id, page = 1, per_page = 10, status = 'ALL', district = 'All') {
+        getOrders() {
+
+            const store_id = this.storeId;
+            const page = this.page || 1;
+            const per_page = this.per_page || 10;
+            let status = this.status || 'ALL';
+            let district = this.selectedDistrict || 'All';
+            let localbody = this.selectedLocalbody ? this.selectedLocalbody.localbody_id : null;
 
             status = status === 'ALL' ? null : status;
             district = district === 'All' ? null : district;
@@ -230,6 +256,7 @@ export default {
                     per_page: per_page,
                     order_status: status,
                     district,
+                    localbody
                 },
             }).then((response) => {
                 let data = response.data.data.orders;
@@ -327,7 +354,7 @@ export default {
 
                     // Delete the order from the array.
                     this.tableData.splice(index, 1);
-                    this.getOrders(this.storeId, this.page, this.per_page, this.status);
+                    this.getOrders();
 
                 } else {
                     throw new Error('Order not deleted');
@@ -366,7 +393,7 @@ export default {
         }
     },
     mounted() {
-        this.getOrders(this.storeId);
+        this.getOrders();
         this.listLocalbodies();
 
         // create a socket connection to server.
@@ -388,7 +415,7 @@ export default {
                 message: 'Click here or refresh to see new orders.',
                 icon: 'fa fa-concierge-bell',
                 onClick: () => {
-                    this.getOrders(this.storeId);
+                    this.getOrders();
                 }
             });
 
