@@ -21,7 +21,18 @@
                 </div>
                 <div class="card-body px-lg-5 py-lg-5" v-else>
                     <div class="text-center text-muted mb-4 font-weight-bold">Reset Password</div>
-                    <div>
+                    <div v-if="step === 1">
+                        <base-input
+                            class="input-group-alternative mb-3"
+                            placeholder="OTP"
+                            addon-left-icon="fas fa-lock"
+                            v-model="password"
+                        ></base-input>
+                        <div class="text-center">
+                            <base-button block type="primary" class="my-4" @click.prevent="verifyOtp">Verify</base-button>
+                        </div>
+                    </div>
+                    <div v-else>
                         <base-input
                             class="input-group-alternative mb-3"
                             placeholder="Password"
@@ -33,7 +44,7 @@
                             <base-button block type="primary" class="my-4" @click.prevent="changePassword">Change Password</base-button>
                         </div>
                     </div>
-                    <div class="text-center text-muted">
+                    <div class="text-center text-muted" v-if="step === 1">
                         <base-button type="link" @click="gotCode = false">Resend Code</base-button>
                     </div>
                 </div>
@@ -48,6 +59,7 @@ export default {
         username: null,
         gotCode: false,
         password: null,
+        step: 1,
     }),
     methods: {
         sendOtp() {
@@ -70,6 +82,9 @@ export default {
             }).catch(() => {
                 this.$error('Unable to send email.');
             });
+        },
+        verifyOtp() {
+
         },
         changePassword() {
 
