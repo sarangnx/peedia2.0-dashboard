@@ -11,9 +11,9 @@ export default [
                 component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
                 meta: {
                     requiresAuth: true,
+                    minrank: 1,
+                    maxrank: 2
                 },
-                minrank: 1,
-                maxrank: 2
             },
             {
                 path: '/orders',
@@ -21,9 +21,9 @@ export default [
                 component: () => import(/* webpackChunkName: "orders" */ '@/views/Orders.vue'),
                 meta: {
                     requiresAuth: true,
+                    minrank: 1,
+                    maxrank: 2
                 },
-                minrank: 1,
-                maxrank: 2
             },
             {
                 path: '/items',
@@ -31,9 +31,9 @@ export default [
                 component: () => import(/* webpackChunkName: "items" */ '@/views/Items.vue'),
                 meta: {
                     requiresAuth: true,
+                    minrank: 2,
+                    maxrank: 2,
                 },
-                minrank: 2,
-                maxrank: 2,
                 redirect: '/items/view-item',
                 children: [
                     {
@@ -59,9 +59,9 @@ export default [
                 component: () => import(/* webpackChunkName: "banner" */ '@/views/Category/Category.vue'),
                 meta: {
                     requiresAuth: true,
+                    minrank: 2,
+                    maxrank: 2
                 },
-                minrank: 2,
-                maxrank: 2
             },
             {
                 path: '/notifications',
@@ -69,9 +69,9 @@ export default [
                 component: () => import(/* webpackChunkName: "notifications" */ '@/views/Notifications.vue'),
                 meta: {
                     requiresAuth: true,
+                    minrank: 2,
+                    maxrank: 4
                 },
-                minrank: 2,
-                maxrank: 4
             },
             {
                 path: '/profile',
@@ -79,9 +79,9 @@ export default [
                 component: () => import(/* webpackChunkName: "profile" */ '@/views/UserProfile.vue'),
                 meta: {
                     requiresAuth: true,
+                    minrank: 1,
+                    maxrank: 4
                 },
-                minrank: 1,
-                maxrank: 4
             },
             {
                 path: '/users',
@@ -89,9 +89,9 @@ export default [
                 component: () => import(/* webpackChunkName: "users" */ '@/views/Users.vue'),
                 meta: {
                     requiresAuth: true,
+                    minrank: 2,
+                    maxrank: 4
                 },
-                minrank: 2,
-                maxrank: 4
             },
         ]
     },
