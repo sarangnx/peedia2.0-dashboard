@@ -23,13 +23,13 @@
                     </a>
                 </base-dropdown>
             </div>
-            <base-input v-model="user.ward" label="Ward" class="col-12 col-md-6" maxlength="200"></base-input>
+            <base-input v-model="user.ward" type="number" label="Ward" class="col-12 col-md-6" maxlength="200"></base-input>
             <base-input v-model="user.district" label="District" class="col-12 col-md-6" maxlength="200"></base-input>
             <base-input v-model="user.state" label="State" class="col-12 col-md-6" maxlength="200"></base-input>
             <div class="col-12">
                 <base-dropdown class="w-100" direction="up">
                     <base-input
-                        v-model="user.usergroup"
+                        v-model="user.usergroup.name"
                         label="Group"
                         maxlength="200"
                         slot="title"
@@ -38,6 +38,7 @@
                         class="dropdown-item"
                         v-for="(item, index) in usergroups"
                         :key="index"
+                        @click="user.usergroup = Object.assign({}, item)"
                     >
                         {{ item.name }}
                     </a>
@@ -54,6 +55,7 @@ export default {
         user: {
             state: 'Kerala',
             localbody: {},
+            usergroup: {}
         },
         localbodies: [],
         searchDropdown: null,
