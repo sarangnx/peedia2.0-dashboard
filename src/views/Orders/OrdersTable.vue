@@ -10,6 +10,34 @@
                         {{ selectedDistrict || 'District' }}
                     </base-button>
                     <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                                        <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
+                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
                     <a class="dropdown-item text-black"
                         v-for="(district, index) in districts"
                         :key="index"
@@ -78,17 +106,31 @@
                     <div class="d-flex flex-column">
                         <h4 class="m-0 pr-2">Address</h4>
                         <div class="d-flex flex-column" v-if="order.delivery_address">
-                            <span>{{order.delivery_address.house}}</span>
-                            <span>{{order.delivery_address.area}}</span>
-                            <span>{{order.delivery_address.district}}</span>
-                            <span>{{order.delivery_address.pincode}}</span>
-                            <span v-if="order.delivery_address.landmark"><small class="font-weight-bold">Landmark:</small> {{order.delivery_address.landmark}}</span>
+                            <span v-if="order.delivery_address.house">{{order.delivery_address.house}},</span>
+                            <span v-if="order.delivery_address.area">{{order.delivery_address.area}},</span>
+                            <span v-if="order.delivery_address.landmark">
+                                <small class="text-muted font-weight-bold">Landmark:</small> {{order.delivery_address.landmark}}
+                            </span>
+                            <span v-if="order.delivery_address.district || order.delivery_address.pincode">
+                                <template v-if="order.delivery_address.district">
+                                    {{order.delivery_address.district}},
+                                </template>
+                                <template v-if="order.delivery_address.pincode">
+                                    {{order.delivery_address.pincode}},
+                                </template>
+                            </span>
+                            <span v-if="order.delivery_address.ward">
+                                <small class="text-muted font-weight-bold">Ward:</small> {{order.delivery_address.ward}}
+                            </span>
+                            <span v-if="order.user.localbody.name">
+                                <small class="text-muted font-weight-bold">Localbody:</small> {{order.user.localbody.name}}
+                            </span>
                         </div>
                         <div class="d-flex flex-column" v-else>
                             <span>Not Provided</span>
                         </div>
                     </div>
-                    <div class="d-flex">
+                    <div class="d-flex" v-if="order.delivery_address.phone || order.user.phone">
                         <h4 class="m-0 pr-2">Phone</h4>
                         <span>{{ order.delivery_address.phone || order.user.phone }}</span>
                     </div>
@@ -158,14 +200,14 @@
         </div>
         <!-- Delete Modal -->
         <modal :show.sync="deleteModal" gradient="danger">
-            <template slot="header">
+            <template slot="header" v-if="!deleteLoading">
                 <h5 class="modal-title">Delete Order</h5>
             </template>
             <div class="py-1 text-center" v-show="!deleteLoading">
                 <h4 class="heading mt-4">Are you sure you want to delete this order?</h4>
                 <p class="text-white">This action cannot be reverted.</p>
             </div>
-            <div class="loader" v-if="deleteLoading">Loading...</div>
+            <loading v-if="deleteLoading" color="white"></loading>
             <template slot="footer" v-if="!deleteLoading">
                 <base-button type="white"
                     @click="deleteOrder()"
@@ -221,7 +263,7 @@ export default {
     computed: {
         baseUrl() {
             // base url of api server where images are uploaded.
-            return this.$store.getters.apiUrl;
+            return this.$store.getters.serverUrl;
         },
         storeId() {
             return this.$store.getters.getUser.store[0].store_id;
@@ -467,67 +509,25 @@ export default {
 };
 </script>
 <style>
-.loader,
-.loader:before,
-.loader:after {
-  background: #ffffff;
-  -webkit-animation: load1 1s infinite ease-in-out;
-  animation: load1 1s infinite ease-in-out;
-  width: 1em;
-  height: 4em;
-}
-.loader {
-  color: #ffffff;
-  text-indent: -9999em;
-  margin: 88px auto;
-  position: relative;
-  font-size: 11px;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-animation-delay: -0.16s;
-  animation-delay: -0.16s;
-}
-.loader:before,
-.loader:after {
-  position: absolute;
-  top: 0;
-  content: '';
-}
-.loader:before {
-  left: -1.5em;
-  -webkit-animation-delay: -0.32s;
-  animation-delay: -0.32s;
-}
-.loader:after {
-  left: 1.5em;
-}
-@-webkit-keyframes load1 {
-  0%,
-  80%,
-  100% {
-    box-shadow: 0 0;
-    height: 4em;
-  }
-  40% {
-    box-shadow: 0 -2em;
-    height: 5em;
-  }
-}
-@keyframes load1 {
-  0%,
-  80%,
-  100% {
-    box-shadow: 0 0;
-    height: 4em;
-  }
-  40% {
-    box-shadow: 0 -2em;
-    height: 5em;
-  }
-}
 .input__height > input {
     height: 2.2em;
     padding: 0px 10px;
+}
+.dropdown-menu {
+    max-height: 50vh;
+    overflow: auto;
+}
+.dropdown-menu::-webkit-scrollbar {
+    width: 5px;
+}
+ 
+.dropdown-menu::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+ 
+.dropdown-menu::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }
 </style>

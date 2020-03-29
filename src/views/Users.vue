@@ -74,6 +74,7 @@ export default {
         count: 0,
         users: [],
         total_pages: 0,
+        usergroup: 'user',
     }),
     watch: {
         page() {
@@ -81,13 +82,14 @@ export default {
         }
     },
     methods: {
-        getUsers(page, per_page) {
+        getUsers(page, per_page, usergroup = null) {
             this.$axios({
                 method: 'get',
                 url: '/users/profiles',
                 params: {
                     page,
-                    per_page
+                    per_page,
+                    ...(usergroup && { usergroup }),
                 },
             }).then((response) => {
                 const data = response.data.data;
@@ -97,11 +99,11 @@ export default {
             });
         },
         refreshPage() {
-            this.getUsers(this.page, this.per_page);
+            this.getUsers(this.page, this.per_page, this.usergroup);
         }
     },
     mounted() {
-        this.getUsers(this.page, this.per_page);
+        this.getUsers(this.page, this.per_page, this.usergroup);
     }
 };
 </script>
