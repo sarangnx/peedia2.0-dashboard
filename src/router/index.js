@@ -17,7 +17,7 @@ const router = new Router({
                 {
                     path: '/dashboard',
                     name: 'dashboard',
-                    component: () => import(/* webpackChunkName: "dashboard" */ './views/Dashboard.vue'),
+                    component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
                     meta: {
                         requiresAuth: true,
                     },
@@ -27,7 +27,7 @@ const router = new Router({
                 {
                     path: '/orders',
                     name: 'orders',
-                    component: () => import(/* webpackChunkName: "orders" */ './views/Orders.vue'),
+                    component: () => import(/* webpackChunkName: "orders" */ '@/views/Orders.vue'),
                     meta: {
                         requiresAuth: true,
                     },
@@ -37,7 +37,7 @@ const router = new Router({
                 {
                     path: '/items',
                     name: 'items',
-                    component: () => import(/* webpackChunkName: "items" */ './views/Items.vue'),
+                    component: () => import(/* webpackChunkName: "items" */ '@/views/Items.vue'),
                     meta: {
                         requiresAuth: true,
                     },
@@ -48,24 +48,24 @@ const router = new Router({
                         {
                             path: 'add-item',
                             name: 'add-item',
-                            component: () => import(/* webpackChunkName: "items" */ './views/Items/AddItem.vue'),
+                            component: () => import(/* webpackChunkName: "items" */ '@/views/Items/AddItem.vue'),
                         },
                         {
                             path: 'add-excel',
                             name: 'add-excel',
-                            component: () => import(/* webpackChunkName: "items" */ './views/Items/ItemTable.vue'),
+                            component: () => import(/* webpackChunkName: "items" */ '../views/Items/ItemTable.vue'),
                         },
                         {
                             path: 'view-items',
                             name: 'view-items',
-                            component: () => import(/* webpackChunkName: "items" */ './views/ViewItems.vue'),
+                            component: () => import(/* webpackChunkName: "items" */ '@/views/ViewItems.vue'),
                         }
                     ]
                 },
                 {
                     path: '/category',
                     name: 'category',
-                    component: () => import(/* webpackChunkName: "banner" */ './views/Category/Category.vue'),
+                    component: () => import(/* webpackChunkName: "banner" */ '@/views/Category/Category.vue'),
                     meta: {
                         requiresAuth: true,
                     },
@@ -75,7 +75,7 @@ const router = new Router({
                 {
                     path: '/notifications',
                     name: 'notifications',
-                    component: () => import(/* webpackChunkName: "notifications" */ './views/Notifications.vue'),
+                    component: () => import(/* webpackChunkName: "notifications" */ '@/views/Notifications.vue'),
                     meta: {
                         requiresAuth: true,
                     },
@@ -85,7 +85,7 @@ const router = new Router({
                 {
                     path: '/profile',
                     name: 'profile',
-                    component: () => import(/* webpackChunkName: "profile" */ './views/UserProfile.vue'),
+                    component: () => import(/* webpackChunkName: "profile" */ '@/views/UserProfile.vue'),
                     meta: {
                         requiresAuth: true,
                     },
@@ -95,7 +95,7 @@ const router = new Router({
                 {
                     path: '/users',
                     name: 'users',
-                    component: () => import(/* webpackChunkName: "users" */ './views/Users.vue'),
+                    component: () => import(/* webpackChunkName: "users" */ '@/views/Users.vue'),
                     meta: {
                         requiresAuth: true,
                     },
@@ -112,12 +112,12 @@ const router = new Router({
                 {
                     path: '/login',
                     name: 'login',
-                    component: () => import(/* webpackChunkName: "auth" */ './views/Login.vue')
+                    component: () => import(/* webpackChunkName: "auth" */ '../views/Login.vue')
                 },
                 {
                     path: '/register',
                     name: 'register',
-                    component: () => import(/* webpackChunkName: "auth" */ './views/Register.vue')
+                    component: () => import(/* webpackChunkName: "auth" */ '../views/Register.vue')
                 }
             ]
         },
