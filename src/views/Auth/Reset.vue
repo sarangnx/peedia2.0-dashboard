@@ -29,10 +29,17 @@
                         <fade-transition :duration="200" origin="center center" group>
                             <div v-if="step === 1" :key="1">
                                 <base-input
+                                    v-if="!usernameSet"
+                                    class="input-group-alternative mb-3"
+                                    placeholder="Email"
+                                    addon-left-icon="fas fa-at"
+                                    v-model="username"
+                                ></base-input>
+                                <base-input
                                     class="input-group-alternative mb-3"
                                     placeholder="OTP"
                                     addon-left-icon="fas fa-lock"
-                                    v-model="password"
+                                    v-model="otp"
                                 ></base-input>
                                 <div class="text-center">
                                     <base-button block type="primary" class="my-4" @click.prevent="verifyOtp">Verify</base-button>
@@ -70,13 +77,17 @@ export default {
     },
     data: () => ({
         username: null,
+        usernameSet: false,
         gotCode: false,
         password: null,
         step: 1,
+        otp: null,
+        loading: false,
     }),
     methods: {
         sendOtp() {
             const username = this.username;
+            this.loading = true;
 
             this.$axios({
                 method: 'post',
@@ -86,19 +97,45 @@ export default {
                     username,
                 }
             }).then((response) => {
-                if (response.data && response.data.status === "success") {
+                if (response.data && response.data.status === 'success') {
                     this.$success('OTP Sent to email');
                     this.gotCode = true;
+                    this.usernameSet = true;
                 } else {
                     throw new Error('Unable to send email.');
                 }
             }).catch(() => {
                 this.$error('Unable to send email.');
+            }).finally(() => {
+                this.loading = false;
             });
         },
         verifyOtp() {
-                this.step=2;
-                
+            this.loading = true;
+            const username = this.username;
+            const otp = this.otp;
+
+            this.$axios({
+                method: 'post',
+                baseURL: process.env.VUE_APP_API_URL,
+                url: `/auth/verify`,
+                data: {
+                    username,
+                    otp
+                }
+            }).then((response) => {
+                console.log(response);
+                if (response.data && response.data.status === 'success') {
+                    this.$success('OTP Verified');
+                    this.step = 2;
+                } else {
+                    throw new Error('Invalid OTP.');
+                }
+            }).catch(() => {
+                this.$error('Invalid OTP. Resend OTP and try again.');
+            }).finally(() => {
+                this.loading = false;
+            });
         },
         changePassword() {
             this.step=1;
