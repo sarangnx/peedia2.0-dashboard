@@ -18,6 +18,7 @@
                         class="dropdown-item"
                         v-for="(item, index) in localbodyDropdown"
                         :key="index"
+                        @click="user.localbody = Object.assign({}, item)"
                     >
                         {{ item.name }}
                     </a>
