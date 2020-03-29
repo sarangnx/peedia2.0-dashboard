@@ -124,7 +124,6 @@ export default {
                     otp
                 }
             }).then((response) => {
-                console.log(response);
                 if (response.data && response.data.status === 'success') {
                     this.$success('OTP Verified');
                     this.step = 2;
@@ -153,7 +152,6 @@ export default {
                     password
                 }
             }).then((response) => {
-                console.log(response);
                 if (response.data && response.data.status === 'success') {
                     this.$success('Password changed.');
                     this.step = 2;
