@@ -16,6 +16,16 @@ export default [
                 },
             },
             {
+                path: '/admin',
+                name: 'admin-dashboard',
+                component: () => import(/* webpackChunkName: "dashboard" */ '@/views/AdminDashboard.vue'),
+                meta: {
+                    requiresAuth: true,
+                    minrank: 3,
+                    maxrank: 4
+                },
+            },
+            {
                 path: '/orders',
                 name: 'orders',
                 component: () => import(/* webpackChunkName: "orders" */ '@/views/Orders.vue'),
