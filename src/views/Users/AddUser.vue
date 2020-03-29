@@ -57,7 +57,7 @@ export default {
             name: '',
             email: '',
             phone: '',
-            ward: '',
+            ward: null,
             district: '',
             state: 'Kerala',
             localbody: {},
@@ -128,6 +128,7 @@ export default {
                         title: "Success",
                         message: "User Added."
                     });
+                    this.$emit('close');
                 } else {
                     throw new Error('User Not Added.')
                 }

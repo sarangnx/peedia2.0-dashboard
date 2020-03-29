@@ -91,7 +91,9 @@
                 <h1 class="modal-title">Add User</h1>
             </template>
             <div class="container">
-                <add-user :key="Date.now()"></add-user>
+                <add-user :key="Date.now()"
+                    @close="addModal = false"
+                ></add-user>
             </div>
         </modal>
     </div>
