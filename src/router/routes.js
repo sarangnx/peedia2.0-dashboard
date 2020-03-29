@@ -8,7 +8,7 @@ export default [
             {
                 path: '/dashboard',
                 name: 'dashboard',
-                component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
+                component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard/Dashboard.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 1,
@@ -18,7 +18,7 @@ export default [
             {
                 path: '/admin',
                 name: 'admin dashboard',
-                component: () => import(/* webpackChunkName: "dashboard" */ '@/views/AdminDashboard.vue'),
+                component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard/AdminDashboard.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 3,
