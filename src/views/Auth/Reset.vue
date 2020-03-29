@@ -138,7 +138,33 @@ export default {
             });
         },
         changePassword() {
-            this.step=1;
+            this.loading = true;
+            const username = this.username;
+            const otp = this.otp;
+            const password = this.password;
+
+            this.$axios({
+                method: 'post',
+                baseURL: process.env.VUE_APP_API_URL,
+                url: `/auth/changepw`,
+                data: {
+                    username,
+                    otp,
+                    password
+                }
+            }).then((response) => {
+                console.log(response);
+                if (response.data && response.data.status === 'success') {
+                    this.$success('Password changed.');
+                    this.step = 2;
+                } else {
+                    throw new Error('Password not changed.');
+                }
+            }).catch(() => {
+                this.$error('Password not changed.', { title: 'Something went wrong.' });
+            }).finally(() => {
+                this.loading = false;
+            });
         }
     }
 };
