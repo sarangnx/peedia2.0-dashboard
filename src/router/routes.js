@@ -113,18 +113,18 @@ export default [
             {
                 path: '/login',
                 name: 'login',
-                component: () => import(/* webpackChunkName: "auth" */ '@/views/Login.vue')
+                component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Login.vue')
             },
             {
                 path: '/register',
                 name: 'register',
-                component: () => import(/* webpackChunkName: "auth" */ '@/views/Register.vue')
+                component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Register.vue')
             }
         ]
     },
     {
         path: '/logout',
         name: 'logout',
-        component: () => import(/* webpackChunkName: "auth" */ '@/views/Logout.vue'),
+        component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Logout.vue'),
     },
 ]
