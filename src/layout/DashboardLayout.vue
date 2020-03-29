@@ -54,6 +54,7 @@ export default {
             ],
             sidebarItems: [
                 { name: 'Dashboard', icon: 'fa fa-desktop text-primary', path: '/dashboard', type: 'sidebaritem', minrank: 1, maxrank: 2 },
+                { name: 'Dashboard', icon: 'fa fa-desktop text-primary', path: '/admin', type: 'sidebaritem', minrank: 3, maxrank: 4 },
                 { name: 'Orders', icon: 'fa fa-shopping-basket text-blue', path: '/orders', type: 'sidebaritem', minrank: 1, maxrank: 2 },
                 { name: 'Category', icon: 'fa fa-th text-blue', path: '/category', type: 'sidebaritem', minrank: 2, maxrank: 2 },
                 { name: 'Items', icon:'fa fa-book text-blue', type: 'sidebardropdown',
