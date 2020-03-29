@@ -5,7 +5,7 @@
             <base-input v-model="user.email" label="Email" class="col-12 col-md-6" maxlength="200"></base-input>
             <base-input v-model="user.phone" label="Phone" class="col-12 col-md-6" maxlength="200"></base-input>
             <div class="col-12 col-md-6">
-                <base-dropdown class="w-100">
+                <base-dropdown class="w-100" menuClasses="drop__down">
                     <base-input
                         v-model="user.localbody.name"
                         label="Pachayath or Municipality"
@@ -28,7 +28,7 @@
             <base-input v-model="user.district" label="District" class="col-12 col-md-6" maxlength="200"></base-input>
             <base-input v-model="user.state" label="State" class="col-12 col-md-6" maxlength="200"></base-input>
             <div class="col-12">
-                <base-dropdown class="w-100" direction="up">
+                <base-dropdown class="w-100" direction="up" menuClasses="drop__down">
                     <base-input
                         v-model="user.usergroup.name"
                         label="Group"
@@ -145,3 +145,23 @@ export default {
     }
 }
 </script>
+<style>
+.drop__down.dropdown-menu {
+    max-height: 250px;
+    overflow: auto;
+}
+
+.drop__down.dropdown-menu::-webkit-scrollbar {
+    width: 5px;
+}
+ 
+.drop__down.dropdown-menu::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+ 
+.drop__down.dropdown-menu::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+</style>
