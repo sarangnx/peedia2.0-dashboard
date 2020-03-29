@@ -1,10 +1,28 @@
 <template>
     <div class="row">
-        <div class="col-12 px-0 row">
+        <div class="col-12 px-0 d-flex flex-wrap">
             <base-input v-model="user.name" label="Name" class="col-12" maxlength="200"></base-input>
             <base-input v-model="user.email" label="Email" class="col-12 col-md-6" maxlength="200"></base-input>
             <base-input v-model="user.phone" label="Phone" class="col-12 col-md-6" maxlength="200"></base-input>
-            <base-input v-model="user.localbody" label="Pachayath or Municipality" class="col-12 col-md-6" maxlength="200"></base-input>
+            <div class="col-12 col-md-6">
+                <base-dropdown class="w-100">
+                    <base-input
+                        v-model="user.localbody.name"
+                        label="Pachayath or Municipality"
+                        maxlength="200"
+                        @keyup="suggestLocalbody()"
+                        slot="title"
+                    ></base-input>
+                    <a class="dropdown-item" v-if="!localbodyDropdown.length">Search localbody...</a>
+                    <a v-else
+                        class="dropdown-item"
+                        v-for="(item, index) in localbodyDropdown"
+                        :key="index"
+                    >
+                        {{ item.name }}
+                    </a>
+                </base-dropdown>
+            </div>
             <base-input v-model="user.ward" label="Ward" class="col-12 col-md-6" maxlength="200"></base-input>
             <base-input v-model="user.district" label="District" class="col-12 col-md-6" maxlength="200"></base-input>
             <base-input v-model="user.state" label="State" class="col-12 col-md-6" maxlength="200"></base-input>
@@ -17,9 +35,12 @@ export default {
     name: 'add-user',
     data: () => ({
         user: {
-            state: 'Kerala'
+            state: 'Kerala',
+            localbody: {},
         },
         localbodies: [],
+        searchDropdown: null,
+        localbodyDropdown: [],
     }),
     methods: {
         listLocalbodies() {
@@ -32,6 +53,23 @@ export default {
                 this.localbodies = localbodies;
             });
         },
+        suggestLocalbody() {
+            const search = this.user.localbody.name;
+
+            if(search === ''){
+                this.localbodyDropdown = [];
+                this.searchDropdown = false;
+                return;
+            }
+
+            const regEx = new RegExp(search, 'i');
+
+            this.localbodyDropdown = this.localbodies.filter(item => item.name.match(regEx));
+            this.searchDropdown = true;
+        },
+    },
+    mounted() {
+        this.listLocalbodies();
     }
 }
 </script>

@@ -86,7 +86,7 @@
             </div>
         </div>
         <!-- ADD USER MODAL -->
-        <modal :show.sync="addModal">
+        <modal :show.sync="addModal" modalClasses="modal-dialog-scrollable">
             <template slot="header">
                 <h1 class="modal-title">Add User</h1>
             </template>
