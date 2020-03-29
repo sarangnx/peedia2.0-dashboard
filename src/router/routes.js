@@ -76,7 +76,7 @@ export default [
             {
                 path: '/notifications',
                 name: 'notifications',
-                component: () => import(/* webpackChunkName: "notifications" */ '@/views/Notifications.vue'),
+                component: () => import(/* webpackChunkName: "notifications" */ '@/views/Notifications/Notifications.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 2,
