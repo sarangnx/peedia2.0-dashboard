@@ -26,7 +26,24 @@
             <base-input v-model="user.ward" label="Ward" class="col-12 col-md-6" maxlength="200"></base-input>
             <base-input v-model="user.district" label="District" class="col-12 col-md-6" maxlength="200"></base-input>
             <base-input v-model="user.state" label="State" class="col-12 col-md-6" maxlength="200"></base-input>
-            <base-input v-model="user.usergroup" label="Group" class="col-12" maxlength="200"></base-input>
+            <div class="col-12">
+                <base-dropdown class="w-100" direction="up">
+                    <base-input
+                        v-model="user.usergroup"
+                        label="Group"
+                        maxlength="200"
+                        slot="title"
+                    ></base-input>
+                    <a
+                        class="dropdown-item"
+                        v-for="(item, index) in usergroups"
+                        :key="index"
+                    >
+                        {{ item.name }}
+                    </a>
+                </base-dropdown>
+            </div>
+            <base-button block>Add User</base-button>
         </div>
     </div>
 </template>
@@ -41,6 +58,13 @@ export default {
         localbodies: [],
         searchDropdown: null,
         localbodyDropdown: [],
+        usergroups: [
+            { id: 'user', name: 'Customers', rank: 0 },
+            { id: 'delivery', name: 'Delivery', rank: 1 },
+            { id: 'storeowner', name: 'Manager', rank: 2 },
+            { id: 'admin', name: 'Admin', rank: 3 },
+            { id: 'superadmin', name: 'Super Admin', rank: 4 },
+        ],
     }),
     methods: {
         listLocalbodies() {
