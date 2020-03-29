@@ -17,7 +17,7 @@ export default [
             },
             {
                 path: '/admin',
-                name: 'admin-dashboard',
+                name: 'admin dashboard',
                 component: () => import(/* webpackChunkName: "dashboard" */ '@/views/AdminDashboard.vue'),
                 meta: {
                     requiresAuth: true,
