@@ -40,29 +40,49 @@
   </div>
 </template>
 <script>
-  import DashboardNavbar from './DashboardNavbar.vue';
-  import ContentFooter from './ContentFooter.vue';
-  import { FadeTransition } from 'vue2-transitions';
+import DashboardNavbar from './DashboardNavbar.vue';
+import ContentFooter from './ContentFooter.vue';
+import { FadeTransition } from 'vue2-transitions';
 
-  export default {
+export default {
     components: {
-      DashboardNavbar,
-      ContentFooter,
-      FadeTransition
+        DashboardNavbar,
+        ContentFooter,
+        FadeTransition
     },
     data() {
-      return {
-        sidebarBackground: 'vue' //vue|blue|orange|green|red|primary
-      };
+        return {
+            sidebarBackground: 'vue', //vue|blue|orange|green|red|primary
+            usergroups: [
+                { id: 'user', name: 'Customers', rank: 0 },
+                { id: 'delivery', name: 'Delivery', rank: 1 },
+                { id: 'storeowner', name: 'Manager', rank: 2 },
+                { id: 'admin', name: 'Admin', rank: 3 },
+                { id: 'superadmin', name: 'Super Admin', rank: 4 },
+            ],
+            usergroup: {},
+        };
+    },
+    computed: {
+        currentUser() {
+            return this.$store.getters.getUser;
+        },
+        activeUsergroups() {
+            const currentUsergroup = this.currentUser.usergroup;
+            const currentGroup = this.usergroups.find((item) => item.id === currentUsergroup );
+            return this.usergroups.filter((usergroup) => {
+                return usergroup.rank < currentGroup.rank;
+            });
+        }
     },
     methods: {
-      toggleSidebar() {
-        if (this.$sidebar.showSidebar) {
-          this.$sidebar.displaySidebar(false);
+        toggleSidebar() {
+            if (this.$sidebar.showSidebar) {
+            this.$sidebar.displaySidebar(false);
+            }
         }
-      }
     }
-  };
+};
 </script>
 <style lang="scss">
 </style>
