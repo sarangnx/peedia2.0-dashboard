@@ -45,7 +45,7 @@
                     </a>
                 </base-dropdown>
             </div>
-            <base-button block>Add User</base-button>
+            <base-button block @click="upload">Add User</base-button>
         </div>
     </div>
 </template>
@@ -54,6 +54,11 @@ export default {
     name: 'add-user',
     data: () => ({
         user: {
+            name: '',
+            email: '',
+            phone: '',
+            ward: '',
+            district: '',
             state: 'Kerala',
             localbody: {},
             usergroup: {}
@@ -94,6 +99,34 @@ export default {
             this.localbodyDropdown = this.localbodies.filter(item => item.name.match(regEx));
             this.searchDropdown = true;
         },
+        upload() {
+            const data = Object.assign({}, this.user);
+            data.localbody_id = data.localbody? data.localbody.localbody_id : null;
+            data.usergroup = data.usergroup? data.usergroup.id : null;
+            delete data.localbody;
+
+            this.$axios({
+                method: 'post',
+                url: `/users/add`,
+                data: data,
+            }).then((response) => {
+                if (response.data && response.data.status === "success") {
+                    this.$notify({
+                        type: "success",
+                        title: "Success",
+                        message: "User Added."
+                    });
+                } else {
+                    throw new Error('User Not Added.')
+                }
+            }).catch(() => {
+                this.$notify({
+                    type: "danger",
+                    title: "Something went Wrong",
+                    message: "User Not Added."
+                });
+            });
+        }
     },
     mounted() {
         this.listLocalbodies();
