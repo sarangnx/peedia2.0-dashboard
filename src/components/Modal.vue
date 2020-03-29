@@ -1,7 +1,7 @@
 <template>
   <SlideYUpTransition :duration="animationDuration">
     <div class="modal fade"
-         @click.self="closeModal"
+         @click.self="clickOut && closeModal()"
          :class="[{'show d-block': show}, {'d-none': !show}, {'modal-mini': type === 'mini'}]"
          v-show="show"
          tabindex="-1"
@@ -48,6 +48,10 @@ export default {
     SlideYUpTransition
   },
   props: {
+    clickOut: {
+        type: Boolean,
+        default: true
+    },
     show: Boolean,
     showClose: {
       type: Boolean,
