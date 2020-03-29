@@ -10,34 +10,6 @@
                         {{ selectedDistrict || 'District' }}
                     </base-button>
                     <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                                        <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
-                    <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
                     <a class="dropdown-item text-black"
                         v-for="(district, index) in districts"
                         :key="index"
