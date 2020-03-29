@@ -4,7 +4,7 @@
         :background-color="sidebarBackground"
         >
             <template slot="links">
-                <template v-for="(item, index) in sidebarItems">
+                <template v-for="(item, index) in activeSidebarItems">
                     <sidebar-item
                         :key="index" v-if="item.type === 'sidebaritem'"
                         :link="item"
@@ -53,18 +53,20 @@ export default {
                 { id: 'superadmin', name: 'Super Admin', rank: 4 },
             ],
             sidebarItems: [
-                { name: 'Dashboard', icon: 'fa fa-desktop text-primary', path: '/dashboard', type: 'sidebaritem' },
-                { name: 'Orders', icon: 'fa fa-shopping-basket text-blue', path: '/orders', type: 'sidebaritem' },
-                { name: 'Category', icon: 'fa fa-th text-blue', path: '/category', type: 'sidebaritem' },
+                { name: 'Dashboard', icon: 'fa fa-desktop text-primary', path: '/dashboard', type: 'sidebaritem', minrank: 1, maxrank: 2 },
+                { name: 'Orders', icon: 'fa fa-shopping-basket text-blue', path: '/orders', type: 'sidebaritem', minrank: 1, maxrank: 2 },
+                { name: 'Category', icon: 'fa fa-th text-blue', path: '/category', type: 'sidebaritem', minrank: 2, maxrank: 2 },
                 { name: 'Items', icon:'fa fa-book text-blue', type: 'sidebardropdown',
                     children: [
                         { name: 'View Items', path: '/items/view-items' },
                         { name: 'Add Item', path: '/items/add-item' },
                         { name: 'Add Item From Excel', path: '/items/add-excel' }
-                    ]
+                    ],
+                    minrank: 2,
+                    maxrank: 2
                 },
-                { name: 'Notifications', icon: 'fa fa-bell text-blue', path: '/notifications', type: 'sidebaritem' },
-                { name: 'Users', icon: 'fa fa-user text-blue', path: '/users', type: 'sidebaritem' }
+                { name: 'Notifications', icon: 'fa fa-bell text-blue', path: '/notifications', type: 'sidebaritem', minrank: 2, maxrank: 4 },
+                { name: 'Users', icon: 'fa fa-user text-blue', path: '/users', type: 'sidebaritem', minrank: 2, maxrank: 4 }
             ]
         };
     },
@@ -75,6 +77,12 @@ export default {
         usergroup() {
             const currentUsergroup = this.currentUser.usergroup;
             return this.usergroups.find((item) => item.id === currentUsergroup );
+        },
+        activeSidebarItems() {
+            const currentUsergroup = this.usergroup;
+            return this.sidebarItems.filter((sidebar) => {
+                return currentUsergroup.rank >= sidebar.minrank && currentUsergroup.rank <= sidebar.maxrank;
+            });
         }
     },
     methods: {
