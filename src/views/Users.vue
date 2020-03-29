@@ -6,8 +6,24 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card shadow">
-                        <div  class="card-header d-flex justify-content-between">
+                        <div  class="card-header d-flex justify-content-between flex-column flex-md-row align-items-center">
                             <h3>Users</h3>
+                            <div class="d-flex align-items-center justify-content-around flex-column flex-md-row">
+                                <!-- FILTER BY DISTRICT -->
+                                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                                <base-dropdown v-else position="right" class="mb-2 mb-md-0">
+                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
+                                        {{ 'User group' }}
+                                    </base-button>
+                                    <a class="dropdown-item text-black"
+                                        v-for="(usergroup, index) in usergroups"
+                                        :key="index"
+                                        @click="'All'"
+                                    >
+                                        {{usergroup.name}}
+                                    </a>
+                                </base-dropdown>
+                            </div>
                         </div> <!-- Outer Header -->
                         <div class="card-body table-responsive">
                             <base-table
@@ -53,7 +69,7 @@
                             </base-table> <!-- Table -->
                         </div> <!-- card body -->
                         <div class="card-footer">
-                            <base-pagination 
+                            <base-pagination
                                 :page-count="total_pages"
                                 v-model="page"
                                 align="center">
@@ -74,8 +90,20 @@ export default {
         count: 0,
         users: [],
         total_pages: 0,
-        usergroup: 'user',
+        usergroup: { id: 'user', name: 'Customers', rank: 0 },
+        pageLoading: null,
+        usergroups: [
+            { id: 'user', name: 'Customers', rank: 0 },
+            { id: 'delivery', name: 'Delivery', rank: 1 },
+            { id: 'storeowner', name: 'Inventory Manager', rank: 2 },
+            { id: 'admin', name: 'Admin', rank: 3 },
+        ]
     }),
+    computed: {
+        currentUser() {
+            return this.$store.getters.getUser;
+        }
+    },
     watch: {
         page() {
             this.refreshPage();
@@ -99,11 +127,11 @@ export default {
             });
         },
         refreshPage() {
-            this.getUsers(this.page, this.per_page, this.usergroup);
+            this.getUsers(this.page, this.per_page, this.usergroup.id);
         }
     },
     mounted() {
-        this.getUsers(this.page, this.per_page, this.usergroup);
+        this.getUsers(this.page, this.per_page, this.usergroup.id);
     }
 };
 </script>
