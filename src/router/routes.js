@@ -86,7 +86,7 @@ export default [
             {
                 path: '/profile',
                 name: 'profile',
-                component: () => import(/* webpackChunkName: "profile" */ '@/views/UserProfile.vue'),
+                component: () => import(/* webpackChunkName: "profile" */ '@/views/Users/UserProfile.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 1,
@@ -96,7 +96,7 @@ export default [
             {
                 path: '/users',
                 name: 'users',
-                component: () => import(/* webpackChunkName: "users" */ '@/views/Users.vue'),
+                component: () => import(/* webpackChunkName: "users" */ '@/views/Users/Users.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 2,
