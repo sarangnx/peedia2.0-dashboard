@@ -21,6 +21,8 @@ const router = new Router({
                     meta: {
                         requiresAuth: true,
                     },
+                    minrank: 1,
+                    maxrank: 2
                 },
                 {
                     path: '/orders',
@@ -29,6 +31,8 @@ const router = new Router({
                     meta: {
                         requiresAuth: true,
                     },
+                    minrank: 1,
+                    maxrank: 2
                 },
                 {
                     path: '/items',
@@ -37,6 +41,8 @@ const router = new Router({
                     meta: {
                         requiresAuth: true,
                     },
+                    minrank: 2,
+                    maxrank: 2,
                     redirect: '/items/view-item',
                     children: [
                         {
@@ -63,6 +69,8 @@ const router = new Router({
                     meta: {
                         requiresAuth: true,
                     },
+                    minrank: 2,
+                    maxrank: 2
                 },
                 {
                     path: '/notifications',
@@ -71,6 +79,8 @@ const router = new Router({
                     meta: {
                         requiresAuth: true,
                     },
+                    minrank: 2,
+                    maxrank: 4
                 },
                 {
                     path: '/profile',
@@ -79,6 +89,8 @@ const router = new Router({
                     meta: {
                         requiresAuth: true,
                     },
+                    minrank: 1,
+                    maxrank: 4
                 },
                 {
                     path: '/users',
@@ -87,6 +99,8 @@ const router = new Router({
                     meta: {
                         requiresAuth: true,
                     },
+                    minrank: 2,
+                    maxrank: 4
                 },
             ]
         },
