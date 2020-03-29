@@ -119,6 +119,11 @@ export default [
                 path: '/register',
                 name: 'register',
                 component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Register.vue')
+            },
+            {
+                path: '/reset',
+                name: 'reset password',
+                component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Reset.vue')
             }
         ]
     },
