@@ -19,7 +19,7 @@
     </div>
 </template>
 <script>
-import ViewBanners from './Banner/ViewBanners';
+import ViewBanners from './ViewBanners';
 
 export default {
     name: 'banner',

@@ -66,7 +66,7 @@ export default [
             {
                 path: '/category',
                 name: 'category',
-                component: () => import(/* webpackChunkName: "banner" */ '@/views/Category/Category.vue'),
+                component: () => import(/* webpackChunkName: "category" */ '@/views/Category/Category.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 2,
