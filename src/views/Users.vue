@@ -9,14 +9,14 @@
                         <div  class="card-header d-flex justify-content-between flex-column flex-md-row align-items-center">
                             <h3>Users</h3>
                             <div class="d-flex align-items-center justify-content-around flex-column flex-md-row">
-                                <!-- FILTER BY DISTRICT -->
+                                <!-- FILTER BY USERGROUP -->
                                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                                 <base-dropdown v-else position="right" class="mb-2 mb-md-0">
                                     <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
-                                        {{ 'User group' }}
+                                        {{ usergroup.name || 'User group' }}
                                     </base-button>
                                     <a class="dropdown-item text-black"
-                                        v-for="(usergroup, index) in usergroups"
+                                        v-for="(usergroup, index) in activeUsergroups"
                                         :key="index"
                                         @click="'All'"
                                     >
@@ -95,13 +95,20 @@ export default {
         usergroups: [
             { id: 'user', name: 'Customers', rank: 0 },
             { id: 'delivery', name: 'Delivery', rank: 1 },
-            { id: 'storeowner', name: 'Inventory Manager', rank: 2 },
+            { id: 'storeowner', name: 'Manager', rank: 2 },
             { id: 'admin', name: 'Admin', rank: 3 },
         ]
     }),
     computed: {
         currentUser() {
             return this.$store.getters.getUser;
+        },
+        activeUsergroups() {
+            const currentUsergroup = this.currentUser.usergroup;
+            const currentGroup = this.usergroups.find((item) => item.id === currentUsergroup );
+            return this.usergroups.filter((usergroup) => {
+                return usergroup.rank < currentGroup.rank;
+            });
         }
     },
     watch: {
