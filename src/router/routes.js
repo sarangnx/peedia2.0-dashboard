@@ -8,7 +8,7 @@ export default [
             {
                 path: '/dashboard',
                 name: 'dashboard',
-                component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
+                component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard/Dashboard.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 1,
@@ -18,7 +18,7 @@ export default [
             {
                 path: '/admin',
                 name: 'admin dashboard',
-                component: () => import(/* webpackChunkName: "dashboard" */ '@/views/AdminDashboard.vue'),
+                component: () => import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard/AdminDashboard.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 3,
@@ -28,7 +28,7 @@ export default [
             {
                 path: '/orders',
                 name: 'orders',
-                component: () => import(/* webpackChunkName: "orders" */ '@/views/Orders.vue'),
+                component: () => import(/* webpackChunkName: "orders" */ '@/views/Orders/Orders.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 1,
@@ -38,7 +38,7 @@ export default [
             {
                 path: '/items',
                 name: 'items',
-                component: () => import(/* webpackChunkName: "items" */ '@/views/Items.vue'),
+                component: () => import(/* webpackChunkName: "items" */ '@/views/Items/Items.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 2,
@@ -59,14 +59,14 @@ export default [
                     {
                         path: 'view-items',
                         name: 'view-items',
-                        component: () => import(/* webpackChunkName: "items" */ '@/views/ViewItems.vue'),
+                        component: () => import(/* webpackChunkName: "items" */ '@/views/Items/ViewItems.vue'),
                     }
                 ]
             },
             {
                 path: '/category',
                 name: 'category',
-                component: () => import(/* webpackChunkName: "banner" */ '@/views/Category/Category.vue'),
+                component: () => import(/* webpackChunkName: "category" */ '@/views/Category/Category.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 2,
@@ -76,7 +76,7 @@ export default [
             {
                 path: '/notifications',
                 name: 'notifications',
-                component: () => import(/* webpackChunkName: "notifications" */ '@/views/Notifications.vue'),
+                component: () => import(/* webpackChunkName: "notifications" */ '@/views/Notifications/Notifications.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 2,
@@ -86,7 +86,7 @@ export default [
             {
                 path: '/profile',
                 name: 'profile',
-                component: () => import(/* webpackChunkName: "profile" */ '@/views/UserProfile.vue'),
+                component: () => import(/* webpackChunkName: "profile" */ '@/views/Users/UserProfile.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 1,
@@ -96,7 +96,7 @@ export default [
             {
                 path: '/users',
                 name: 'users',
-                component: () => import(/* webpackChunkName: "users" */ '@/views/Users.vue'),
+                component: () => import(/* webpackChunkName: "users" */ '@/views/Users/Users.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 2,
@@ -113,18 +113,18 @@ export default [
             {
                 path: '/login',
                 name: 'login',
-                component: () => import(/* webpackChunkName: "auth" */ '@/views/Login.vue')
+                component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Login.vue')
             },
             {
                 path: '/register',
                 name: 'register',
-                component: () => import(/* webpackChunkName: "auth" */ '@/views/Register.vue')
+                component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Register.vue')
             }
         ]
     },
     {
         path: '/logout',
         name: 'logout',
-        component: () => import(/* webpackChunkName: "auth" */ '@/views/Logout.vue'),
+        component: () => import(/* webpackChunkName: "auth" */ '@/views/Auth/Logout.vue'),
     },
 ]

@@ -106,7 +106,9 @@
             <template slot="header">
                 <h1 class="modal-title">Edit Item</h1>
             </template>
-            <edit-item :item_id="editID" :edit="editModal" @close-edit="closeEdit()"></edit-item>
+            <div class="container">
+                <edit-item :item_id="editID" :edit="editModal" @close-edit="closeEdit()"></edit-item>
+            </div>
         </modal>
         <div class="card-footer">
             <base-pagination 
@@ -118,7 +120,7 @@
     </div>       
 </template>
 <script>
-import EditItem from './Items/EditItem';
+import EditItem from './EditItem';
 
 export default {
     name: 'view-items',

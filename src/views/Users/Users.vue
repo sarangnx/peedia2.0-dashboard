@@ -69,6 +69,12 @@
                             </base-table> <!-- Table -->
                         </div> <!-- card body -->
                         <div class="card-footer">
+                            <div class="d-flex justify-content-end mb-3">
+                                <base-button type="success" @click="addModal = true">
+                                    <font-awesome-icon icon="plus" class="mr-2"/>
+                                    Create User
+                                </base-button>
+                            </div>
                             <base-pagination
                                 :page-count="total_pages"
                                 v-model="page"
@@ -79,11 +85,27 @@
                 </div>
             </div>
         </div>
+        <!-- ADD USER MODAL -->
+        <modal :show.sync="addModal" modalClasses="modal-dialog-scrollable" :clickOut="false">
+            <template slot="header">
+                <h1 class="modal-title">Add User</h1>
+            </template>
+            <div class="container">
+                <add-user :key="Date.now()"
+                    @close="addModal = false"
+                ></add-user>
+            </div>
+        </modal>
     </div>
 </template>
 <script>
+import AddUser from './AddUser';
+
 export default {
     name: 'users',
+    components: {
+        AddUser,
+    },
     data: () => ({
         page: 1,
         per_page: 20,
@@ -99,6 +121,7 @@ export default {
             { id: 'admin', name: 'Admin', rank: 3 },
             { id: 'superadmin', name: 'Super Admin', rank: 4 },
         ],
+        addModal: false
     }),
     computed: {
         currentUser() {
