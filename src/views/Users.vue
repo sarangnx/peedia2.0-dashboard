@@ -16,11 +16,11 @@
                                         {{ usergroup.name || 'User group' }}
                                     </base-button>
                                     <a class="dropdown-item text-black"
-                                        v-for="(usergroup, index) in activeUsergroups"
+                                        v-for="(item, index) in activeUsergroups"
                                         :key="index"
-                                        @click="'All'"
+                                        @click="usergroup = Object.assign({}, item)"
                                     >
-                                        {{usergroup.name}}
+                                        {{ item.name }}
                                     </a>
                                 </base-dropdown>
                             </div>
@@ -97,7 +97,7 @@ export default {
             { id: 'delivery', name: 'Delivery', rank: 1 },
             { id: 'storeowner', name: 'Manager', rank: 2 },
             { id: 'admin', name: 'Admin', rank: 3 },
-        ]
+        ],
     }),
     computed: {
         currentUser() {
@@ -113,6 +113,9 @@ export default {
     },
     watch: {
         page() {
+            this.refreshPage();
+        },
+        usergroup() {
             this.refreshPage();
         }
     },
