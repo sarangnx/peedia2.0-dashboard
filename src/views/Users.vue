@@ -9,7 +9,7 @@
                         <div  class="card-header d-flex justify-content-between">
                             <h3>Users</h3>
                         </div> <!-- Outer Header -->
-                        <div class="card-body d-flex flex-row justify-content-start flex-wrap table-responsive">
+                        <div class="card-body table-responsive">
                             <base-table
                                 :data="users"
                                 type="hover table-striped table-sm"
@@ -23,7 +23,7 @@
 
                                 <template slot-scope="{row}">
                                     <td class="text-left">
-                                        {{ row.user_profile && row.user_profile.name ? row.user_profile.name : 'N/A' }}
+                                        {{ row.name || 'N/A' }}
                                     </td>
                                     <td>
                                         {{ row.email || 'N/A' }}
