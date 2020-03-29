@@ -37,7 +37,7 @@
                     ></base-input>
                     <a
                         class="dropdown-item"
-                        v-for="(item, index) in usergroups"
+                        v-for="(item, index) in activeUsergroups"
                         :key="index"
                         @click="user.usergroup = Object.assign({}, item)"
                     >
@@ -74,6 +74,18 @@ export default {
             { id: 'superadmin', name: 'Super Admin', rank: 4 },
         ],
     }),
+    computed: {
+        currentUser() {
+            return this.$store.getters.getUser;
+        },
+        activeUsergroups() {
+            const currentUsergroup = this.currentUser.usergroup;
+            const currentGroup = this.usergroups.find((item) => item.id === currentUsergroup );
+            return this.usergroups.filter((usergroup) => {
+                return usergroup.rank < currentGroup.rank;
+            });
+        }
+    },
     methods: {
         listLocalbodies() {
             this.$axios({
