@@ -1,43 +1,35 @@
 <template>
-  <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
-    <side-bar
-      :background-color="sidebarBackground"
-    >
-      <template slot="links">
-        <sidebar-item
-          :link="{
-            name: 'Dashboard',
-            icon: 'fa fa-desktop text-primary',
-            path: '/dashboard'
-          }"
-        />
+    <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
+        <side-bar
+        :background-color="sidebarBackground"
+        >
+            <template slot="links">
+                <template v-for="(item, index) in sidebarItems">
+                    <sidebar-item
+                        :key="index" v-if="item.type === 'sidebaritem'"
+                        :link="item"
+                    />
+                    <sidebar-dropdown
+                        :key="index" v-if="item.type === 'sidebardropdown'"
+                        :title="item.name"
+                        :icon="item.icon"
+                        :children="item.children"
+                    />
+                </template>
+            </template>
+        </side-bar>
+        <div class="main-content" :data="sidebarBackground">
+            <dashboard-navbar></dashboard-navbar>
 
-        <sidebar-item :link="{name: 'Orders', icon: 'fa fa-shopping-basket text-blue', path: '/orders'}"/>
-        <sidebar-item :link="{name: 'Category', icon: 'fa fa-th text-blue', path: '/category'}"/>
-        <sidebar-dropdown
-            title="Items" icon="fa fa-book text-blue"
-            :children="[
-                { name: 'View Items', path: '/items/view-items' },
-                { name: 'Add Item', path: '/items/add-item' },
-                { name: 'Add Item From Excel', path: '/items/add-excel' }
-            ]"
-        />
-        <sidebar-item :link="{name: 'Notifications', icon: 'fa fa-bell text-blue', path: '/notifications'}"/>
-        <sidebar-item :link="{name: 'Users', icon: 'fa fa-user text-blue', path: '/users'}"/>
-      </template>
-    </side-bar>
-    <div class="main-content" :data="sidebarBackground">
-      <dashboard-navbar></dashboard-navbar>
-
-      <div @click="toggleSidebar">
-        <fade-transition :duration="200" origin="center top" mode="out-in">
-          <!-- your content here -->
-          <router-view></router-view>
-        </fade-transition>
-        <content-footer v-if="!$route.meta.hideFooter"></content-footer>
-      </div>
+            <div @click="toggleSidebar">
+                <fade-transition :duration="200" origin="center top" mode="out-in">
+                <!-- your content here -->
+                <router-view></router-view>
+                </fade-transition>
+                <content-footer v-if="!$route.meta.hideFooter"></content-footer>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 <script>
 import DashboardNavbar from './DashboardNavbar.vue';
@@ -60,19 +52,29 @@ export default {
                 { id: 'admin', name: 'Admin', rank: 3 },
                 { id: 'superadmin', name: 'Super Admin', rank: 4 },
             ],
-            usergroup: {},
+            sidebarItems: [
+                { name: 'Dashboard', icon: 'fa fa-desktop text-primary', path: '/dashboard', type: 'sidebaritem' },
+                { name: 'Orders', icon: 'fa fa-shopping-basket text-blue', path: '/orders', type: 'sidebaritem' },
+                { name: 'Category', icon: 'fa fa-th text-blue', path: '/category', type: 'sidebaritem' },
+                { name: 'Items', icon:'fa fa-book text-blue', type: 'sidebardropdown',
+                    children: [
+                        { name: 'View Items', path: '/items/view-items' },
+                        { name: 'Add Item', path: '/items/add-item' },
+                        { name: 'Add Item From Excel', path: '/items/add-excel' }
+                    ]
+                },
+                { name: 'Notifications', icon: 'fa fa-bell text-blue', path: '/notifications', type: 'sidebaritem' },
+                { name: 'Users', icon: 'fa fa-user text-blue', path: '/users', type: 'sidebaritem' }
+            ]
         };
     },
     computed: {
         currentUser() {
             return this.$store.getters.getUser;
         },
-        activeUsergroups() {
+        usergroup() {
             const currentUsergroup = this.currentUser.usergroup;
-            const currentGroup = this.usergroups.find((item) => item.id === currentUsergroup );
-            return this.usergroups.filter((usergroup) => {
-                return usergroup.rank < currentGroup.rank;
-            });
+            return this.usergroups.find((item) => item.id === currentUsergroup );
         }
     },
     methods: {
@@ -80,8 +82,8 @@ export default {
             if (this.$sidebar.showSidebar) {
             this.$sidebar.displaySidebar(false);
             }
-        }
-    }
+        },
+    },
 };
 </script>
 <style lang="scss">
