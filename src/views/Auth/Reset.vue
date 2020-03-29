@@ -25,7 +25,7 @@
             <div class="card bg-secondary shadow border-0" :key="2" v-else>
                 <fade-transition :duration="200" origin="center center">
                     <div class="card-body px-lg-5 py-lg-5">
-                        <div class="text-center text-muted mb-4 font-weight-bold">Reset Password</div>
+                        <div class="text-center text-muted mb-4 font-weight-bold" v-if="step !==3">Reset Password</div>
                         <fade-transition :duration="200" origin="center center" group>
                             <div v-if="step === 1" :key="1">
                                 <base-input
@@ -45,7 +45,7 @@
                                     <base-button block type="primary" class="my-4" @click.prevent="verifyOtp">Verify</base-button>
                                 </div>
                             </div>
-                            <div v-else :key="2">
+                            <div v-else-if="step === 2" :key="2">
                                 <base-input
                                     class="input-group-alternative mb-3"
                                     placeholder="Password"
@@ -58,6 +58,16 @@
                                 </div>
                             </div>
                         </fade-transition>
+                        <div v-if="step===3" class="d-flex align-items-center flex-column">
+                            <font-awesome-icon
+                                icon="check-circle"
+                                :style="{ color: '#2dce89' }"
+                                size="4x"
+                            />
+                            <div class="text-center text-muted mt-3">
+                                <base-button type="link" @click="$router.push('/')">Go to Login</base-button>
+                            </div>
+                        </div>
                         <div class="text-center text-muted" v-if="step === 1">
                             <base-button type="link" @click="gotCode = false">Resend Code</base-button>
                         </div>
@@ -154,7 +164,7 @@ export default {
             }).then((response) => {
                 if (response.data && response.data.status === 'success') {
                     this.$success('Password changed.');
-                    this.step = 2;
+                    this.step = 3;
                 } else {
                     throw new Error('Password not changed.');
                 }
