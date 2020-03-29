@@ -1,12 +1,13 @@
 <template>
     <div class="row">
         <div class="col-12 px-0 d-flex flex-wrap">
-            <base-input v-model="user.name" label="Name" class="col-12" maxlength="200"></base-input>
-            <base-input v-model="user.email" label="Email" class="col-12 col-md-6" maxlength="200"></base-input>
-            <base-input v-model="user.phone" label="Phone" class="col-12 col-md-6" maxlength="200"></base-input>
+            <base-input v-model="user.name" label="Name" class="col-12" maxlength="200" :disabled="loading"></base-input>
+            <base-input v-model="user.email" label="Email" class="col-12 col-md-6" maxlength="200" :disabled="loading"></base-input>
+            <base-input v-model="user.phone" label="Phone" class="col-12 col-md-6" maxlength="200" :disabled="loading"></base-input>
             <div class="col-12 col-md-6">
                 <base-dropdown class="w-100" menuClasses="drop__down">
                     <base-input
+                        :disabled="loading"
                         v-model="user.localbody.name"
                         label="Pachayath or Municipality"
                         maxlength="200"
@@ -24,12 +25,13 @@
                     </a>
                 </base-dropdown>
             </div>
-            <base-input v-model="user.ward" type="number" label="Ward" class="col-12 col-md-6" maxlength="200"></base-input>
-            <base-input v-model="user.district" label="District" class="col-12 col-md-6" maxlength="200"></base-input>
-            <base-input v-model="user.state" label="State" class="col-12 col-md-6" maxlength="200"></base-input>
+            <base-input v-model="user.ward" type="number" label="Ward" class="col-12 col-md-6" maxlength="200" :disabled="loading"></base-input>
+            <base-input v-model="user.district" label="District" class="col-12 col-md-6" maxlength="200" :disabled="loading"></base-input>
+            <base-input v-model="user.state" label="State" class="col-12 col-md-6" maxlength="200" :disabled="loading"></base-input>
             <div class="col-12">
                 <base-dropdown class="w-100" direction="up" menuClasses="drop__down">
                     <base-input
+                        :disabled="loading"
                         v-model="user.usergroup.name"
                         label="Group"
                         maxlength="200"
@@ -45,7 +47,7 @@
                     </a>
                 </base-dropdown>
             </div>
-            <base-button block @click="upload">Add User</base-button>
+            <base-button :disabled="loading" block @click="upload">Add User</base-button>
         </div>
     </div>
 </template>
@@ -73,6 +75,7 @@ export default {
             { id: 'admin', name: 'Admin', rank: 3 },
             { id: 'superadmin', name: 'Super Admin', rank: 4 },
         ],
+        loading: false,
     }),
     computed: {
         currentUser() {
@@ -112,6 +115,8 @@ export default {
             this.searchDropdown = true;
         },
         upload() {
+            this.loading = true;
+
             const data = Object.assign({}, this.user);
             data.localbody_id = data.localbody? data.localbody.localbody_id : null;
             data.usergroup = data.usergroup? data.usergroup.id : null;
@@ -138,6 +143,8 @@ export default {
                     title: "Something went Wrong",
                     message: "User Not Added."
                 });
+            }).finally(() => {
+                this.loading = false;
             });
         }
     },
