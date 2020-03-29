@@ -38,7 +38,7 @@ export default [
             {
                 path: '/items',
                 name: 'items',
-                component: () => import(/* webpackChunkName: "items" */ '@/views/Items.vue'),
+                component: () => import(/* webpackChunkName: "items" */ '@/views/Items/Items.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 2,
@@ -59,7 +59,7 @@ export default [
                     {
                         path: 'view-items',
                         name: 'view-items',
-                        component: () => import(/* webpackChunkName: "items" */ '@/views/ViewItems.vue'),
+                        component: () => import(/* webpackChunkName: "items" */ '@/views/Items/ViewItems.vue'),
                     }
                 ]
             },

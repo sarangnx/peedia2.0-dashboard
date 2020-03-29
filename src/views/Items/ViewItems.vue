@@ -118,7 +118,7 @@
     </div>       
 </template>
 <script>
-import EditItem from './Items/EditItem';
+import EditItem from './EditItem';
 
 export default {
     name: 'view-items',
