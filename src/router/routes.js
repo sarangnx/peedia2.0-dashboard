@@ -28,7 +28,7 @@ export default [
             {
                 path: '/orders',
                 name: 'orders',
-                component: () => import(/* webpackChunkName: "orders" */ '@/views/Orders.vue'),
+                component: () => import(/* webpackChunkName: "orders" */ '@/views/Orders/Orders.vue'),
                 meta: {
                     requiresAuth: true,
                     minrank: 1,

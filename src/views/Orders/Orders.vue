@@ -47,7 +47,7 @@
 </template>
 <script>
 import io from 'socket.io-client';
-import OrdersTable from './Orders/OrdersTable';
+import OrdersTable from './OrdersTable';
 
 export default {
     name: 'orders',
