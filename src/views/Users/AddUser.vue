@@ -30,7 +30,7 @@
                         maxlength="200"
                         @keyup="suggestLocalbody()"
                         slot="title"
-                        :error="$v.user.localbody.localbody_id.$error ? 'Localbody Required' : null"
+                        :error="$v.user.localbody.localbody_id.$error ? 'Select valid localbody from list' : null"
                     ></base-input>
                     <a class="dropdown-item" v-if="!localbodyDropdown.length">Search localbody...</a>
                     <a v-else
@@ -50,18 +50,18 @@
                 :disabled="loading"
                 :error="$v.user.ward.$error ? 'Ward Required' : null"
             ></base-input>
-            <base-input 
-                v-model="user.district" 
-                label="District" 
-                class="col-12 col-md-6" maxlength="200" 
+            <base-input
+                v-model="user.district"
+                label="District"
+                class="col-12 col-md-6" maxlength="200"
                 :disabled="loading"
                 :error="$v.user.district.$error ? 'District Required' : null"
             ></base-input>
-            <base-input 
-                v-model="user.state" 
-                label="State" 
-                class="col-12 col-md-6" 
-                maxlength="200" 
+            <base-input
+                v-model="user.state"
+                label="State"
+                class="col-12 col-md-6"
+                maxlength="200"
                 :disabled="loading"
                 :error="$v.user.state.$error ? 'State Required' : null"
             ></base-input>
@@ -73,6 +73,7 @@
                         label="Group"
                         maxlength="200"
                         slot="title"
+                        @keyup="$set(user.usergroup, 'id', null)"
                         :error="$v.user.usergroup.id.$error ? 'Group Required' : null"
                     ></base-input>
                     <a
@@ -110,6 +111,7 @@ export default {
             },
             usergroup: {
                 id: null,
+                name: null
             }
         },
         localbodies: [],
@@ -158,8 +160,8 @@ export default {
                 },
                 localbody: {
                     localbody_id: {
-                        required
-                    }
+                        required,
+                    },
                 }
             });
         } else {
@@ -200,6 +202,8 @@ export default {
         },
         suggestLocalbody() {
             const search = this.user.localbody.name;
+            // remove id so that error is displayed
+            this.user.localbody.localbody_id = null;
 
             if(search === ''){
                 this.localbodyDropdown = [];
@@ -214,7 +218,9 @@ export default {
         },
         upload() {
             this.$v.$touch();
-            return;
+            if( this.$v.$invalid ){
+                return;
+            }
             this.loading = true;
 
             const data = Object.assign({}, this.user);
