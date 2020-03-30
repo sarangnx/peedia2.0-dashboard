@@ -31,7 +31,7 @@
                     class="form-control"
                     :class="[
                      {'is-valid': valid === true},
-                     {'is-invalid': valid === false}, inputClasses]"
+                     {'is-invalid': error }, inputClasses]"
                     aria-describedby="addon-right addon-left">
         </slot>
         <div v-if="addonRightIcon || $slots.addonRight" class="input-group-append">
