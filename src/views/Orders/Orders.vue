@@ -38,7 +38,7 @@
         <div class="container-fluid mt--7">
             <div class="row">
                 <div class="col">
-                    <orders-table title="Orders"></orders-table>
+                    <orders-table title="Orders" :user="user"></orders-table>
                 </div>
             </div>
         </div>
@@ -65,6 +65,7 @@ export default {
             delivered: 0,
             cancelled: 0
         },
+        user: {}
     }),
     computed: {
         baseUrl() {
@@ -73,11 +74,13 @@ export default {
         },
         storeId() {
             return this.$store.getters.getUser.store[0].store_id;
+        },
+        userId() {
+            return this.$store.getters.getUser.user_id;
         }
     },
     methods: {
         getStats(store_id) {
-
             this.$axios({
                 method: 'get',
                 url: '/orders/stats',
@@ -88,9 +91,20 @@ export default {
                 this.stats = Object.assign({}, this.stats, response.data.data.stats);
             });
         },
+        getUser() {
+            const userId = this.userId;
+
+            this.$axios({
+                method: 'get',
+                url: `/users/profile/${userId}`,
+            }).then((response) => {
+                this.user = Object.assign({}, response.data.data.user);
+            });
+        }
     },
     mounted() {
         this.getStats(this.storeId);
+        this.getUser();
 
         // create a socket connection to server.
         const socket = io(this.baseUrl);

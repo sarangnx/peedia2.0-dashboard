@@ -6,7 +6,7 @@
                 <!-- FILTER BY DISTRICT -->
                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                 <base-dropdown v-else position="right" class="mb-2 mb-md-0">
-                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
+                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm" :disabled="init">
                         {{ selectedDistrict || 'District' }}
                     </base-button>
                     <a class="dropdown-item text-black" @click="selectedDistrict = 'All'">All</a>
@@ -21,7 +21,7 @@
                 <!-- FILTER BY LOCALBODY -->
                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                 <base-dropdown v-else-if="activeLocalbodies.length" position="right" class="mb-2 mb-md-0">
-                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
+                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm" :disabled="init">
                         {{ selectedLocalbody ? selectedLocalbody.name : 'Panchayath or Municipality' }}
                     </base-button>
                     <a class="dropdown-item text-black" @click="selectedLocalbody =  Object.assign({},{ name: 'All' })">All</a>
@@ -41,6 +41,7 @@
                     min="1"
                     max="1000"
                     v-model="ward"
+                    placeholder="ward"
                 >
                 </base-input>
                 <!-- FILTER BY STATUS -->
@@ -206,6 +207,10 @@ export default {
         type: {
             type: String
         },
+        user: {
+            type: Object,
+            default: () => ({})
+        }
     },
     data() {
         return {
@@ -230,6 +235,7 @@ export default {
             ward: null,
             debounce: null, // for debounced request
             debounceerror: null, // for debounced error notification
+            init: false,
         }
     },
     computed: {
@@ -278,6 +284,12 @@ export default {
                         message: "Invalid ward number."
                     });
                 }, 1000);
+            }
+        },
+        user: {
+            deep: true,
+            handler() {
+                this.initDropdown();
             }
         }
     },
@@ -434,12 +446,27 @@ export default {
             });
         },
         filterLocalbodies() {
-            this.selectedLocalbody = null;
+            if(!this.init){
+                this.selectedLocalbody = null;
+            }
             this.activeLocalbodies = this.localbodies.filter((item) => {
                 if (item.district === this.selectedDistrict) {
                     return item;
                 }
             });
+        },
+        initDropdown() {
+            if(!this.user || !this.user.localbody){
+                return;
+            }
+
+            this.init = true;
+            // to force watch
+            this.selectedDistrict = null;
+            this.selectedDistrict = this.user.localbody.district;
+            this.selectedLocalbody = Object.assign({});
+            const selectedLocalbody = this.localbodies.find((item) => item.localbody_id === this.user.localbody.localbody_id)
+            this.selectedLocalbody = Object.assign({}, selectedLocalbody);
         }
     },
     mounted() {
