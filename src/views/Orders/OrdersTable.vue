@@ -73,7 +73,7 @@
                     </div>
                     <div class="d-flex">
                         <h4 class="m-0 pr-2">Name</h4>
-                        <span>{{order.user.name || order.user.email || 'not provided'}}</span>
+                        <span>{{ ( order.user && order.user.name ) || ( order.user && order.user.email ) || 'not provided'}}</span>
                     </div>
                     <div class="d-flex flex-column">
                         <h4 class="m-0 pr-2">Address</h4>
@@ -94,7 +94,7 @@
                             <span v-if="order.delivery_address.ward">
                                 <small class="text-muted font-weight-bold">Ward:</small> {{order.delivery_address.ward}}
                             </span>
-                            <span v-if="order.user.localbody.name">
+                            <span v-if="order.user && order.user.localbody && order.user.localbody.name">
                                 <small class="text-muted font-weight-bold">Localbody:</small> {{order.user.localbody.name}}
                             </span>
                         </div>
@@ -102,9 +102,9 @@
                             <span>Not Provided</span>
                         </div>
                     </div>
-                    <div class="d-flex" v-if="order.delivery_address.phone || order.user.phone">
+                    <div class="d-flex" v-if="(order.delivery_address && order.delivery_address.phone) || (order.user && order.user.phone)">
                         <h4 class="m-0 pr-2">Phone</h4>
-                        <span>{{ order.delivery_address.phone || order.user.phone }}</span>
+                        <span>{{ (order.delivery_address && order.delivery_address.phone) || (order.user && order.user.phone) }}</span>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -146,7 +146,7 @@
                                 </template>
                                 <template slot-scope="{row}">
                                     <td>
-                                        {{ row.item_details.item_name }}
+                                        {{ row.item_details && row.item_details.item_name }}
                                     </td>
                                     <td>
                                         {{ parseFloat(row.quantity) }}
