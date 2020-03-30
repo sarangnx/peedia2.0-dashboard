@@ -128,7 +128,7 @@ export default {
     props: {
         localbodies: {
             type: Array,
-            default: [],
+            default: () => ([]),
         },
     },
     validations() {
