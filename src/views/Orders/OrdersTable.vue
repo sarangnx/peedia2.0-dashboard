@@ -121,7 +121,7 @@
                         <a :class="['dropdown-item', `text-${badgeClass('DELIVERED')}`]" @click="changeStatus('DELIVERED', index)">Delivered</a>
                         <a :class="['dropdown-item', `text-${badgeClass('CANCELLED')}`]" @click="changeStatus('CANCELLED', index)">Cancelled</a>
                     </base-dropdown>
-                    <base-button 
+                    <base-button
                         @click.stop.prevent="deleteID = order.order_id; deleteModal = true; deleteIndex = index"
                         :disabled="deleteLoading"
                         size="sm"
@@ -164,7 +164,7 @@
             </div>
         </div> <!-- Card body -->
         <div>
-            <base-pagination 
+            <base-pagination
                 :page-count="total_pages"
                 v-model="page"
                 align="center">
@@ -427,7 +427,7 @@ export default {
                 url: '/localbodies/list',
             }).then((response) => {
                 const localbodies = response.data.localbodies.rows;
-                
+
                 this.districts = localbodies.map(item => item.district);
                 this.districts = [ ...new Set(this.districts) ]; // remove duplicates
                 this.localbodies = localbodies;
@@ -448,6 +448,7 @@ export default {
 
         // create a socket connection to server.
         const socket = io(this.baseUrl);
+        const event = this;
 
         // Show notifications on new orders.
         socket.on('new-order', () => {
@@ -461,11 +462,15 @@ export default {
             this.$notify({
                 type: 'default',
                 title: 'New Orders are here..!',
-                timeout: 480000, // 480 seconds
+                timeout: 60000, // 60 seconds
                 message: 'Click here or refresh to see new orders.',
                 icon: 'fa fa-concierge-bell',
-                onClick: () => {
-                    this.getOrders();
+                onClick: function() {
+                    if (this.$route.name === 'orders') {
+                        event.$emit('reload:order');
+                    } else {
+                        this.$router.push('/orders');
+                    }
                 }
             });
 
@@ -475,7 +480,11 @@ export default {
             (async function(){
                 await notifAudio.play();
             })();
-            
+
+        });
+
+        this.$on('reload:order', () => {
+            event.getOrders();
         });
     },
 };
@@ -492,14 +501,14 @@ export default {
 .dropdown-menu::-webkit-scrollbar {
     width: 5px;
 }
- 
+
 .dropdown-menu::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 10px;
 }
- 
+
 .dropdown-menu::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 </style>
