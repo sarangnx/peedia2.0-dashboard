@@ -93,6 +93,7 @@
             <div class="container">
                 <add-user :key="Date.now()"
                     @close="addModal = false"
+                    :localbodies.sync="localbodies"
                 ></add-user>
             </div>
         </modal>
@@ -121,7 +122,8 @@ export default {
             { id: 'admin', name: 'Admin', rank: 3 },
             { id: 'superadmin', name: 'Super Admin', rank: 4 },
         ],
-        addModal: false
+        addModal: false,
+        localbodies: []
     }),
     computed: {
         currentUser() {
@@ -160,12 +162,23 @@ export default {
                 this.total_pages = data.total_pages;
             });
         },
+        listLocalbodies() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/list',
+            }).then((response) => {
+                const localbodies = response.data.localbodies.rows;
+
+                this.localbodies = localbodies;
+            });
+        },
         refreshPage() {
             this.getUsers(this.page, this.per_page, this.usergroup.id);
         }
     },
     mounted() {
         this.getUsers(this.page, this.per_page, this.usergroup.id);
+        this.listLocalbodies();
     }
 };
 </script>

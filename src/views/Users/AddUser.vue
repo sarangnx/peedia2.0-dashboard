@@ -114,7 +114,6 @@ export default {
                 name: null
             }
         },
-        localbodies: [],
         searchDropdown: null,
         localbodyDropdown: [],
         usergroups: [
@@ -126,6 +125,12 @@ export default {
         ],
         loading: false,
     }),
+    props: {
+        localbodies: {
+            type: Array,
+            default: [],
+        },
+    },
     validations() {
         let schema = {
             user: {
@@ -190,16 +195,6 @@ export default {
         }
     },
     methods: {
-        listLocalbodies() {
-            this.$axios({
-                method: 'get',
-                url: '/localbodies/list',
-            }).then((response) => {
-                const localbodies = response.data.localbodies.rows;
-
-                this.localbodies = localbodies;
-            });
-        },
         suggestLocalbody() {
             const search = this.user.localbody.name;
             // remove id so that error is displayed
@@ -254,9 +249,6 @@ export default {
             });
         }
     },
-    mounted() {
-        this.listLocalbodies();
-    }
 }
 </script>
 <style>
