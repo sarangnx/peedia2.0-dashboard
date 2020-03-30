@@ -1,9 +1,26 @@
 <template>
     <div class="row">
         <div class="col-12 px-0 d-flex flex-wrap">
-            <base-input v-model="user.name" label="Name" class="col-12" maxlength="200" :disabled="loading"></base-input>
-            <base-input v-model="user.email" label="Email" class="col-12 col-md-6" maxlength="200" :disabled="loading"></base-input>
-            <base-input v-model="user.phone" label="Phone" class="col-12 col-md-6" maxlength="200" :disabled="loading"></base-input>
+            <base-input
+                v-model="user.name"
+                label="Name"
+                class="col-12" maxlength="200"
+                :disabled="loading"
+                :error="$v.user.name.$error ? 'Name Required' : null"
+            ></base-input>
+            <base-input
+                v-model="user.email"
+                label="Email"
+                class="col-12 col-md-6" maxlength="200"
+                :disabled="loading"
+                :error="$v.user.email.$error ? 'Email Required' : null"
+            ></base-input>
+            <base-input
+                v-model="user.phone"
+                label="Phone"
+                class="col-12 col-md-6" maxlength="200"
+                :disabled="loading"
+            ></base-input>
             <div class="col-12 col-md-6">
                 <base-dropdown class="w-100" menuClasses="drop__down">
                     <base-input
@@ -13,6 +30,7 @@
                         maxlength="200"
                         @keyup="suggestLocalbody()"
                         slot="title"
+                        :error="$v.user.localbody.localbody_id.$error ? 'Select valid localbody from list' : null"
                     ></base-input>
                     <a class="dropdown-item" v-if="!localbodyDropdown.length">Search localbody...</a>
                     <a v-else
@@ -25,9 +43,28 @@
                     </a>
                 </base-dropdown>
             </div>
-            <base-input v-model="user.ward" type="number" label="Ward" class="col-12 col-md-6" maxlength="200" :disabled="loading"></base-input>
-            <base-input v-model="user.district" label="District" class="col-12 col-md-6" maxlength="200" :disabled="loading"></base-input>
-            <base-input v-model="user.state" label="State" class="col-12 col-md-6" maxlength="200" :disabled="loading"></base-input>
+            <base-input
+                v-model="user.ward"
+                type="number" label="Ward"
+                class="col-12 col-md-6" maxlength="200"
+                :disabled="loading"
+                :error="$v.user.ward.$error ? 'Ward Required' : null"
+            ></base-input>
+            <base-input
+                v-model="user.district"
+                label="District"
+                class="col-12 col-md-6" maxlength="200"
+                :disabled="loading"
+                :error="$v.user.district.$error ? 'District Required' : null"
+            ></base-input>
+            <base-input
+                v-model="user.state"
+                label="State"
+                class="col-12 col-md-6"
+                maxlength="200"
+                :disabled="loading"
+                :error="$v.user.state.$error ? 'State Required' : null"
+            ></base-input>
             <div class="col-12">
                 <base-dropdown class="w-100" direction="up" menuClasses="drop__down">
                     <base-input
@@ -36,6 +73,8 @@
                         label="Group"
                         maxlength="200"
                         slot="title"
+                        @keyup="$set(user.usergroup, 'id', null)"
+                        :error="$v.user.usergroup.id.$error ? 'Group Required' : null"
                     ></base-input>
                     <a
                         class="dropdown-item"
@@ -55,20 +94,26 @@
     </div>
 </template>
 <script>
+import { required } from 'vuelidate/lib/validators';
+
 export default {
     name: 'add-user',
     data: () => ({
         user: {
-            name: '',
-            email: '',
-            phone: '',
+            name: null,
+            email: null,
+            phone: null,
             ward: null,
-            district: '',
+            district: null,
             state: 'Kerala',
-            localbody: {},
-            usergroup: {}
+            localbody: {
+                localbody_id: null,
+            },
+            usergroup: {
+                id: null,
+                name: null
+            }
         },
-        localbodies: [],
         searchDropdown: null,
         localbodyDropdown: [],
         usergroups: [
@@ -80,6 +125,63 @@ export default {
         ],
         loading: false,
     }),
+    props: {
+        localbodies: {
+            type: Array,
+            default: [],
+        },
+    },
+    validations() {
+        let schema = {
+            user: {
+                name: {
+                    required,
+                },
+                email: {
+                    required,
+                },
+                usergroup: {
+                    id: {
+                        required
+                    },
+                },
+            },
+        }
+
+        if(
+            this.user.usergroup.id === 'user' ||
+            this.user.usergroup.id === 'delivery' ||
+            this.user.usergroup.id === 'storeowner'
+        ) {
+            schema.user = Object.assign({}, schema.user, {
+                ward: {
+                    required,
+                },
+                district: {
+                    required,
+                },
+                state: {
+                    required,
+                },
+                localbody: {
+                    localbody_id: {
+                        required,
+                    },
+                }
+            });
+        } else {
+            schema.user = Object.assign({}, schema.user, {
+                ward: {},
+                district: {},
+                state: {},
+                localbody: {
+                    localbody_id: {}
+                }
+            });
+        }
+
+        return schema;
+    },
     computed: {
         currentUser() {
             return this.$store.getters.getUser;
@@ -93,18 +195,10 @@ export default {
         }
     },
     methods: {
-        listLocalbodies() {
-            this.$axios({
-                method: 'get',
-                url: '/localbodies/list',
-            }).then((response) => {
-                const localbodies = response.data.localbodies.rows;
-
-                this.localbodies = localbodies;
-            });
-        },
         suggestLocalbody() {
             const search = this.user.localbody.name;
+            // remove id so that error is displayed
+            this.user.localbody.localbody_id = null;
 
             if(search === ''){
                 this.localbodyDropdown = [];
@@ -118,6 +212,10 @@ export default {
             this.searchDropdown = true;
         },
         upload() {
+            this.$v.$touch();
+            if( this.$v.$invalid ){
+                return;
+            }
             this.loading = true;
 
             const data = Object.assign({}, this.user);
@@ -151,9 +249,6 @@ export default {
             });
         }
     },
-    mounted() {
-        this.listLocalbodies();
-    }
 }
 </script>
 <style>
@@ -165,15 +260,15 @@ export default {
 .drop__down.dropdown-menu::-webkit-scrollbar {
     width: 5px;
 }
- 
+
 .drop__down.dropdown-menu::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
     border-radius: 10px;
 }
- 
+
 .drop__down.dropdown-menu::-webkit-scrollbar-thumb {
     border-radius: 10px;
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 .over__lay {
     opacity: 0.4;
