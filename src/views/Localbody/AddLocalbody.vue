@@ -77,7 +77,7 @@
                 class="col-12 col-md-6" maxlength="200"
                 :disabled="loading"
             ></base-input>
-            <base-button :disabled="loading" block @click="upload">Add User</base-button>
+            <base-button :disabled="loading" block @click="upload">Add Localbody</base-button>
         </div>
         <div class="over__lay d-flex align-items-center" v-if="loading">
             <loading/>
@@ -141,25 +141,17 @@ export default {
 
             this.$axios({
                 method: 'post',
-                url: `/users/add`,
+                url: `/localbodies/add`,
                 data: data,
             }).then((response) => {
                 if (response.data && response.data.status === "success") {
-                    this.$notify({
-                        type: "success",
-                        title: "Success",
-                        message: "User Added."
-                    });
+                    this.$success('Localbody Added.');
                     this.$emit('close');
                 } else {
-                    throw new Error('User Not Added.')
+                    throw new Error('Localbody Not Added.')
                 }
             }).catch(() => {
-                this.$notify({
-                    type: "danger",
-                    title: "Something went Wrong",
-                    message: "User Not Added."
-                });
+                this.$error('Localbody Not Added.');
             }).finally(() => {
                 this.loading = false;
             });
