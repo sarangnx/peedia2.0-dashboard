@@ -2,62 +2,66 @@
     <div class="row">
         <div class="col-12 px-0 d-flex flex-wrap">
             <base-input
-                v-model="user.name"
+                v-model="localbody.name"
                 label="Panchayath or Municipality Name"
                 class="col-12" maxlength="200"
                 :disabled="loading"
-                :error="$v.user.name.$error ? 'Name Required' : null"
+                :error="$v.localbody.name.$error ? 'Panchayath or Municipality Name Required' : null"
             ></base-input>
             <base-input
-                v-model="user.district"
+                v-model="localbody.district"
                 label="District"
                 class="col-12 col-md-6" maxlength="200"
                 :disabled="loading"
-                :error="$v.user.district.$error ? 'District Required' : null"
+                :error="$v.localbody.district.$error ? 'District Required' : null"
             ></base-input>
             <base-input
-                v-model="user.state"
+                v-model="localbody.state"
                 label="State"
                 class="col-12 col-md-6"
                 maxlength="200"
                 :disabled="true"
-                :error="$v.user.state.$error ? 'State Required' : null"
+                :error="$v.localbody.state.$error ? 'State Required' : null"
             ></base-input>
             <div class="form-group col-12 col-md-6">
                 <label class="form-control-label">Type</label>
-                <select v-model="user" class="custom-select mr-sm-2">
+                <select v-model="localbody.type" class="custom-select mr-sm-2" 
+                    :class="[{'is-invalid': $v.localbody.type.$error}]"
+                >
                     <option>panchayath</option>
                     <option>municipality</option>
                 </select>
+                <div class="text-danger invalid-feedback" style="display: block;" v-if="$v.localbody.type.$error">
+                    Localbody type Required
+                </div>
             </div>
             <base-input
-                v-model="user.ward"
+                v-model="localbody.total_wards"
                 type="number" label="Total wards"
                 class="col-12 col-md-6" maxlength="200"
                 :disabled="loading"
-                :error="$v.user.ward.$error ? 'Ward Required' : null"
+                :error="$v.localbody.total_wards.$error ? 'Total number of wards Required' : null"
             ></base-input>
             <base-input
-                v-model="user.email"
+                v-model="localbody.email"
                 label="Email"
                 class="col-12 col-md-6" maxlength="200"
                 :disabled="loading"
-                :error="$v.user.email.$error ? 'Email Required' : null"
             ></base-input>
             <base-input
-                v-model="user.phone"
+                v-model="localbody.phone"
                 label="Phone (General)"
                 class="col-12 col-md-6" maxlength="200"
                 :disabled="loading"
             ></base-input>
             <base-input
-                v-model="user.phone"
+                v-model="localbody.emergency_phone"
                 label="Phone (Emergency)"
                 class="col-12 col-md-6" maxlength="200"
                 :disabled="loading"
             ></base-input>
             <base-input
-                v-model="user.phone"
+                v-model="localbody.kitchen_phone"
                 label="Phone (Kitchen)"
                 class="col-12 col-md-6" maxlength="200"
                 :disabled="loading"
@@ -75,113 +79,48 @@ import { required } from 'vuelidate/lib/validators';
 export default {
     name: 'add-localbody',
     data: () => ({
-        user: {
+        localbody: {
             name: null,
-            email: null,
-            phone: null,
-            ward: null,
             district: null,
             state: 'Kerala',
-            localbody: {
-                localbody_id: null,
-            },
-            usergroup: {
-                id: null,
-                name: null
-            }
+            type: null,
+            total_wards: null,
+            email: null,
+            phone: null,
+            emergency_phone: null,
+            kitchen_phone: null,
         },
-        searchDropdown: null,
-        localbodyDropdown: [],
-        usergroups: [
-            { id: 'user', name: 'Customers', rank: 0 },
-            { id: 'delivery', name: 'Delivery', rank: 1 },
-            { id: 'storeowner', name: 'Manager', rank: 2 },
-            { id: 'admin', name: 'Admin', rank: 3 },
-            { id: 'superadmin', name: 'Super Admin', rank: 4 },
-        ],
         loading: false,
     }),
     props: {
-        localbodies: {
+        districts: {
             type: Array,
             default: () => ([]),
         },
     },
-    validations() {
-        let schema = {
-            user: {
-                name: {
-                    required,
-                },
-                email: {
-                    required,
-                },
-                usergroup: {
-                    id: {
-                        required
-                    },
-                },
+    validations: {
+        localbody: {
+            name: {
+                required,
             },
-        }
-
-        if(
-            this.user.usergroup.id === 'user' ||
-            this.user.usergroup.id === 'delivery' ||
-            this.user.usergroup.id === 'storeowner'
-        ) {
-            schema.user = Object.assign({}, schema.user, {
-                ward: {
-                    required,
-                },
-                district: {
-                    required,
-                },
-                state: {
-                    required,
-                },
-                localbody: {
-                    localbody_id: {
-                        required,
-                    },
-                }
-            });
-        } else {
-            schema.user = Object.assign({}, schema.user, {
-                ward: {},
-                district: {},
-                state: {},
-                localbody: {
-                    localbody_id: {}
-                }
-            });
-        }
-
-        return schema;
-    },
-    computed: {
-        currentUser() {
-            return this.$store.getters.getUser;
+            district: {
+                required,
+            },
+            state: {
+                required,
+            },
+            type: {
+                required,
+            },
+            total_wards: {
+                required,
+            },
         },
     },
     methods: {
-        suggestLocalbody() {
-            const search = this.user.localbody.name;
-            // remove id so that error is displayed
-            this.user.localbody.localbody_id = null;
-
-            if(search === ''){
-                this.localbodyDropdown = [];
-                this.searchDropdown = false;
-                return;
-            }
-
-            const regEx = new RegExp(search, 'i');
-
-            this.localbodyDropdown = this.localbodies.filter(item => item.name.match(regEx));
-            this.searchDropdown = true;
-        },
         upload() {
             this.$v.$touch();
+            return;
             if( this.$v.$invalid ){
                 return;
             }
