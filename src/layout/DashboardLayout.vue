@@ -67,6 +67,7 @@ export default {
                     maxrank: 2
                 },
                 { name: 'Notifications', icon: 'fa fa-bell text-blue', path: '/notifications', type: 'sidebaritem', minrank: 2, maxrank: 4 },
+                { name: 'Localbody', icon: 'fa fa-store text-blue', path: '/localbody', type: 'sidebaritem', minrank: 3, maxrank: 4 },
                 { name: 'Users', icon: 'fa fa-user text-blue', path: '/users', type: 'sidebaritem', minrank: 2, maxrank: 4 }
             ]
         };

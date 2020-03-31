@@ -94,6 +94,16 @@ export default [
                 },
             },
             {
+                path: '/localbody',
+                name: 'localbody',
+                component: () => import(/* webpackChunkName: "localbody" */ '@/views/Localbody/Localbody.vue'),
+                meta: {
+                    requiresAuth: true,
+                    minrank: 3,
+                    maxrank: 4
+                },
+            },
+            {
                 path: '/users',
                 name: 'users',
                 component: () => import(/* webpackChunkName: "users" */ '@/views/Users/Users.vue'),
