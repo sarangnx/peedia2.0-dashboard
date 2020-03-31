@@ -56,13 +56,13 @@
                                         {{ row.email || 'N/A' }}
                                     </td>
                                     <td>
-                                        <div v-if="row.phone">
+                                        <div>
                                             <strong>General:</strong> {{ row.phone || 'N/A' }}
                                         </div>
-                                        <div v-if="row.emergency_phone">
+                                        <div>
                                             <strong>Emergency:</strong> {{ row.emergency_phone || 'N/A' }}
                                         </div>
-                                        <div v-if="row.kitchen_phone">
+                                        <div>
                                             <strong>Kitchen:</strong> {{ row.kitchen_phone || 'N/A' }}
                                         </div>
                                     </td>
@@ -117,7 +117,7 @@
             </template>
             <div class="container">
                 <add-localbody :key="Date.now()"
-                    @close="addModal = false"
+                    @close="closeModal"
                     :districts.sync="districts"
                 ></add-localbody>
             </div>
@@ -134,7 +134,7 @@ export default {
     },
     data: () => ({
         page: 1,
-        per_page: 20,
+        per_page: 10,
         count: 0,
         total_pages: 0,
         pageLoading: null,
@@ -152,6 +152,10 @@ export default {
         }
     },
     methods: {
+        closeModal() {
+            this.addModal = false;
+            this.refreshPage()
+        },
         listLocalbodies() {
             const page = this.page;
             const per_page = this.per_page;
