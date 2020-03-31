@@ -31,7 +31,7 @@
                             </div>
                         </div> <!-- Outer Header -->
                         <div 
-                            class="card-body table-responsive position-relative"
+                            class="card-body table-responsive position-relative p-0 custom__scrollbar"
                             :class="[{'overflow-hidden': pageLoading}]"
                         >
                             <base-table
