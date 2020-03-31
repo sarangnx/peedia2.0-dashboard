@@ -30,7 +30,10 @@
                                 </base-dropdown>
                             </div>
                         </div> <!-- Outer Header -->
-                        <div class="card-body table-responsive">
+                        <div 
+                            class="card-body table-responsive position-relative p-0 custom__scrollbar"
+                            :class="[{'overflow-hidden': pageLoading}]"
+                        >
                             <base-table
                                 :data="localbodies"
                                 type="hover table-striped table-sm"
@@ -56,13 +59,13 @@
                                         {{ row.email || 'N/A' }}
                                     </td>
                                     <td>
-                                        <div v-if="row.phone">
+                                        <div>
                                             <strong>General:</strong> {{ row.phone || 'N/A' }}
                                         </div>
-                                        <div v-if="row.emergency_phone">
+                                        <div>
                                             <strong>Emergency:</strong> {{ row.emergency_phone || 'N/A' }}
                                         </div>
-                                        <div v-if="row.kitchen_phone">
+                                        <div>
                                             <strong>Kitchen:</strong> {{ row.kitchen_phone || 'N/A' }}
                                         </div>
                                     </td>
@@ -92,12 +95,15 @@
                                     </td>
                                 </template>
                             </base-table> <!-- Table -->
+                            <div class="over__lay d-flex align-items-center" v-if="pageLoading">
+                                <loading color="white"/>
+                            </div>
                         </div> <!-- card body -->
                         <div class="card-footer">
                             <div class="d-flex justify-content-end mb-3">
                                 <base-button type="success" @click="addModal = true">
                                     <font-awesome-icon icon="plus" class="mr-2"/>
-                                    Create User
+                                    Create Localbody
                                 </base-button>
                             </div>
                             <base-pagination
@@ -110,31 +116,31 @@
                 </div>
             </div>
         </div>
-        <!-- ADD USER MODAL -->
+        <!-- ADD LOCALBODY MODAL -->
         <modal :show.sync="addModal" modalClasses="modal-dialog-scrollable" :clickOut="false">
             <template slot="header">
-                <h1 class="modal-title">Add User</h1>
+                <h1 class="modal-title">Add Localbody</h1>
             </template>
             <div class="container">
-                <add-user :key="Date.now()"
-                    @close="addModal = false"
-                    :localbodies.sync="localbodies"
-                ></add-user>
+                <add-localbody :key="Date.now()"
+                    @close="closeModal"
+                    :districts.sync="districts"
+                ></add-localbody>
             </div>
         </modal>
     </div>
 </template>
 <script>
-import AddUser from './AddUser';
+import AddLocalbody from './AddLocalbody';
 
 export default {
     name: 'localbody',
     components: {
-        AddUser,
+        AddLocalbody,
     },
     data: () => ({
         page: 1,
-        per_page: 20,
+        per_page: 10,
         count: 0,
         total_pages: 0,
         pageLoading: null,
@@ -152,7 +158,12 @@ export default {
         }
     },
     methods: {
+        closeModal() {
+            this.addModal = false;
+            this.refreshPage()
+        },
         listLocalbodies() {
+            this.pageLoading = true;
             const page = this.page;
             const per_page = this.per_page;
             const district = this.selectedDistrict;
@@ -171,6 +182,8 @@ export default {
                 this.localbodies = localbodies.rows;
                 this.count = localbodies.count;
                 this.total_pages = Math.ceil( this.count/this.per_page );
+            }).finally(() => {
+                this.pageLoading = false;
             });
         },
         listDistricts() {
@@ -196,5 +209,17 @@ export default {
 <style scoped>
 th, td {
     text-align: center;
+    max-width: 200px;
+    overflow: auto;
+}
+.over__lay {
+    opacity: 0.4;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+    width: 100%;
+    z-index: 5000;
+    height: 100%;
 }
 </style>
