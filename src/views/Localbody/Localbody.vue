@@ -137,39 +137,16 @@ export default {
         per_page: 20,
         count: 0,
         total_pages: 0,
-        usergroup: { id: 'user', name: 'Customers', rank: 0 },
         pageLoading: null,
-        usergroups: [
-            { id: 'user', name: 'Customers', rank: 0 },
-            { id: 'delivery', name: 'Delivery', rank: 1 },
-            { id: 'storeowner', name: 'Manager', rank: 2 },
-            { id: 'admin', name: 'Admin', rank: 3 },
-            { id: 'superadmin', name: 'Super Admin', rank: 4 },
-        ],
         addModal: false,
         localbodies: [],
         districts: [],
         selectedDistrict: null,
     }),
-    computed: {
-        currentUser() {
-            return this.$store.getters.getUser;
-        },
-        activeUsergroups() {
-            const currentUsergroup = this.currentUser.usergroup;
-            const currentGroup = this.usergroups.find((item) => item.id === currentUsergroup );
-            return this.usergroups.filter((usergroup) => {
-                return usergroup.rank < currentGroup.rank;
-            });
-        }
-    },
     watch: {
         page() {
             this.refreshPage();
         },
-        usergroup() {
-            this.refreshPage();
-        }
     },
     methods: {
         listLocalbodies() {
