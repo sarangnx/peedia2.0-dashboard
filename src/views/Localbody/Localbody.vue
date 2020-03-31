@@ -97,7 +97,7 @@
                             <div class="d-flex justify-content-end mb-3">
                                 <base-button type="success" @click="addModal = true">
                                     <font-awesome-icon icon="plus" class="mr-2"/>
-                                    Create User
+                                    Create Localbody
                                 </base-button>
                             </div>
                             <base-pagination
@@ -110,27 +110,27 @@
                 </div>
             </div>
         </div>
-        <!-- ADD USER MODAL -->
+        <!-- ADD LOCALBODY MODAL -->
         <modal :show.sync="addModal" modalClasses="modal-dialog-scrollable" :clickOut="false">
             <template slot="header">
-                <h1 class="modal-title">Add User</h1>
+                <h1 class="modal-title">Add Localbody</h1>
             </template>
             <div class="container">
-                <add-user :key="Date.now()"
+                <add-localbody :key="Date.now()"
                     @close="addModal = false"
-                    :localbodies.sync="localbodies"
-                ></add-user>
+                    :districts.sync="districts"
+                ></add-localbody>
             </div>
         </modal>
     </div>
 </template>
 <script>
-import AddUser from './AddUser';
+import AddLocalbody from './AddLocalbody';
 
 export default {
     name: 'localbody',
     components: {
-        AddUser,
+        AddLocalbody,
     },
     data: () => ({
         page: 1,
