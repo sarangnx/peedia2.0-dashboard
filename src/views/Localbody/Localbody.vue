@@ -23,9 +23,9 @@
                                     <a class="dropdown-item text-black text-capitalize"
                                         v-for="(item, index) in districts"
                                         :key="index"
-                                        @click="selectedDistrict = item"
+                                        @click="selectedDistrict = item.name"
                                     >
-                                        {{ item }}
+                                        {{ item.name }}
                                     </a>
                                 </base-dropdown>
                             </div>
@@ -147,11 +147,15 @@ export default {
         page() {
             this.refreshPage();
         },
+        selectedDistrict() {
+            this.refreshPage();
+        }
     },
     methods: {
         listLocalbodies() {
             const page = this.page;
             const per_page = this.per_page;
+            const district = this.selectedDistrict;
 
             this.$axios({
                 method: 'get',
@@ -159,6 +163,7 @@ export default {
                 params: {
                     page,
                     per_page,
+                    district
                 },
             }).then((response) => {
                 const localbodies = response.data.localbodies;
@@ -166,8 +171,16 @@ export default {
                 this.localbodies = localbodies.rows;
                 this.count = localbodies.count;
                 this.total_pages = Math.ceil( this.count/this.per_page );
-                this.districts = this.localbodies.map(item => item.district);
-                this.districts = [ ...new Set(this.districts) ]; // remove duplicates
+            });
+        },
+        listDistricts() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/districts',
+            }).then((response) => {
+                const districts = response.data.districts;
+
+                this.districts = districts.rows;
             });
         },
         refreshPage() {
@@ -176,6 +189,7 @@ export default {
     },
     mounted() {
         this.listLocalbodies();
+        this.listDistricts();
     }
 };
 </script>
