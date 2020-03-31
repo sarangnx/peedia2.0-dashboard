@@ -3,52 +3,10 @@
         <div class="col-12 px-0 d-flex flex-wrap">
             <base-input
                 v-model="user.name"
-                label="Name"
+                label="Panchayath or Municipality Name"
                 class="col-12" maxlength="200"
                 :disabled="loading"
                 :error="$v.user.name.$error ? 'Name Required' : null"
-            ></base-input>
-            <base-input
-                v-model="user.email"
-                label="Email"
-                class="col-12 col-md-6" maxlength="200"
-                :disabled="loading"
-                :error="$v.user.email.$error ? 'Email Required' : null"
-            ></base-input>
-            <base-input
-                v-model="user.phone"
-                label="Phone"
-                class="col-12 col-md-6" maxlength="200"
-                :disabled="loading"
-            ></base-input>
-            <div class="col-12 col-md-6">
-                <base-dropdown class="w-100" menuClasses="drop__down">
-                    <base-input
-                        :disabled="loading"
-                        v-model="user.localbody.name"
-                        label="Pachayath or Municipality"
-                        maxlength="200"
-                        @keyup="suggestLocalbody()"
-                        slot="title"
-                        :error="$v.user.localbody.localbody_id.$error ? 'Select valid localbody from list' : null"
-                    ></base-input>
-                    <a class="dropdown-item" v-if="!localbodyDropdown.length">Search localbody...</a>
-                    <a v-else
-                        class="dropdown-item"
-                        v-for="(item, index) in localbodyDropdown"
-                        :key="index"
-                        @click="user.localbody = Object.assign({}, item)"
-                    >
-                        {{ item.name }}
-                    </a>
-                </base-dropdown>
-            </div>
-            <base-input
-                v-model="user.ward"
-                type="number" label="Ward"
-                class="col-12 col-md-6" maxlength="200"
-                :disabled="loading"
-                :error="$v.user.ward.$error ? 'Ward Required' : null"
             ></base-input>
             <base-input
                 v-model="user.district"
@@ -62,30 +20,48 @@
                 label="State"
                 class="col-12 col-md-6"
                 maxlength="200"
-                :disabled="loading"
+                :disabled="true"
                 :error="$v.user.state.$error ? 'State Required' : null"
             ></base-input>
-            <div class="col-12">
-                <base-dropdown class="w-100" direction="up" menuClasses="drop__down">
-                    <base-input
-                        :disabled="loading"
-                        v-model="user.usergroup.name"
-                        label="Group"
-                        maxlength="200"
-                        slot="title"
-                        @keyup="$set(user.usergroup, 'id', null)"
-                        :error="$v.user.usergroup.id.$error ? 'Group Required' : null"
-                    ></base-input>
-                    <a
-                        class="dropdown-item"
-                        v-for="(item, index) in activeUsergroups"
-                        :key="index"
-                        @click="user.usergroup = Object.assign({}, item)"
-                    >
-                        {{ item.name }}
-                    </a>
-                </base-dropdown>
+            <div class="form-group col-12 col-md-6">
+                <label class="form-control-label">Type</label>
+                <select v-model="user" class="custom-select mr-sm-2">
+                    <option>panchayath</option>
+                    <option>municipality</option>
+                </select>
             </div>
+            <base-input
+                v-model="user.ward"
+                type="number" label="Total wards"
+                class="col-12 col-md-6" maxlength="200"
+                :disabled="loading"
+                :error="$v.user.ward.$error ? 'Ward Required' : null"
+            ></base-input>
+            <base-input
+                v-model="user.email"
+                label="Email"
+                class="col-12 col-md-6" maxlength="200"
+                :disabled="loading"
+                :error="$v.user.email.$error ? 'Email Required' : null"
+            ></base-input>
+            <base-input
+                v-model="user.phone"
+                label="Phone (General)"
+                class="col-12 col-md-6" maxlength="200"
+                :disabled="loading"
+            ></base-input>
+            <base-input
+                v-model="user.phone"
+                label="Phone (Emergency)"
+                class="col-12 col-md-6" maxlength="200"
+                :disabled="loading"
+            ></base-input>
+            <base-input
+                v-model="user.phone"
+                label="Phone (Kitchen)"
+                class="col-12 col-md-6" maxlength="200"
+                :disabled="loading"
+            ></base-input>
             <base-button :disabled="loading" block @click="upload">Add User</base-button>
         </div>
         <div class="over__lay d-flex align-items-center" v-if="loading">
@@ -97,7 +73,7 @@
 import { required } from 'vuelidate/lib/validators';
 
 export default {
-    name: 'add-user',
+    name: 'add-localbody',
     data: () => ({
         user: {
             name: null,
@@ -186,13 +162,6 @@ export default {
         currentUser() {
             return this.$store.getters.getUser;
         },
-        activeUsergroups() {
-            const currentUsergroup = this.currentUser.usergroup;
-            const currentGroup = this.usergroups.find((item) => item.id === currentUsergroup );
-            return this.usergroups.filter((usergroup) => {
-                return usergroup.rank < currentGroup.rank;
-            });
-        }
     },
     methods: {
         suggestLocalbody() {
