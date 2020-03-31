@@ -11,7 +11,7 @@
                             <div class="d-flex align-items-center justify-content-around flex-column flex-md-row">
                                 <!-- FILTER BY DISTRICT -->
                                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
-                                <base-dropdown v-else position="right" class="mb-2 mb-md-0">
+                                <base-dropdown v-else position="right" class="mb-2 mb-md-0" menuClasses="drop__down custom__scrollbar">
                                     <base-button slot="title" type="primary" class="dropdown-toggle text-capitalize" size="sm">
                                         {{ selectedDistrict || 'District' }}
                                     </base-button>
@@ -184,8 +184,13 @@ export default {
     }
 };
 </script>
-<style scoped>
+<style>
 th, td {
     text-align: center;
+}
+
+.drop__down.dropdown-menu {
+    max-height: 250px;
+    overflow: auto;
 }
 </style>
