@@ -12,15 +12,20 @@
                                 <!-- FILTER BY DISTRICT -->
                                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                                 <base-dropdown v-else position="right" class="mb-2 mb-md-0">
-                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
-                                        {{ usergroup.name || 'User group' }}
+                                    <base-button slot="title" type="primary" class="dropdown-toggle text-capitalize" size="sm">
+                                        {{ selectedDistrict || 'District' }}
                                     </base-button>
                                     <a class="dropdown-item text-black"
-                                        v-for="(item, index) in activeUsergroups"
-                                        :key="index"
-                                        @click="usergroup = Object.assign({}, item)"
+                                        @click="selectedDistrict = null"
                                     >
-                                        {{ item.name }}
+                                        All
+                                    </a>
+                                    <a class="dropdown-item text-black text-capitalize"
+                                        v-for="(item, index) in districts"
+                                        :key="index"
+                                        @click="selectedDistrict = item"
+                                    >
+                                        {{ item }}
                                     </a>
                                 </base-dropdown>
                             </div>
@@ -131,7 +136,6 @@ export default {
         page: 1,
         per_page: 20,
         count: 0,
-        users: [],
         total_pages: 0,
         usergroup: { id: 'user', name: 'Customers', rank: 0 },
         pageLoading: null,
@@ -143,7 +147,9 @@ export default {
             { id: 'superadmin', name: 'Super Admin', rank: 4 },
         ],
         addModal: false,
-        localbodies: []
+        localbodies: [],
+        districts: [],
+        selectedDistrict: null,
     }),
     computed: {
         currentUser() {
@@ -166,22 +172,6 @@ export default {
         }
     },
     methods: {
-        getUsers(page, per_page, usergroup = null) {
-            this.$axios({
-                method: 'get',
-                url: '/users/profiles',
-                params: {
-                    page,
-                    per_page,
-                    ...(usergroup && { usergroup }),
-                },
-            }).then((response) => {
-                const data = response.data.data;
-                this.users = data.rows;
-                this.count = data.count;
-                this.total_pages = data.total_pages;
-            });
-        },
         listLocalbodies() {
             const page = this.page;
             const per_page = this.per_page;
@@ -199,7 +189,8 @@ export default {
                 this.localbodies = localbodies.rows;
                 this.count = localbodies.count;
                 this.total_pages = Math.ceil( this.count/this.per_page );
-                console.log(localbodies);
+                this.districts = this.localbodies.map(item => item.district);
+                this.districts = [ ...new Set(this.districts) ]; // remove duplicates
             });
         },
         refreshPage() {
