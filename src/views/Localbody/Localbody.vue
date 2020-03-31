@@ -30,7 +30,10 @@
                                 </base-dropdown>
                             </div>
                         </div> <!-- Outer Header -->
-                        <div class="card-body table-responsive">
+                        <div 
+                            class="card-body table-responsive position-relative"
+                            :class="[{'overflow-hidden': pageLoading}]"
+                        >
                             <base-table
                                 :data="localbodies"
                                 type="hover table-striped table-sm"
@@ -92,6 +95,9 @@
                                     </td>
                                 </template>
                             </base-table> <!-- Table -->
+                            <div class="over__lay d-flex align-items-center" v-if="pageLoading">
+                                <loading color="white"/>
+                            </div>
                         </div> <!-- card body -->
                         <div class="card-footer">
                             <div class="d-flex justify-content-end mb-3">
@@ -157,6 +163,7 @@ export default {
             this.refreshPage()
         },
         listLocalbodies() {
+            this.pageLoading = true;
             const page = this.page;
             const per_page = this.per_page;
             const district = this.selectedDistrict;
@@ -175,6 +182,8 @@ export default {
                 this.localbodies = localbodies.rows;
                 this.count = localbodies.count;
                 this.total_pages = Math.ceil( this.count/this.per_page );
+            }).finally(() => {
+                this.pageLoading = false;
             });
         },
         listDistricts() {
@@ -200,5 +209,15 @@ export default {
 <style scoped>
 th, td {
     text-align: center;
+}
+.over__lay {
+    opacity: 0.4;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+    width: 100%;
+    z-index: 5000;
+    height: 100%;
 }
 </style>
