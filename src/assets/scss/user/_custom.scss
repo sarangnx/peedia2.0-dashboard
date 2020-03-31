@@ -2,3 +2,19 @@ html, body, #app, .wrapper, .main-content {
     height: 100%;
     min-height: 100%;
 }
+
+// Custom scrollbar
+.custom__scrollbar::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+.custom__scrollbar::-webkit-scrollbar-track {
+    background: #ececec;
+    border-radius: 10px;
+}
+
+.custom__scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #616161;
+}
