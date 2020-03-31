@@ -28,6 +28,32 @@
                                         {{ item.name }}
                                     </a>
                                 </base-dropdown>
+                                <!-- FILTER BY LOCALBODY -->
+                                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                                <base-dropdown v-else-if="activeLocalbodies.length" position="right" class="mb-2 mb-md-0">
+                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm" :disabled="init">
+                                        {{ selectedLocalbody ? selectedLocalbody.name : 'Panchayath or Municipality' }}
+                                    </base-button>
+                                    <a class="dropdown-item text-black" @click="selectedLocalbody =  null">All</a>
+                                    <a class="dropdown-item text-black"
+                                        v-for="(localbody, index) in activeLocalbodies"
+                                        :key="index"
+                                        @click="selectedLocalbody = Object.assign({}, localbody)"
+                                    >
+                                        {{ localbody.name }}
+                                    </a>
+                                </base-dropdown>
+                                <!-- FILTER BY WARD -->
+                                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                                <base-input v-else-if="selectedLocalbody && selectedLocalbody.localbody_id"
+                                    class="m-0 mr-2 input__height mb-2 mb-md-0"
+                                    type="number"
+                                    min="1"
+                                    max="1000"
+                                    v-model="ward"
+                                    placeholder="ward"
+                                >
+                                </base-input>
                             </div>
                         </div> <!-- Outer Header -->
                         <div class="card-body table-responsive p-0 custom__scrollbar">
@@ -114,7 +140,13 @@ export default {
         localbodies: [],
         rations: [],
         districts: [],
-        selectedDistrict: null
+        selectedDistrict: null,
+        activeLocalbodies: [], // localbodies in a district
+        selectedLocalbody: [],
+        ward: null,
+        init: null,
+        debounce: null,
+        debounceerror: null,
     }),
     computed: {
         currentUser() {
@@ -125,9 +157,33 @@ export default {
         page() {
             this.refreshPage();
         },
-        selectedDistrict() {
+        per_page() {
             this.refreshPage();
-        }
+        },
+        selectedDistrict() {
+            this.filterLocalbodies();
+            this.refreshPage();
+        },
+        selectedLocalbody() {
+            this.refreshPage();
+        },
+        ward() {
+            clearTimeout(this.debounce);
+            clearTimeout(this.debounceerror);
+            if( this.ward > 0 && this.ward < 200 ) {
+                this.debounce = setTimeout(() => {
+                    this.refreshPage();
+                }, 1000);
+            } else if(!this.ward) {
+                this.debounce = setTimeout(() => {
+                    this.refreshPage();
+                }, 1000);
+            } else {
+                this.debounceerror = setTimeout(() => {
+                    this.$error('Invalid ward number.');
+                }, 1000);
+            }
+        },
     },
     methods: {
         listLocalbodies() {
@@ -140,11 +196,22 @@ export default {
                 this.localbodies = localbodies;
             });
         },
+        filterLocalbodies() {
+            if(!this.init){
+                this.selectedLocalbody = null;
+            }
+            this.activeLocalbodies = this.localbodies.filter((item) => {
+                if (item.district === this.selectedDistrict) {
+                    return item;
+                }
+            });
+        },
         listRation() {
             const page = this.page;
             const per_page = this.per_page;
             const district = this.selectedDistrict;
-            const localbody_id = this.localbody_id;
+            const localbody = this.selectedLocalbody ? this.selectedLocalbody.localbody_id : null;
+            let ward = this.ward > 0 && this.ward < 200 ? this.ward : null;
 
             this.$axios({
                 method: 'get',
@@ -153,7 +220,8 @@ export default {
                     page,
                     per_page,
                     district,
-                    localbody_id,
+                    localbody,
+                    ward,
                 }
             }).then((response) => {
                 const rations = response.data.rations;
