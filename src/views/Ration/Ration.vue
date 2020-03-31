@@ -125,6 +125,9 @@ export default {
         page() {
             this.refreshPage();
         },
+        selectedDistrict() {
+            this.refreshPage();
+        }
     },
     methods: {
         listLocalbodies() {
@@ -140,12 +143,18 @@ export default {
         listRation() {
             const page = this.page;
             const per_page = this.per_page;
-            const district = this.district;
+            const district = this.selectedDistrict;
             const localbody_id = this.localbody_id;
 
             this.$axios({
                 method: 'get',
                 url: '/ration/list',
+                params: {
+                    page,
+                    per_page,
+                    district,
+                    localbody_id,
+                }
             }).then((response) => {
                 const rations = response.data.rations;
 
