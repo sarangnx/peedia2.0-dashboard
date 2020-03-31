@@ -7,34 +7,66 @@
                 <div class="col-12">
                     <div class="card shadow">
                         <div  class="card-header d-flex justify-content-between flex-column flex-md-row align-items-center">
-                            <h3>Users</h3>
+                            <h3>Ration</h3>
                             <div class="d-flex align-items-center justify-content-around flex-column flex-md-row">
-                                <!-- FILTER BY USERGROUP -->
+                                <!-- FILTER BY DISTRICT -->
                                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
-                                <base-dropdown v-else position="right" class="mb-2 mb-md-0">
-                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
-                                        {{ usergroup.name || 'User group' }}
+                                <base-dropdown v-else position="right" class="mb-2 mb-md-0" menuClasses="drop__down custom__scrollbar">
+                                    <base-button slot="title" type="primary" class="dropdown-toggle text-capitalize" size="sm" :disabled="init && selectedDistrict">
+                                        {{ selectedDistrict || 'District' }}
                                     </base-button>
                                     <a class="dropdown-item text-black"
-                                        v-for="(item, index) in activeUsergroups"
+                                        @click="selectedDistrict = null"
+                                    >
+                                        All
+                                    </a>
+                                    <a class="dropdown-item text-black text-capitalize"
+                                        v-for="(item, index) in districts"
                                         :key="index"
-                                        @click="usergroup = Object.assign({}, item)"
+                                        @click="selectedDistrict = item.name"
                                     >
                                         {{ item.name }}
                                     </a>
                                 </base-dropdown>
+                                <!-- FILTER BY LOCALBODY -->
+                                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                                <base-dropdown v-else-if="activeLocalbodies.length" position="right" class="mb-2 mb-md-0">
+                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm" :disabled="init && selectedLocalbody">
+                                        {{ selectedLocalbody ? selectedLocalbody.name : 'Panchayath or Municipality' }}
+                                    </base-button>
+                                    <a class="dropdown-item text-black" @click="selectedLocalbody =  null">All</a>
+                                    <a class="dropdown-item text-black"
+                                        v-for="(localbody, index) in activeLocalbodies"
+                                        :key="index"
+                                        @click="selectedLocalbody = Object.assign({}, localbody)"
+                                    >
+                                        {{ localbody.name }}
+                                    </a>
+                                </base-dropdown>
+                                <!-- FILTER BY WARD -->
+                                <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                                <base-input v-else-if="selectedLocalbody && selectedLocalbody.localbody_id"
+                                    class="m-0 mr-2 input__height mb-2 mb-md-0"
+                                    type="number"
+                                    min="1"
+                                    max="1000"
+                                    v-model="ward"
+                                    placeholder="ward"
+                                >
+                                </base-input>
                             </div>
                         </div> <!-- Outer Header -->
-                        <div class="card-body table-responsive">
+                        <div class="card-body table-responsive p-0 custom__scrollbar">
                             <base-table
-                                :data="users"
+                                :data="rations"
                                 type="hover table-striped table-sm"
                             >
                                 <template slot="columns">
                                     <th class="text-left">Name</th>
-                                    <th>Email</th>
                                     <th>Phone</th>
-                                    <th></th>
+                                    <th>Aadhar</th>
+                                    <th>Ration Card</th>
+                                    <th>Address</th>
                                 </template>
 
                                 <template slot-scope="{row}">
@@ -42,39 +74,44 @@
                                         {{ row.name || 'N/A' }}
                                     </td>
                                     <td>
-                                        {{ row.email || 'N/A' }}
-                                    </td>
-                                    <td>
                                         {{ row.phone || 'N/A' }}
                                     </td>
                                     <td>
-                                        <base-button
-                                            v-if="!row.blocked"
-                                            icon="fa fa-user-slash"
-                                            size="sm"
-                                            type="danger"
-                                            title="Block User"
-                                            @click="true"
-                                        ></base-button>
-                                        <base-button
-                                            v-else
-                                            icon="fa fa-user"
-                                            size="sm"
-                                            type="success"
-                                            title="Unblock User"
-                                            @click="true"
-                                        ></base-button>
+                                        {{ row.aadhar_no || 'N/A' }}
+                                    </td>
+                                    <td>
+                                        {{ row.card_no || 'N/A' }}
+                                    </td>
+                                    <td class="text-left">
+                                        <div v-if="row.user && row.user.house">
+                                            <small class="text-muted font-weight-bold">House:</small> {{row.user.house}}
+                                        </div>
+                                        <div v-if="row.user && row.user.area">
+                                            <small class="text-muted font-weight-bold">Area:</small> {{row.user.area}},
+                                        </div>
+                                        <div v-if="row.user && row.user.landmark">
+                                            <small class="text-muted font-weight-bold">Landmark:</small> {{row.user.landmark}}
+                                        </div>
+                                        <div v-if="row.user && row.user.district">
+                                            <small class="text-muted font-weight-bold">District:</small> {{row.user.district}},
+                                        </div>
+                                        <div v-if="row.user && row.user.pincode">
+                                            <small class="text-muted font-weight-bold">Pincode:</small> {{row.user.pincode}},
+                                        </div>
+                                        <div v-if="row.user && row.user.ward">
+                                            <small class="text-muted font-weight-bold">Ward:</small> {{row.user.ward}}
+                                        </div>
+                                        <div v-if="row.user && row.user.localbody && row.user.localbody.name">
+                                            <small class="text-muted font-weight-bold">Localbody:</small> {{row.user.localbody.name}}
+                                        </div>
                                     </td>
                                 </template>
                             </base-table> <!-- Table -->
+                            <div class="over__lay d-flex align-items-center" v-if="pageLoading">
+                                <loading color="white"/>
+                            </div>
                         </div> <!-- card body -->
                         <div class="card-footer">
-                            <div class="d-flex justify-content-end mb-3">
-                                <base-button type="success" @click="addModal = true">
-                                    <font-awesome-icon icon="plus" class="mr-2"/>
-                                    Create User
-                                </base-button>
-                            </div>
                             <base-pagination
                                 :page-count="total_pages"
                                 v-model="page"
@@ -89,62 +126,69 @@
 </template>
 <script>
 export default {
-    name: 'users',
+    name: 'ration',
     data: () => ({
         page: 1,
-        per_page: 20,
+        per_page: 10,
         count: 0,
-        users: [],
         total_pages: 0,
-        usergroup: { id: 'user', name: 'Customers', rank: 0 },
         pageLoading: null,
-        usergroups: [
-            { id: 'user', name: 'Customers', rank: 0 },
-            { id: 'delivery', name: 'Delivery', rank: 1 },
-            { id: 'storeowner', name: 'Manager', rank: 2 },
-            { id: 'admin', name: 'Admin', rank: 3 },
-            { id: 'superadmin', name: 'Super Admin', rank: 4 },
-        ],
-        addModal: false,
-        localbodies: []
+        localbodies: [],
+        rations: [],
+        districts: [],
+        selectedDistrict: null,
+        activeLocalbodies: [], // localbodies in a district
+        selectedLocalbody: [],
+        ward: null,
+        init: null,
+        debounce: null,
+        debounceerror: null,
+        user: null,
     }),
     computed: {
-        currentUser() {
-            return this.$store.getters.getUser;
+        userId() {
+            return this.$store.getters.getUser.user_id;
         },
-        activeUsergroups() {
-            const currentUsergroup = this.currentUser.usergroup;
-            const currentGroup = this.usergroups.find((item) => item.id === currentUsergroup );
-            return this.usergroups.filter((usergroup) => {
-                return usergroup.rank < currentGroup.rank;
-            });
-        }
     },
     watch: {
         page() {
             this.refreshPage();
         },
-        usergroup() {
+        per_page() {
             this.refreshPage();
+        },
+        selectedDistrict() {
+            this.filterLocalbodies();
+            this.refreshPage();
+        },
+        selectedLocalbody() {
+            this.refreshPage();
+        },
+        ward() {
+            clearTimeout(this.debounce);
+            clearTimeout(this.debounceerror);
+            if( this.ward > 0 && this.ward < 200 ) {
+                this.debounce = setTimeout(() => {
+                    this.refreshPage();
+                }, 1000);
+            } else if(!this.ward) {
+                this.debounce = setTimeout(() => {
+                    this.refreshPage();
+                }, 1000);
+            } else {
+                this.debounceerror = setTimeout(() => {
+                    this.$error('Invalid ward number.');
+                }, 1000);
+            }
+        },
+        user: {
+            deep: true,
+            handler() {
+                this.initDropdown();
+            }
         }
     },
     methods: {
-        getUsers(page, per_page, usergroup = null) {
-            this.$axios({
-                method: 'get',
-                url: '/users/profiles',
-                params: {
-                    page,
-                    per_page,
-                    ...(usergroup && { usergroup }),
-                },
-            }).then((response) => {
-                const data = response.data.data;
-                this.users = data.rows;
-                this.count = data.count;
-                this.total_pages = data.total_pages;
-            });
-        },
         listLocalbodies() {
             this.$axios({
                 method: 'get',
@@ -155,18 +199,109 @@ export default {
                 this.localbodies = localbodies;
             });
         },
+        filterLocalbodies() {
+            if(!this.init){
+                this.selectedLocalbody = null;
+            }
+            this.activeLocalbodies = this.localbodies.filter((item) => {
+                if (item.district === this.selectedDistrict) {
+                    return item;
+                }
+            });
+        },
+        listRation() {
+            this.pageLoading = true;
+            const page = this.page;
+            const per_page = this.per_page;
+            const district = this.selectedDistrict;
+            const localbody = this.selectedLocalbody ? this.selectedLocalbody.localbody_id : null;
+            let ward = this.ward > 0 && this.ward < 200 ? this.ward : null;
+
+            this.$axios({
+                method: 'get',
+                url: '/ration/list',
+                params: {
+                    page,
+                    per_page,
+                    district,
+                    localbody,
+                    ward,
+                }
+            }).then((response) => {
+                const rations = response.data.rations;
+
+                this.rations = rations.rows;
+                this.count = rations.count;
+                this.total_pages = Math.ceil(this.count/this.per_page);
+            }).finally(() => {
+                this.pageLoading = false;
+            });
+        },
+        listDistricts() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/districts',
+            }).then((response) => {
+                const districts = response.data.districts;
+
+                this.districts = districts.rows;
+            });
+        },
         refreshPage() {
-            this.getUsers(this.page, this.per_page, this.usergroup.id);
+            this.listRation();
+        },
+        initDropdown() {
+            if(!this.user || !this.user.localbody){
+                return;
+            }
+
+            this.init = true;
+            // to force watch
+            this.selectedDistrict = null;
+            this.selectedDistrict = this.user.localbody.district;
+            this.selectedLocalbody = Object.assign({});
+            const selectedLocalbody = this.localbodies.find((item) => item.localbody_id === this.user.localbody.localbody_id)
+            this.selectedLocalbody = Object.assign({}, selectedLocalbody);
+        },
+        getUser() {
+            const userId = this.userId;
+
+            this.$axios({
+                method: 'get',
+                url: `/users/profile/${userId}`,
+            }).then((response) => {
+                this.user = Object.assign({}, response.data.data.user);
+            });
         }
     },
     mounted() {
-        this.getUsers(this.page, this.per_page, this.usergroup.id);
+        this.getUser();
+        this.listDistricts();
         this.listLocalbodies();
+        this.listRation();
+        this.initDropdown();
     }
 };
 </script>
-<style scoped>
+<style>
 th, td {
     text-align: center;
+}
+
+.drop__down.dropdown-menu {
+    max-height: 250px;
+    overflow: auto;
+}
+
+.over__lay {
+    opacity: 0.4;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+    width: 100%;
+    z-index: 5000;
+    height: 100%;
+    border-radius: 0.375rem;
 }
 </style>
