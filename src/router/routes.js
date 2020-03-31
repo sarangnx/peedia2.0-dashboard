@@ -104,6 +104,16 @@ export default [
                 },
             },
             {
+                path: '/ration',
+                name: 'ration',
+                component: () => import(/* webpackChunkName: "ration" */ '@/views/Ration/Ration.vue'),
+                meta: {
+                    requiresAuth: true,
+                    minrank: 1,
+                    maxrank: 2
+                },
+            },
+            {
                 path: '/users',
                 name: 'users',
                 component: () => import(/* webpackChunkName: "users" */ '@/views/Users/Users.vue'),

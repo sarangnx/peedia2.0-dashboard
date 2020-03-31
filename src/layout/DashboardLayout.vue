@@ -53,10 +53,11 @@ export default {
                 { id: 'superadmin', name: 'Super Admin', rank: 4 },
             ],
             sidebarItems: [
-                { name: 'Dashboard', icon: 'fa fa-desktop text-primary', path: '/dashboard', type: 'sidebaritem', minrank: 1, maxrank: 2 },
-                { name: 'Dashboard', icon: 'fa fa-desktop text-primary', path: '/admin', type: 'sidebaritem', minrank: 3, maxrank: 4 },
-                { name: 'Orders', icon: 'fa fa-shopping-basket text-blue', path: '/orders', type: 'sidebaritem', minrank: 1, maxrank: 2 },
-                { name: 'Category', icon: 'fa fa-th text-blue', path: '/category', type: 'sidebaritem', minrank: 2, maxrank: 2 },
+                { name: 'Dashboard', icon: 'fas fa-desktop text-primary', path: '/dashboard', type: 'sidebaritem', minrank: 1, maxrank: 2 },
+                { name: 'Dashboard', icon: 'fas fa-desktop text-primary', path: '/admin', type: 'sidebaritem', minrank: 3, maxrank: 4 },
+                { name: 'Orders', icon: 'fas fa-shopping-basket text-blue', path: '/orders', type: 'sidebaritem', minrank: 1, maxrank: 2 },
+                { name: 'Ration', icon: 'fas fa-warehouse text-blue', path: '/ration', type: 'sidebaritem', minrank: 1, maxrank: 2 },
+                // { name: 'Category', icon: 'fa fa-th text-blue', path: '/category', type: 'sidebaritem', minrank: 2, maxrank: 2 },
                 { name: 'Items', icon:'fa fa-book text-blue', type: 'sidebardropdown',
                     children: [
                         { name: 'View Items', path: '/items/view-items' },
@@ -66,9 +67,9 @@ export default {
                     minrank: 2,
                     maxrank: 2
                 },
-                { name: 'Notifications', icon: 'fa fa-bell text-blue', path: '/notifications', type: 'sidebaritem', minrank: 2, maxrank: 4 },
-                { name: 'Localbody', icon: 'fa fa-store text-blue', path: '/localbody', type: 'sidebaritem', minrank: 3, maxrank: 4 },
-                { name: 'Users', icon: 'fa fa-user text-blue', path: '/users', type: 'sidebaritem', minrank: 2, maxrank: 4 }
+                { name: 'Notifications', icon: 'fas fa-bell text-blue', path: '/notifications', type: 'sidebaritem', minrank: 2, maxrank: 4 },
+                { name: 'Localbody', icon: 'fas fa-store text-blue', path: '/localbody', type: 'sidebaritem', minrank: 3, maxrank: 4 },
+                { name: 'Users', icon: 'fas fa-user text-blue', path: '/users', type: 'sidebaritem', minrank: 2, maxrank: 4 }
             ]
         };
     },
