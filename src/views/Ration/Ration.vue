@@ -138,7 +138,7 @@ export default {
         districts: [],
         selectedDistrict: null,
         activeLocalbodies: [], // localbodies in a district
-        selectedLocalbody: [],
+        selectedLocalbody: null,
         ward: null,
         init: null,
         debounce: null,
@@ -259,7 +259,7 @@ export default {
             // to force watch
             this.selectedDistrict = null;
             this.selectedDistrict = this.user.localbody.district;
-            this.selectedLocalbody = Object.assign({});
+            this.selectedLocalbody = null;
             const selectedLocalbody = this.localbodies.find((item) => item.localbody_id === this.user.localbody.localbody_id)
             this.selectedLocalbody = Object.assign({}, selectedLocalbody);
         },
