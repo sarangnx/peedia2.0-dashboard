@@ -27,13 +27,15 @@
                         </div> <!-- Outer Header -->
                         <div class="card-body table-responsive">
                             <base-table
-                                :data="users"
+                                :data="rations"
                                 type="hover table-striped table-sm"
                             >
                                 <template slot="columns">
                                     <th class="text-left">Name</th>
-                                    <th>Email</th>
                                     <th>Phone</th>
+                                    <th>Aadhar</th>
+                                    <th>Ration Card</th>
+                                    <th>Address</th>
                                     <th></th>
                                 </template>
 
@@ -42,10 +44,36 @@
                                         {{ row.name || 'N/A' }}
                                     </td>
                                     <td>
-                                        {{ row.email || 'N/A' }}
+                                        {{ row.phone || 'N/A' }}
                                     </td>
                                     <td>
-                                        {{ row.phone || 'N/A' }}
+                                        {{ row.aadhar_no || 'N/A' }}
+                                    </td>
+                                    <td>
+                                        {{ row.card_no || 'N/A' }}
+                                    </td>
+                                    <td class="text-left">
+                                        <div v-if="row.user && row.user.house">
+                                            <small class="text-muted font-weight-bold">House:</small> {{row.user.house}}
+                                        </div>
+                                        <div v-if="row.user && row.user.area">
+                                            <small class="text-muted font-weight-bold">Area:</small> {{row.user.area}},
+                                        </div>
+                                        <div v-if="row.user && row.user.landmark">
+                                            <small class="text-muted font-weight-bold">Landmark:</small> {{row.user.landmark}}
+                                        </div>
+                                        <div v-if="row.user && row.user.district">
+                                            <small class="text-muted font-weight-bold">District:</small> {{row.user.district}},
+                                        </div>
+                                        <div v-if="row.user && row.user.pincode">
+                                            <small class="text-muted font-weight-bold">Pincode:</small> {{row.user.pincode}},
+                                        </div>
+                                        <div v-if="row.user && row.user.ward">
+                                            <small class="text-muted font-weight-bold">Ward:</small> {{row.user.ward}}
+                                        </div>
+                                        <div v-if="row.user && row.user.localbody && row.user.localbody.name">
+                                            <small class="text-muted font-weight-bold">Localbody:</small> {{row.user.localbody.name}}
+                                        </div>
                                     </td>
                                     <td>
                                         <base-button
@@ -106,7 +134,8 @@ export default {
             { id: 'superadmin', name: 'Super Admin', rank: 4 },
         ],
         addModal: false,
-        localbodies: []
+        localbodies: [],
+        rations: [],
     }),
     computed: {
         currentUser() {
@@ -129,22 +158,6 @@ export default {
         }
     },
     methods: {
-        getUsers(page, per_page, usergroup = null) {
-            this.$axios({
-                method: 'get',
-                url: '/users/profiles',
-                params: {
-                    page,
-                    per_page,
-                    ...(usergroup && { usergroup }),
-                },
-            }).then((response) => {
-                const data = response.data.data;
-                this.users = data.rows;
-                this.count = data.count;
-                this.total_pages = data.total_pages;
-            });
-        },
         listLocalbodies() {
             this.$axios({
                 method: 'get',
@@ -155,13 +168,30 @@ export default {
                 this.localbodies = localbodies;
             });
         },
+        listRation() {
+            const page = this.page;
+            const per_page = this.per_page;
+            const district = this.district;
+            const localbody_id = this.localbody_id;
+
+            this.$axios({
+                method: 'get',
+                url: '/ration/list',
+            }).then((response) => {
+                const rations = response.data.rations;
+
+                this.rations = rations.rows;
+                this.count = rations.count;
+                this.total_pages = Math.ceil(this.count/this.per_page);
+            });
+        },
         refreshPage() {
-            this.getUsers(this.page, this.per_page, this.usergroup.id);
+            this.listRation();
         }
     },
     mounted() {
-        this.getUsers(this.page, this.per_page, this.usergroup.id);
         this.listLocalbodies();
+        this.listRation();
     }
 };
 </script>
