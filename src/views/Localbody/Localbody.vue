@@ -77,21 +77,14 @@
                                     </td>
                                     <td>
                                         <base-button
-                                            v-if="!row.blocked"
-                                            icon="fa fa-user-slash"
-                                            size="sm"
-                                            type="danger"
-                                            title="Block User"
-                                            @click="true"
-                                        ></base-button>
-                                        <base-button
-                                            v-else
-                                            icon="fa fa-user"
+                                            v-if="!row.store_id && !storeLoading"
+                                            icon="fa fa-store"
                                             size="sm"
                                             type="success"
-                                            title="Unblock User"
-                                            @click="true"
+                                            title="Create seperate store for this localbody."
+                                            @click="addStore(row.localbody_id)"
                                         ></base-button>
+                                        <loading v-if="storeLoading === row.localbody_id"/>
                                     </td>
                                 </template>
                             </base-table> <!-- Table -->
@@ -148,6 +141,7 @@ export default {
         localbodies: [],
         districts: [],
         selectedDistrict: null,
+        storeLoading: null,
     }),
     watch: {
         page() {
@@ -198,6 +192,28 @@ export default {
         },
         refreshPage() {
             this.listLocalbodies();
+        },
+        addStore(localbody_id) {
+            this.storeLoading = localbody_id;
+
+            this.$axios({
+                method: 'post',
+                url: '/localbodies/store/add',
+                data: {
+                    localbody_id,
+                }
+            }).then((response) => {
+                if(response.data && response.data.status === 'success'){
+                    this.$success('Store created.');
+                } else {
+                    throw new Error('Store not created');
+                }
+            }).catch(() => {
+                this.$error('Store not created.');
+            }).finally(() => {
+                this.storeLoading = null;
+                this.refreshPage();
+            });
         }
     },
     mounted() {
