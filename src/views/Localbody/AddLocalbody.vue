@@ -8,13 +8,23 @@
                 :disabled="loading"
                 :error="$v.localbody.name.$error ? 'Panchayath or Municipality Name Required' : null"
             ></base-input>
-            <base-input
-                v-model="localbody.district"
-                label="District"
-                class="col-12 col-md-6" maxlength="200"
-                :disabled="loading"
-                :error="$v.localbody.district.$error ? 'District Required' : null"
-            ></base-input>
+            <div class="form-group col-12 col-md-6">
+                <label class="form-control-label">District</label>
+                <select v-model="localbody.district" class="custom-select mr-sm-2"
+                    :class="[{'is-invalid': $v.localbody.district.$error}]"
+                    :disabled="loading"
+                >
+                    <option
+                        v-for="(district, index) in districts"
+                        :key="index"
+                    >
+                        {{district.name}}
+                    </option>
+                </select>
+                <div class="text-danger invalid-feedback" style="display: block;" v-if="$v.localbody.district.$error">
+                        District Required
+                </div>
+            </div>
             <base-input
                 v-model="localbody.state"
                 label="State"
@@ -25,8 +35,9 @@
             ></base-input>
             <div class="form-group col-12 col-md-6">
                 <label class="form-control-label">Type</label>
-                <select v-model="localbody.type" class="custom-select mr-sm-2" 
+                <select v-model="localbody.type" class="custom-select mr-sm-2"
                     :class="[{'is-invalid': $v.localbody.type.$error}]"
+                    :disabled="loading"
                 >
                     <option>panchayath</option>
                     <option>municipality</option>
@@ -120,16 +131,13 @@ export default {
     methods: {
         upload() {
             this.$v.$touch();
-            return;
+
             if( this.$v.$invalid ){
                 return;
             }
             this.loading = true;
 
-            const data = Object.assign({}, this.user);
-            data.localbody_id = data.localbody? data.localbody.localbody_id : null;
-            data.usergroup = data.usergroup? data.usergroup.id : null;
-            delete data.localbody;
+            const data = Object.assign({}, this.localbody);
 
             this.$axios({
                 method: 'post',
