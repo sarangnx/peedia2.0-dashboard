@@ -26,7 +26,7 @@
                     <base-input
                         :disabled="loading"
                         v-model="user.localbody.name"
-                        label="Pachayath or Municipality"
+                        label="Panchayath or Municipality"
                         maxlength="200"
                         @keyup="suggestLocalbody()"
                         slot="title"
