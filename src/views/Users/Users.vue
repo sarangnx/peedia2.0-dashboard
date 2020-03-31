@@ -94,6 +94,7 @@
                 <add-user :key="Date.now()"
                     @close="addModal = false"
                     :localbodies.sync="localbodies"
+                    :districts.sync="districts"
                 ></add-user>
             </div>
         </modal>
@@ -123,7 +124,8 @@ export default {
             { id: 'superadmin', name: 'Super Admin', rank: 4 },
         ],
         addModal: false,
-        localbodies: []
+        localbodies: [],
+        districts: [],
     }),
     computed: {
         currentUser() {
@@ -172,6 +174,16 @@ export default {
                 this.localbodies = localbodies;
             });
         },
+        listDistricts() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/districts',
+            }).then((response) => {
+                const districts = response.data.districts;
+
+                this.districts = districts.rows;
+            });
+        },
         refreshPage() {
             this.getUsers(this.page, this.per_page, this.usergroup.id);
         }
@@ -179,6 +191,7 @@ export default {
     mounted() {
         this.getUsers(this.page, this.per_page, this.usergroup.id);
         this.listLocalbodies();
+        this.listDistricts();
     }
 };
 </script>
