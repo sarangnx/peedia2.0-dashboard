@@ -12,7 +12,7 @@
                                 <!-- FILTER BY DISTRICT -->
                                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                                 <base-dropdown v-else position="right" class="mb-2 mb-md-0" menuClasses="drop__down custom__scrollbar">
-                                    <base-button slot="title" type="primary" class="dropdown-toggle text-capitalize" size="sm">
+                                    <base-button slot="title" type="primary" class="dropdown-toggle text-capitalize" size="sm" :disabled="init && selectedDistrict">
                                         {{ selectedDistrict || 'District' }}
                                     </base-button>
                                     <a class="dropdown-item text-black"
@@ -31,7 +31,7 @@
                                 <!-- FILTER BY LOCALBODY -->
                                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                                 <base-dropdown v-else-if="activeLocalbodies.length" position="right" class="mb-2 mb-md-0">
-                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm" :disabled="init">
+                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm" :disabled="init && selectedLocalbody">
                                         {{ selectedLocalbody ? selectedLocalbody.name : 'Panchayath or Municipality' }}
                                     </base-button>
                                     <a class="dropdown-item text-black" @click="selectedLocalbody =  null">All</a>
@@ -147,10 +147,11 @@ export default {
         init: null,
         debounce: null,
         debounceerror: null,
+        user: null,
     }),
     computed: {
-        currentUser() {
-            return this.$store.getters.getUser;
+        userId() {
+            return this.$store.getters.getUser.user_id;
         },
     },
     watch: {
@@ -184,6 +185,12 @@ export default {
                 }, 1000);
             }
         },
+        user: {
+            deep: true,
+            handler() {
+                this.initDropdown();
+            }
+        }
     },
     methods: {
         listLocalbodies() {
@@ -243,12 +250,37 @@ export default {
         },
         refreshPage() {
             this.listRation();
+        },
+        initDropdown() {
+            if(!this.user || !this.user.localbody){
+                return;
+            }
+
+            this.init = true;
+            // to force watch
+            this.selectedDistrict = null;
+            this.selectedDistrict = this.user.localbody.district;
+            this.selectedLocalbody = Object.assign({});
+            const selectedLocalbody = this.localbodies.find((item) => item.localbody_id === this.user.localbody.localbody_id)
+            this.selectedLocalbody = Object.assign({}, selectedLocalbody);
+        },
+        getUser() {
+            const userId = this.userId;
+
+            this.$axios({
+                method: 'get',
+                url: `/users/profile/${userId}`,
+            }).then((response) => {
+                this.user = Object.assign({}, response.data.data.user);
+            });
         }
     },
     mounted() {
+        this.getUser();
         this.listDistricts();
         this.listLocalbodies();
         this.listRation();
+        this.initDropdown();
     }
 };
 </script>
