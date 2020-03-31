@@ -132,7 +132,7 @@ export default {
     name: 'ration',
     data: () => ({
         page: 1,
-        per_page: 20,
+        per_page: 10,
         count: 0,
         total_pages: 0,
         pageLoading: null,
