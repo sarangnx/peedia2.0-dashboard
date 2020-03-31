@@ -107,14 +107,11 @@
                                     </td>
                                 </template>
                             </base-table> <!-- Table -->
+                            <div class="over__lay d-flex align-items-center" v-if="pageLoading">
+                                <loading color="white"/>
+                            </div>
                         </div> <!-- card body -->
                         <div class="card-footer">
-                            <div class="d-flex justify-content-end mb-3">
-                                <base-button type="success" @click="addModal = true">
-                                    <font-awesome-icon icon="plus" class="mr-2"/>
-                                    Create User
-                                </base-button>
-                            </div>
                             <base-pagination
                                 :page-count="total_pages"
                                 v-model="page"
@@ -136,7 +133,6 @@ export default {
         count: 0,
         total_pages: 0,
         pageLoading: null,
-        addModal: false,
         localbodies: [],
         rations: [],
         districts: [],
@@ -214,6 +210,7 @@ export default {
             });
         },
         listRation() {
+            this.pageLoading = true;
             const page = this.page;
             const per_page = this.per_page;
             const district = this.selectedDistrict;
@@ -236,6 +233,8 @@ export default {
                 this.rations = rations.rows;
                 this.count = rations.count;
                 this.total_pages = Math.ceil(this.count/this.per_page);
+            }).finally(() => {
+                this.pageLoading = false;
             });
         },
         listDistricts() {
@@ -292,5 +291,17 @@ th, td {
 .drop__down.dropdown-menu {
     max-height: 250px;
     overflow: auto;
+}
+
+.over__lay {
+    opacity: 0.4;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: black;
+    width: 100%;
+    z-index: 5000;
+    height: 100%;
+    border-radius: 0.375rem;
 }
 </style>
