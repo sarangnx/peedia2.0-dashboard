@@ -209,6 +209,8 @@ export default {
 <style scoped>
 th, td {
     text-align: center;
+    max-width: 200px;
+    overflow: auto;
 }
 .over__lay {
     opacity: 0.4;
