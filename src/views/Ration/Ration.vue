@@ -7,25 +7,30 @@
                 <div class="col-12">
                     <div class="card shadow">
                         <div  class="card-header d-flex justify-content-between flex-column flex-md-row align-items-center">
-                            <h3>Users</h3>
+                            <h3>Ration</h3>
                             <div class="d-flex align-items-center justify-content-around flex-column flex-md-row">
-                                <!-- FILTER BY USERGROUP -->
+                                <!-- FILTER BY DISTRICT -->
                                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                                 <base-dropdown v-else position="right" class="mb-2 mb-md-0">
-                                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
-                                        {{ usergroup.name || 'User group' }}
+                                    <base-button slot="title" type="primary" class="dropdown-toggle text-capitalize" size="sm">
+                                        {{ selectedDistrict || 'District' }}
                                     </base-button>
                                     <a class="dropdown-item text-black"
-                                        v-for="(item, index) in activeUsergroups"
+                                        @click="selectedDistrict = null"
+                                    >
+                                        All
+                                    </a>
+                                    <a class="dropdown-item text-black text-capitalize"
+                                        v-for="(item, index) in districts"
                                         :key="index"
-                                        @click="usergroup = Object.assign({}, item)"
+                                        @click="selectedDistrict = item.name"
                                     >
                                         {{ item.name }}
                                     </a>
                                 </base-dropdown>
                             </div>
                         </div> <!-- Outer Header -->
-                        <div class="card-body table-responsive">
+                        <div class="card-body table-responsive p-0 custom__scrollbar">
                             <base-table
                                 :data="rations"
                                 type="hover table-striped table-sm"
@@ -36,7 +41,6 @@
                                     <th>Aadhar</th>
                                     <th>Ration Card</th>
                                     <th>Address</th>
-                                    <th></th>
                                 </template>
 
                                 <template slot-scope="{row}">
@@ -75,24 +79,6 @@
                                             <small class="text-muted font-weight-bold">Localbody:</small> {{row.user.localbody.name}}
                                         </div>
                                     </td>
-                                    <td>
-                                        <base-button
-                                            v-if="!row.blocked"
-                                            icon="fa fa-user-slash"
-                                            size="sm"
-                                            type="danger"
-                                            title="Block User"
-                                            @click="true"
-                                        ></base-button>
-                                        <base-button
-                                            v-else
-                                            icon="fa fa-user"
-                                            size="sm"
-                                            type="success"
-                                            title="Unblock User"
-                                            @click="true"
-                                        ></base-button>
-                                    </td>
                                 </template>
                             </base-table> <!-- Table -->
                         </div> <!-- card body -->
@@ -117,45 +103,28 @@
 </template>
 <script>
 export default {
-    name: 'users',
+    name: 'ration',
     data: () => ({
         page: 1,
         per_page: 20,
         count: 0,
-        users: [],
         total_pages: 0,
-        usergroup: { id: 'user', name: 'Customers', rank: 0 },
         pageLoading: null,
-        usergroups: [
-            { id: 'user', name: 'Customers', rank: 0 },
-            { id: 'delivery', name: 'Delivery', rank: 1 },
-            { id: 'storeowner', name: 'Manager', rank: 2 },
-            { id: 'admin', name: 'Admin', rank: 3 },
-            { id: 'superadmin', name: 'Super Admin', rank: 4 },
-        ],
         addModal: false,
         localbodies: [],
         rations: [],
+        districts: [],
+        selectedDistrict: null
     }),
     computed: {
         currentUser() {
             return this.$store.getters.getUser;
         },
-        activeUsergroups() {
-            const currentUsergroup = this.currentUser.usergroup;
-            const currentGroup = this.usergroups.find((item) => item.id === currentUsergroup );
-            return this.usergroups.filter((usergroup) => {
-                return usergroup.rank < currentGroup.rank;
-            });
-        }
     },
     watch: {
         page() {
             this.refreshPage();
         },
-        usergroup() {
-            this.refreshPage();
-        }
     },
     methods: {
         listLocalbodies() {
@@ -185,11 +154,22 @@ export default {
                 this.total_pages = Math.ceil(this.count/this.per_page);
             });
         },
+        listDistricts() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/districts',
+            }).then((response) => {
+                const districts = response.data.districts;
+
+                this.districts = districts.rows;
+            });
+        },
         refreshPage() {
             this.listRation();
         }
     },
     mounted() {
+        this.listDistricts();
         this.listLocalbodies();
         this.listRation();
     }
