@@ -76,6 +76,9 @@
                     </base-button>
                 </div>
             </div>
+            <div class="over__lay" v-if="pageLoading">
+                <loading color="dark"/>
+            </div>
         </div> <!-- outer card body -->
         <!-- Delete Modal -->
         <modal :show.sync="deleteModal" gradient="danger">
@@ -188,6 +191,7 @@ export default {
     },
     methods: {
         getItemsByCategory({category_id, page, per_page, recursive}) {
+            this.pageLoading = true;
             const store_id = this.storeId;
 
             this.$axios({
@@ -210,9 +214,12 @@ export default {
 
                 // Initialize array
                 this.modals = Array.from({length: this.count}, () => false);
+            }).finally(() => {
+                this.pageLoading = false;
             });
         },
         getAllItems(page, per_page = 12){
+            this.pageLoading = true;
             const store_id = this.storeId;
 
             this.$axios({
@@ -233,6 +240,8 @@ export default {
 
                 // Initialize array
                 this.modals = Array.from({length: this.count}, () => false);
+            }).finally(() => {
+                this.pageLoading = false;
             });
 
         },
