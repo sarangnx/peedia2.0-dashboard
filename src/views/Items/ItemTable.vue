@@ -83,13 +83,14 @@
                             </div>
                         </td>
                         <td>
-                            <div class="form-group d-flex justify-content-center">
+                            <div class="form-group d-flex justify-content-center" v-if="uploading !== index">
                                 <base-button
                                     type="success"
                                     icon="ni ni-cloud-upload-96"
                                     @click.prevent.stop="uploadSingle(index)"
                                 ></base-button>
                             </div>
+                            <loading color="dark" size="sm" v-if="uploading === index"/>
                         </td>
                     </template>
                 </base-table>
@@ -134,6 +135,7 @@ export default {
         selectCategoryModal: false,
         selectedIndex: null,
         loading: null,
+        uploading: null,
     }),
     computed: {
         storeId() {
@@ -186,7 +188,7 @@ export default {
             this.$set(this.excel[index], 'image', event.target.files[0]);
         },
         uploadSingle(index) {
-
+            this.uploading = index;
             const data = this.excel[index];
             data.category_id = data.category? data.category.category_id : null;
             delete data.category;
@@ -205,25 +207,15 @@ export default {
                 data: formdata,
             }).then((response) => {
                 if( response.data && response.data.status === 'success' ){
-                    this.$notify({
-                        type: 'success',
-                        title: 'Success',
-                        message: 'Item Added to Inventory'
-                    });
+                    this.$success('Item Added to Inventory');
                     this.excel.splice(index,1);
                 } else {
-                    this.$notify({
-                        type: 'danger',
-                        title: 'Something went Wrong',
-                        message: 'Item not Added to Inventory'
-                    });
+                    this.$error('Item not Added to Inventory');
                 }
             }).catch(() => {
-                this.$notify({
-                    type: 'danger',
-                    title: 'Something went Wrong',
-                    message: 'Item not Added to Inventory'
-                });
+                this.$error('Item not Added to Inventory');
+            }).finally(() => {
+                this.uploading = null;
             });
         },
     },
