@@ -103,9 +103,19 @@ export default {
         sendNotification() {
             this.loading = true;
 
+            let topic;
+            if(this.selectedLocalbody && this.selectedLocalbody.localbody_id){
+                topic = `localbody${localbody_id}`;
+            } else if(this.selectedDistrict) {
+                topic = this.selectedDistrict;
+            } else {
+                topic = 'announcements'
+            }
+
             const data = {
                 notif_title: this.notif_title,
                 notif_body: this.notif_body,
+                topic,
             }
 
             this.$axios({
@@ -115,23 +125,15 @@ export default {
             }).then((response) => {
                 if(response.data && response.data.status === 'success'){
 
-                    this.$notify({
-                        type: 'success',
-                        title: 'Success',
-                        message: 'Notifications sent successfully'
-                    });
+                    this.$success('Notifications sent successfully');
 
                     this.loading = false;
                     this.notif_title = '';
                     this.notif_body = '';
                 }
             }).catch(() => {
-                
-                this.$notify({
-                    type: 'danger',
-                    title: 'Something went wrong!',
-                    message: 'Notification not sent'
-                });
+
+                this.$error('Notification not sent');
                 this.loading = false;
             });
 
@@ -144,7 +146,6 @@ export default {
                 const localbodies = response.data.localbodies.rows;
 
                 this.localbodies = localbodies;
-                console.log(this.localbodies);
             });
         },
         listDistricts() {
@@ -155,7 +156,6 @@ export default {
                 const districts = response.data.districts;
 
                 this.districts = districts.rows;
-                console.log(this.districts);
             });
         },
     },
