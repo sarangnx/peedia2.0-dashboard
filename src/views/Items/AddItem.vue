@@ -1,117 +1,123 @@
 <template>
-<div>
-    <div class="row align-items-center mb-3">
-        <div class="col">
-            <h1 class="mb-0">Add Item</h1>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <h3>Product Name</h3>
-        </div>
-        <div class="col-12 px-0">
-            <base-input v-model="item.item_name"
-                class="col-12 col-md-6" maxlength="200"
-                :error="$v.item.item_name.$error ? 'Item Name Required' : null"
-            ></base-input>
-        </div>
-        <div class="col-12">
-            <h3>Base Quantity</h3>
-        </div>
-        <base-input
-            v-model="item.quantity"
-            label="Quantity"
-            class="col-6" type="number" min="1"
-            :error="$v.item.quantity.$error ? 'Base Quantity Required' : null"
-        ></base-input>
-
-        <div class="form-group col-6">
-            <label class="form-control-label">Unit</label>
-            <select
-                v-model="item.unit"
-                class="custom-select mr-sm-2"
-                :class="[{'is-invalid': $v.item.unit.$error}]"
-            >
-                <option value="null">None</option>
-                <option>kg</option>
-                <option>g</option>
-                <option>l</option>
-                <option>ml</option>
-                <option>count</option>
-            </select>
-            <div
-                class="text-danger invalid-feedback"
-                style="display: block;"
-                v-if="$v.item.unit.$error"
-            >
-                Unit Required
-            </div>
-        </div>
-        <div class="col-12">
-            <h3>Price</h3>
-        </div>
-        <base-input
-            v-model="item.market_price"
-            class="col-6"
-        ></base-input>
-
-        <div class="col-12">
-            <h3>Category</h3>
-        </div>
-
-        <!-- CATEGORY -->
-        <div class="form-group col-12 col-md-6">
-            <base-input
-                v-model="item.category.category_name"
-                :error="$v.item.category.category_id.$error ? 'Category Required' : null"
-                class="mr-sm-2"
-                @focus="selectCategoryModal = true"
-            >
-            </base-input>
-            <modal :show.sync="selectCategoryModal" bodyClasses="pt-0">
-                <template slot="header">
-                    <h3 class="modal-title">Select Category</h3>
-                </template>
-                <select-category
-                    @category="selectCategory"
-                    @close="selectCategoryModal = false"
-                ></select-category>
-            </modal>
-        </div>
-        <!-- CATEGORY -->
-
-        <div class="col-12">
-            <h3>Product Image</h3>
-        </div>
-        <div class="form-group col-12">
-            <div class="input-group">
-                <div class="custom-file">
-                    <input type="file" ref="file" @change="loadImage($event)" class="custom-file-input" />
-                    <label class="custom-file-label" ref="image">Product Image</label>
-                </div>
-                <div class="input-group-append">
-                    <base-button
-                        type="danger"
-                        icon="ni ni-lg ni-fat-remove"
-                        @click.prevent="removeImage()"
-                    >
-                    </base-button>
+    <div class="card shadow">
+        <div class="card-header col-12 border-0">
+            <div class="row align-items-center mb-3">
+                <div class="col">
+                    <h1 class="mb-0">Add Item</h1>
                 </div>
             </div>
         </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h3>Product Name</h3>
+                    </div>
+                    <div class="col-12 px-0">
+                        <base-input v-model="item.item_name"
+                            class="col-12 col-md-6" maxlength="200"
+                            :error="$v.item.item_name.$error ? 'Item Name Required' : null"
+                        ></base-input>
+                    </div>
+                    <div class="col-12">
+                        <h3>Base Quantity</h3>
+                    </div>
+                    <base-input
+                        v-model="item.quantity"
+                        label="Quantity"
+                        class="col-6" type="number" min="1"
+                        :error="$v.item.quantity.$error ? 'Base Quantity Required' : null"
+                    ></base-input>
 
-        <div class="form-group col">
-            <base-button
-                type="success"
-                icon="ni ni-cloud-upload-96"
-                @click.prevent.stop="upload()"
-            >Add Item</base-button>
-        </div>
-        <div class="over__lay" v-if="loading">
-            <loading color="dark"/>
+                    <div class="form-group col-6">
+                        <label class="form-control-label">Unit</label>
+                        <select
+                            v-model="item.unit"
+                            class="custom-select mr-sm-2"
+                            :class="[{'is-invalid': $v.item.unit.$error}]"
+                        >
+                            <option value="null">None</option>
+                            <option>kg</option>
+                            <option>g</option>
+                            <option>l</option>
+                            <option>ml</option>
+                            <option>count</option>
+                        </select>
+                        <div
+                            class="text-danger invalid-feedback"
+                            style="display: block;"
+                            v-if="$v.item.unit.$error"
+                        >
+                            Unit Required
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <h3>Price</h3>
+                    </div>
+                    <base-input
+                        v-model="item.market_price"
+                        class="col-6"
+                    ></base-input>
+
+                    <div class="col-12">
+                        <h3>Category</h3>
+                    </div>
+
+                    <!-- CATEGORY -->
+                    <div class="form-group col-12 col-md-6">
+                        <base-input
+                            v-model="item.category.category_name"
+                            :error="$v.item.category.category_id.$error ? 'Category Required' : null"
+                            class="mr-sm-2"
+                            @focus="selectCategoryModal = true"
+                        >
+                        </base-input>
+                        <modal :show.sync="selectCategoryModal" bodyClasses="pt-0">
+                            <template slot="header">
+                                <h3 class="modal-title">Select Category</h3>
+                            </template>
+                            <select-category
+                                @category="selectCategory"
+                                @close="selectCategoryModal = false"
+                            ></select-category>
+                        </modal>
+                    </div>
+                    <!-- CATEGORY -->
+
+                    <div class="col-12">
+                        <h3>Product Image</h3>
+                    </div>
+                    <div class="form-group col-12">
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" ref="file" @change="loadImage($event)" class="custom-file-input" />
+                                <label class="custom-file-label" ref="image">Product Image</label>
+                            </div>
+                            <div class="input-group-append">
+                                <base-button
+                                    type="danger"
+                                    icon="ni ni-lg ni-fat-remove"
+                                    @click.prevent="removeImage()"
+                                >
+                                </base-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col">
+                        <base-button
+                            type="success"
+                            icon="ni ni-cloud-upload-96"
+                            @click.prevent.stop="upload()"
+                        >Add Item</base-button>
+                    </div>
+                    <div class="over__lay" v-if="loading">
+                        <loading color="dark"/>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 </template>
 <script>
 import { required } from 'vuelidate/lib/validators';

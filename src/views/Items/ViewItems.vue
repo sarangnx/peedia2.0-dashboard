@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="card shadow">
         <div  class="card-header d-flex justify-content-between">
             <h3>Items</h3>
             <div>
@@ -30,50 +30,52 @@
                 </base-dropdown>
             </div> <!-- Filter -->
         </div> <!-- Card Header -->
-        <div class="card-body d-flex flex-row justify-content-start flex-wrap">
+        <div class="card-body d-flex flex-row justify-content-start flex-wrap p-2">
             <div
                 v-for="(item, index) of items"
                 :key="item.item_id"
-                class="card col-md-4 mb-2 p-1"
+                class="col-md-4 mb-2 p-1 border-0"
             >
-                <div class="card-header d-flex justify-content-center">
-                    <img v-if="item.image_path" :src="`${baseUrl}/images/inventory/${item.image_path}`" class="item-image">
-                    <i v-else class="ni ni-image ni-5x"></i> <!-- Alt Image -->
-                </div>
-                <div class="card-body">
-                    <div>
-                        <h4 class="inline m-0 pr-2">Product Name:</h4>
-                        <span>{{ item.item_name }}</span>
+                <div class="card shadow h-100">
+                    <div class="card-header border-0 d-flex justify-content-center">
+                        <img v-if="item.image_path" :src="`${baseUrl}/images/inventory/${item.image_path}`" class="item-image">
+                        <i v-else class="ni ni-image ni-5x"></i> <!-- Alt Image -->
                     </div>
-                    <div>
-                        <h4 class="inline m-0 pr-2">Quantity:</h4>
-                        <span>{{ parseFloat(item.quantity) }}</span>
+                    <div class="card-body d-flex justify-content-end flex-column">
+                        <div>
+                            <h4 class="inline m-0 pr-2">Product Name:</h4>
+                            <span>{{ item.item_name }}</span>
+                        </div>
+                        <div>
+                            <h4 class="inline m-0 pr-2">Quantity:</h4>
+                            <span>{{ parseFloat(item.quantity) }}</span>
+                        </div>
+                        <div>
+                            <h4 class="inline m-0 pr-2">Unit:</h4>
+                            <span>{{ item.unit }}</span>
+                        </div>
+                        <div>
+                            <h4 class="inline m-0 pr-2">Market Price:</h4>
+                            <span>{{ parseFloat(item.market_price) }}</span>
+                        </div>
+                        <div v-if="item.offer_price">
+                            <h4 class="inline m-0 pr-2">Offer Price:</h4>
+                            <span>{{ parseFloat(item.offer_price) }}</span>
+                        </div>
                     </div>
-                    <div>
-                        <h4 class="inline m-0 pr-2">Unit:</h4>
-                        <span>{{ item.unit }}</span>
-                    </div>
-                    <div>
-                        <h4 class="inline m-0 pr-2">Market Price:</h4>
-                        <span>{{ parseFloat(item.market_price) }}</span>
-                    </div>
-                    <div v-if="item.offer_price">
-                        <h4 class="inline m-0 pr-2">Offer Price:</h4>
-                        <span>{{ parseFloat(item.offer_price) }}</span>
-                    </div>
-                </div>
-                <div class="card-footer d-flex justify-content-end">
-                    <base-button size="sm" type="danger"
-                        @click="deleteID = item.item_id; deleteModal = true; deleteIndex = index"
-                    >
-                        Delete
-                    </base-button>
+                    <div class="card-footer d-flex justify-content-end">
+                        <base-button size="sm" type="danger"
+                            @click="deleteID = item.item_id; deleteModal = true; deleteIndex = index"
+                        >
+                            Delete
+                        </base-button>
 
-                    <base-button size="sm" type="primary"
-                        @click="editID = item.item_id; editModal = true"
-                    >
-                        Edit
-                    </base-button>
+                        <base-button size="sm" type="primary"
+                            @click="editID = item.item_id; editModal = true"
+                        >
+                            Edit
+                        </base-button>
+                    </div>
                 </div>
             </div>
             <div class="over__lay" v-if="pageLoading">
