@@ -83,7 +83,7 @@
                             </div>
                         </td>
                         <td>
-                            <div class="form-group">
+                            <div class="form-group d-flex justify-content-center">
                                 <base-button
                                     type="success"
                                     icon="ni ni-cloud-upload-96"
@@ -102,6 +102,9 @@
                     </base-button>
                 </div>
             </div> <!-- card footer -->
+            <div class="over__lay" v-if="loading">
+                <loading color="dark"/>
+            </div>
         </div>
         <modal :show.sync="selectCategoryModal" bodyClasses="pt-0">
             <template slot="header">
@@ -130,7 +133,7 @@ export default {
         }, // selected category
         selectCategoryModal: false,
         selectedIndex: null,
-        eventTarget: null,
+        loading: null,
     }),
     computed: {
         storeId() {
@@ -147,11 +150,10 @@ export default {
             this.excel = [];
         },
         handleExcel(file) {
+            this.loading = true;
             let files = file.target.files, f = files[0];
             let reader = new FileReader();
-            reader.onprogess = (event) => {
-                console.log(event);
-            };
+
             reader.onload = (file) => {
                 const data = new Uint8Array(file.target.result);
                 // Load the excel book as an array
@@ -172,6 +174,7 @@ export default {
                  */
 
                 this.excel = jsonData;
+                this.loading = false;
             };
             reader.readAsArrayBuffer(f);
         },
@@ -223,34 +226,13 @@ export default {
                 });
             });
         },
-        activateHScroll() {
-            const table = this.$refs.table;
-            this.eventTarget = window.addEventListener('wheel', function(e){
-                if (e.deltaY > 0) {
-                    table.scrollLeft += 100;
-                } else {
-                    table.scrollLeft -= 100;
-                }
-            });
-        },
-        deactivateHScroll() {
-            window.removeEventListener('wheel', this.eventTarget);
-        }
     },
-    mounted() {
-        const table = this.$refs.table;
-        table.addEventListener('mouseenter', (e) => {
-            this.activateHScroll();
-        });
-        table.addEventListener('mouseleave', (e) => {
-            this.deactivateHScroll();
-        });
-    }
 };
 </script>
 <style>
 .minwidth {
     min-width: 200px;
+    text-align: center;
 }
 
 .table-responsive{
