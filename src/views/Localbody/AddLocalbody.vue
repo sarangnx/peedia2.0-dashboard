@@ -159,15 +159,3 @@ export default {
     },
 }
 </script>
-<style scoped>
-.over__lay {
-    opacity: 0.4;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: black;
-    width: 100%;
-    z-index: 5000;
-    height: 100%;
-}
-</style>
