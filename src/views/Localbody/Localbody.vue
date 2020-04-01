@@ -84,7 +84,7 @@
                                             title="Create seperate store for this localbody."
                                             @click="addStore(row.localbody_id)"
                                         ></base-button>
-                                        <loading v-if="storeLoading === row.localbody_id"/>
+                                        <loading v-if="storeLoading === row.localbody_id" size="sm"/>
                                     </td>
                                 </template>
                             </base-table> <!-- Table -->
