@@ -22,6 +22,8 @@ html, body, #app, .wrapper, .main-content {
 // Overlay for loading animation
 .over__lay {
     position: absolute;
+    display: flex;
+    align-items: center;
     top: 0;
     left: 0;
     background-color: rgba(0, 0, 0, 0.1);

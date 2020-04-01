@@ -10,27 +10,50 @@
             <h3>Product Name</h3>
         </div>
         <div class="col-12 px-0">
-            <base-input v-model="item.item_name" class="col-12 col-md-6" maxlength="200"></base-input>
+            <base-input v-model="item.item_name"
+                class="col-12 col-md-6" maxlength="200"
+                :error="$v.item.item_name.$error ? 'Item Name Required' : null"
+            ></base-input>
         </div>
         <div class="col-12">
             <h3>Base Quantity</h3>
         </div>
-        <base-input v-model="item.quantity" label="Quantity" class="col-6" type="number" min="1"></base-input>
+        <base-input
+            v-model="item.quantity"
+            label="Quantity"
+            class="col-6" type="number" min="1"
+            :error="$v.item.quantity.$error ? 'Base Quantity Required' : null"
+        ></base-input>
 
         <div class="form-group col-6">
             <label class="form-control-label">Unit</label>
-            <select v-model="item.unit" class="custom-select mr-sm-2">
+            <select
+                v-model="item.unit"
+                class="custom-select mr-sm-2"
+                :class="[{'is-invalid': $v.item.unit.$error}]"
+            >
+                <option value="null">None</option>
                 <option>kg</option>
                 <option>g</option>
                 <option>l</option>
                 <option>ml</option>
                 <option>count</option>
             </select>
+            <div
+                class="text-danger invalid-feedback"
+                style="display: block;"
+                v-if="$v.item.unit.$error"
+            >
+                Unit Required
+            </div>
         </div>
         <div class="col-12">
             <h3>Price</h3>
         </div>
-        <base-input v-model="item.market_price" class="col-6"></base-input>
+        <base-input
+            v-model="item.market_price"
+            class="col-6"
+        ></base-input>
 
         <div class="col-12">
             <h3>Category</h3>
@@ -39,7 +62,8 @@
         <!-- CATEGORY -->
         <div class="form-group col-12 col-md-6">
             <base-input
-                v-model="category.category_name"
+                v-model="item.category.category_name"
+                :error="$v.item.category.category_id.$error ? 'Category Required' : null"
                 class="mr-sm-2"
                 @focus="selectCategoryModal = true"
             >
@@ -53,7 +77,6 @@
                     @close="selectCategoryModal = false"
                 ></select-category>
             </modal>
-            
         </div>
         <!-- CATEGORY -->
 
@@ -67,7 +90,7 @@
                     <label class="custom-file-label" ref="image">Product Image</label>
                 </div>
                 <div class="input-group-append">
-                    <base-button 
+                    <base-button
                         type="danger"
                         icon="ni ni-lg ni-fat-remove"
                         @click.prevent="removeImage()"
@@ -84,10 +107,14 @@
                 @click.prevent.stop="upload()"
             >Add Item</base-button>
         </div>
+        <div class="over__lay" v-if="loading">
+            <loading color="dark"/>
+        </div>
     </div>
 </div>
 </template>
 <script>
+import { required } from 'vuelidate/lib/validators';
 import SelectCategory from './SelectCategory';
 
 export default {
@@ -96,12 +123,37 @@ export default {
         SelectCategory,
     },
     data: () => ({
-        item: {},
-        category: {
-            category_name: ''
-        }, // selected category
+        item: {
+            item_name: null,
+            quantity: null,
+            unit: null,
+            market_price: null,
+            category: {
+                category_id: null,
+                category_name: null,
+            },
+        },
         selectCategoryModal: false,
+        loading: null,
     }),
+    validations: {
+        item: {
+            item_name: {
+                required,
+            },
+            quantity: {
+                required,
+            },
+            unit: {
+                required
+            },
+            category: {
+                category_id: {
+                    required,
+                },
+            },
+        },
+    },
     computed: {
         storeId() {
             return this.$store.getters.getUser.store[0].store_id;
@@ -109,7 +161,7 @@ export default {
     },
     methods: {
         selectCategory(category) {
-            this.category = Object.assign({}, this.category, category);
+            this.$set(this.item, 'category', category);
         },
         loadImage(event) {
             this.item.image = event.target.files[0];
@@ -127,10 +179,15 @@ export default {
             this.$refs.image.innerHTML = 'Product Image';
         },
         upload() {
+            this.$v.$touch();
+            if(this.$v.$invalid) {
+                return;
+            }
+            this.loading = true;
 
-            const data = this.item;
+            const data = Object.assign({}, this.item);
             // assign category id from selected category
-            data.category_id = this.category.category_id;
+            data.category_id = data.category.category_id;
 
             // remove keys with null or undefined or 0 value.
             for (let key in data) {
@@ -156,32 +213,29 @@ export default {
                 if (response.data && response.data.status === "success") {
 
                     // Reset item and image on successful upload.
-                    this.item = null;
                     this.item = {
-                        category_id: 0,
-                    };
+                        item_name: null,
+                        quantity: null,
+                        unit: null,
+                        market_price: null,
+                        category: {
+                            category_id: null,
+                            category_name: null,
+                        },
+                    }
 
                     // remove selected image
                     this.removeImage();
 
-                    this.$notify({
-                        type: "success",
-                        title: "Success",
-                        message: "Item Added to Inventory"
-                    });
+                    this.$success('Item Added to Inventory');
                 } else {
-                    this.$notify({
-                        type: "danger",
-                        title: "Something went Wrong",
-                        message: "Item not Added to Inventory"
-                    });
+                    throw new Error('Item not Added to Inventory');
                 }
             }).catch(() => {
-                this.$notify({
-                    type: "danger",
-                    title: "Something went Wrong",
-                    message: "Item not Added to Inventory"
-                });
+                this.error('Item not Added to Inventory');
+            }).finally(() => {
+                this.$v.$reset();
+                this.loading = false;
             });
         }
     },
