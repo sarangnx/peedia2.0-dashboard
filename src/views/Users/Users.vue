@@ -90,7 +90,7 @@
             </template>
             <div class="container">
                 <add-user :key="Date.now()"
-                    @close="addModal = false"
+                    @close="closeModal"
                     :localbodies.sync="localbodies"
                     :districts.sync="districts"
                 ></add-user>
@@ -171,7 +171,6 @@ export default {
                 this.users = data.rows;
                 this.count = data.count;
                 this.total_pages = data.total_pages;
-                console.log(this.users);
             }).finally(() => {
                 this.loading = false;
             });
@@ -266,6 +265,10 @@ export default {
                 this.storeLoading = null;
                 this.refreshPage();
             });
+        },
+        closeModal() {
+            this.addModal = false;
+            this.refreshPage();
         }
     },
     mounted() {

@@ -254,21 +254,13 @@ export default {
                 data: data,
             }).then((response) => {
                 if (response.data && response.data.status === "success") {
-                    this.$notify({
-                        type: "success",
-                        title: "Success",
-                        message: "User Added."
-                    });
+                    this.$success('User Added.');
                     this.$emit('close');
                 } else {
                     throw new Error('User Not Added.')
                 }
             }).catch(() => {
-                this.$notify({
-                    type: "danger",
-                    title: "Something went Wrong",
-                    message: "User Not Added."
-                });
+                this.$error('User Not Added.');
             }).finally(() => {
                 this.loading = false;
             });
