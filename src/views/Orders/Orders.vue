@@ -73,7 +73,13 @@ export default {
             return this.$store.getters.serverUrl;
         },
         storeId() {
-            return this.$store.getters.getUser.store[0].store_id;
+            const user = this.$store.getters.getUser;
+            if( user.store && user.store.length ){
+                return user.store[0].store_id;
+            }
+            else {
+                return null;
+            }
         },
         userId() {
             return this.$store.getters.getUser.user_id;
