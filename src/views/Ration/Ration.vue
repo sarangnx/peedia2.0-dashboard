@@ -108,7 +108,7 @@
                                 </template>
                             </base-table> <!-- Table -->
                             <div class="over__lay d-flex align-items-center" v-if="pageLoading">
-                                <loading color="white"/>
+                                <loading color="dark"/>
                             </div>
                         </div> <!-- card body -->
                         <div class="card-footer">

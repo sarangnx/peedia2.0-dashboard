@@ -67,6 +67,9 @@
                                     </td>
                                 </template>
                             </base-table> <!-- Table -->
+                            <div class="over__lay d-flex align-items-center" v-if="loading">
+                                <loading color="dark"/>
+                            </div>
                         </div> <!-- card body -->
                         <div class="card-footer">
                             <div class="d-flex justify-content-end mb-3">
@@ -116,6 +119,7 @@ export default {
         total_pages: 0,
         usergroup: { id: 'user', name: 'Customers', rank: 0 },
         pageLoading: null,
+        loading: null,
         usergroups: [
             { id: 'user', name: 'Customers', rank: 0 },
             { id: 'delivery', name: 'Delivery', rank: 1 },
@@ -149,6 +153,8 @@ export default {
     },
     methods: {
         getUsers(page, per_page, usergroup = null) {
+            this.loading = true;
+
             this.$axios({
                 method: 'get',
                 url: '/users/profiles',
@@ -162,6 +168,8 @@ export default {
                 this.users = data.rows;
                 this.count = data.count;
                 this.total_pages = data.total_pages;
+            }).finally(() => {
+                this.loading = false;
             });
         },
         listLocalbodies() {

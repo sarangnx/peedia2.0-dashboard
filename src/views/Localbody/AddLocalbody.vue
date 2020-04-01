@@ -80,7 +80,7 @@
             <base-button :disabled="loading" block @click="upload">Add Localbody</base-button>
         </div>
         <div class="over__lay d-flex align-items-center" v-if="loading">
-            <loading/>
+            <loading color="dark"/>
         </div>
     </div>
 </template>

@@ -100,7 +100,7 @@
             <base-button :disabled="loading" block @click="upload">Add User</base-button>
         </div>
         <div class="over__lay d-flex align-items-center" v-if="loading">
-            <loading/>
+            <loading color="dark"/>
         </div>
     </div>
 </template>
@@ -294,15 +294,5 @@ export default {
 .drop__down.dropdown-menu::-webkit-scrollbar-thumb {
     border-radius: 10px;
     box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-}
-.over__lay {
-    opacity: 0.4;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: black;
-    width: 100%;
-    z-index: 5000;
-    height: 100%;
 }
 </style>
