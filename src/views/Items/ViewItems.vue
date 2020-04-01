@@ -54,7 +54,7 @@
                             <h4 class="inline m-0 pr-2">Unit:</h4>
                             <span>{{ item.unit }}</span>
                         </div>
-                        <div>
+                        <div v-if="item.market_price">
                             <h4 class="inline m-0 pr-2">Market Price:</h4>
                             <span>{{ parseFloat(item.market_price) }}</span>
                         </div>
