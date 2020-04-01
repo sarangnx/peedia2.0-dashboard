@@ -61,6 +61,9 @@
             </div>
         </div>
         <div class="card-body d-flex flex-row justify-content-around flex-wrap">
+            <div class="over__lay" v-if="pageLoading">
+                <loading/>
+            </div>
             <div
                 v-for="(order, index) in tableData"
                 :key="order.order_id"
@@ -295,7 +298,7 @@ export default {
     },
     methods: {
         getOrders() {
-
+            this.pageLoading = true;
             const store_id = this.storeId;
             const page = this.page || 1;
             const per_page = this.per_page || 10;
@@ -328,6 +331,8 @@ export default {
                 // initialize array
                 this.modals = Array.from({length: this.count}, () => false);
                 this.loading = Array.from({length: this.count}, () => false);
+            }).finally(() => {
+                this.pageLoading = false;
             });
 
         },
