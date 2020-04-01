@@ -105,7 +105,7 @@ export default {
 
             let topic;
             if(this.selectedLocalbody && this.selectedLocalbody.localbody_id){
-                topic = `localbody${localbody_id}`;
+                topic = `localbody${this.selectedLocalbody.localbody_id}`;
             } else if(this.selectedDistrict) {
                 topic = this.selectedDistrict;
             } else {
