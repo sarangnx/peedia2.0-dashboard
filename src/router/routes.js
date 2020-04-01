@@ -32,7 +32,7 @@ export default [
                 meta: {
                     requiresAuth: true,
                     minrank: 1,
-                    maxrank: 2
+                    maxrank: 4
                 },
             },
             {
@@ -42,9 +42,9 @@ export default [
                 meta: {
                     requiresAuth: true,
                     minrank: 2,
-                    maxrank: 2,
+                    maxrank: 4,
                 },
-                redirect: '/items/view-item',
+                redirect: '/items/view-items',
                 children: [
                     {
                         path: 'add-item',
