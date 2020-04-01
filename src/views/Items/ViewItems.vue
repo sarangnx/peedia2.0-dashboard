@@ -152,7 +152,13 @@ export default {
     }),
     computed: {
         storeId() {
-            return this.$store.getters.getUser.store[0].store_id;
+            const user = this.$store.getters.getUser;
+            if( user.store && user.store.length ){
+                return user.store[0].store_id;
+            }
+            else {
+                return null;
+            }
         },
         baseUrl() {
             // base url of api server where images are uploaded.
