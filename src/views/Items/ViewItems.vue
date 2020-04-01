@@ -10,7 +10,7 @@
                         {{ category.name }}
                     </base-button>
                     <a class="dropdown-item"
-                        @click.stop="category={ 
+                        @click.stop="category={
                             name: 'All',
                             id: 0
                         }"
@@ -20,7 +20,7 @@
                     <a class="dropdown-item"
                         v-for="item in categories"
                         :key="item.category_id"
-                        @click.stop="category={ 
+                        @click.stop="category={
                             name: item.category_name,
                             id: item.category_id
                         }"
@@ -111,13 +111,13 @@
             </div>
         </modal>
         <div class="card-footer">
-            <base-pagination 
+            <base-pagination
                 :page-count="total_pages"
                 v-model="page"
                 align="center">
                 </base-pagination>
         </div>
-    </div>       
+    </div>
 </template>
 <script>
 import EditItem from './EditItem';
@@ -188,6 +188,8 @@ export default {
     },
     methods: {
         getItemsByCategory({category_id, page, per_page, recursive}) {
+            const store_id = this.storeId;
+
             this.$axios({
                 method: 'get',
                 url: '/inventory/items/category',
@@ -196,6 +198,7 @@ export default {
                     page,
                     per_page,
                     recursive,
+                    store_id,
                 }
             }).then((response) => {
                 const data = response.data.data;
@@ -210,6 +213,7 @@ export default {
             });
         },
         getAllItems(page, per_page = 12){
+            const store_id = this.storeId;
 
             this.$axios({
                 method: 'get',
@@ -217,6 +221,7 @@ export default {
                 params: {
                     page,
                     per_page,
+                    store_id,
                 }
             }).then((response) => {
                 const data = response.data.data;
@@ -232,7 +237,6 @@ export default {
 
         },
         getCategories() {
-
             // return if already loaded.
             if (Object.entries(this.categories).length !== 0) {
                 return;
@@ -250,7 +254,6 @@ export default {
 
         },
         deleteItem() {
-
             const item_id = this.deleteID;
             const index = this.deleteIndex;
 
@@ -260,28 +263,16 @@ export default {
                 url: `/inventory/item/${item_id}`
             }).then((response) => {
                 if (response.data && response.data.status === "success") {
-                    this.$notify({
-                        type: "success",
-                        title: "Success",
-                        message: "Item Deleted."
-                    });
+                    this.$success('Item Deleted.');
 
                     // Delete the item from the array.
                     this.items.splice(index, 1);
 
                 } else {
-                    this.$notify({
-                        type: "danger",
-                        title: "Something went Wrong!",
-                        message: "Item not deleted."
-                    });
+                    this.$error('Item not deleted.');
                 }
             }).catch(() => {
-                this.$notify({
-                    type: "danger",
-                    title: "Something went Wrong!",
-                    message: "Item not deleted."
-                });
+                this.$error('Item not deleted.');
             }).finally(() => {
                 this.deleteID = null;
                 this.deleteModal = false;
