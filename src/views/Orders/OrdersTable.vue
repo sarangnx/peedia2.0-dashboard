@@ -180,7 +180,7 @@
                 <h4 class="heading mt-4">Are you sure you want to delete this order?</h4>
                 <p class="text-white">This action cannot be reverted.</p>
             </div>
-            <loading v-if="deleteLoading" color="white"></loading>
+            <loading v-if="deleteLoading" color="dark"></loading>
             <template slot="footer" v-if="!deleteLoading">
                 <base-button type="white"
                     @click="deleteOrder()"

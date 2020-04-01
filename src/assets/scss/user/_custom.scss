@@ -18,3 +18,14 @@ html, body, #app, .wrapper, .main-content {
     border-radius: 10px;
     background: #616161;
 }
+
+// Overlay for loading animation
+.over__lay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.1);
+    width: 100%;
+    z-index: 5000;
+    height: 100%;
+}

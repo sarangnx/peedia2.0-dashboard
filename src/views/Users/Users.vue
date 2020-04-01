@@ -25,7 +25,7 @@
                                 </base-dropdown>
                             </div>
                         </div> <!-- Outer Header -->
-                        <div class="card-body table-responsive">
+                        <div class="card-body table-responsive p-0 custom__scrollbar">
                             <base-table
                                 :data="users"
                                 type="hover table-striped table-sm"
@@ -48,25 +48,23 @@
                                         {{ row.phone || 'N/A' }}
                                     </td>
                                     <td>
-                                        <base-button
-                                            v-if="!row.blocked"
-                                            icon="fa fa-user-slash"
-                                            size="sm"
-                                            type="danger"
-                                            title="Block User"
-                                            @click="true"
-                                        ></base-button>
-                                        <base-button
-                                            v-else
-                                            icon="fa fa-user"
-                                            size="sm"
-                                            type="success"
-                                            title="Unblock User"
-                                            @click="true"
-                                        ></base-button>
+                                        <div v-if="currentUsergroup.rank > 2 && ( row.usergroup === 'delivery' || row.usergroup === 'storeowner')">
+                                            <base-button
+                                                v-if="!row.store.length && !storeLoading && ( row.usergroup === 'delivery' || row.usergroup === 'storeowner')"
+                                                icon="fa fa-store"
+                                                size="sm"
+                                                type="success"
+                                                title="Add User to a store in their localbody. Localbody store has to be created first."
+                                                @click="addStore(row.user_id)"
+                                            ></base-button>
+                                            <loading v-if="storeLoading === row.user_id" size="sm"/>
+                                        </div>
                                     </td>
                                 </template>
                             </base-table> <!-- Table -->
+                            <div class="over__lay d-flex align-items-center" v-if="loading">
+                                <loading color="dark"/>
+                            </div>
                         </div> <!-- card body -->
                         <div class="card-footer">
                             <div class="d-flex justify-content-end mb-3">
@@ -94,6 +92,7 @@
                 <add-user :key="Date.now()"
                     @close="addModal = false"
                     :localbodies.sync="localbodies"
+                    :districts.sync="districts"
                 ></add-user>
             </div>
         </modal>
@@ -115,6 +114,7 @@ export default {
         total_pages: 0,
         usergroup: { id: 'user', name: 'Customers', rank: 0 },
         pageLoading: null,
+        loading: null,
         usergroups: [
             { id: 'user', name: 'Customers', rank: 0 },
             { id: 'delivery', name: 'Delivery', rank: 1 },
@@ -123,7 +123,9 @@ export default {
             { id: 'superadmin', name: 'Super Admin', rank: 4 },
         ],
         addModal: false,
-        localbodies: []
+        localbodies: [],
+        districts: [],
+        storeLoading: null,
     }),
     computed: {
         currentUser() {
@@ -135,6 +137,11 @@ export default {
             return this.usergroups.filter((usergroup) => {
                 return usergroup.rank < currentGroup.rank;
             });
+        },
+        currentUsergroup() {
+            const currentUsergroup = this.currentUser.usergroup;
+            const currentGroup = this.usergroups.find((item) => item.id === currentUsergroup );
+            return currentGroup;
         }
     },
     watch: {
@@ -147,6 +154,8 @@ export default {
     },
     methods: {
         getUsers(page, per_page, usergroup = null) {
+            this.loading = true;
+
             this.$axios({
                 method: 'get',
                 url: '/users/profiles',
@@ -160,6 +169,8 @@ export default {
                 this.users = data.rows;
                 this.count = data.count;
                 this.total_pages = data.total_pages;
+            }).finally(() => {
+                this.loading = false;
             });
         },
         listLocalbodies() {
@@ -172,13 +183,46 @@ export default {
                 this.localbodies = localbodies;
             });
         },
+        listDistricts() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/districts',
+            }).then((response) => {
+                const districts = response.data.districts;
+
+                this.districts = districts.rows;
+            });
+        },
         refreshPage() {
             this.getUsers(this.page, this.per_page, this.usergroup.id);
+        },
+        addStore(user_id) {
+            this.storeLoading = user_id;
+
+            this.$axios({
+                method: 'post',
+                url: '/users/store/add',
+                data: {
+                    user_id,
+                }
+            }).then((response) => {
+                if(response.data && response.data.status === 'success'){
+                    this.$success('Added to Store.');
+                } else {
+                    throw new Error('User not added to Store.');
+                }
+            }).catch(() => {
+                this.$error('User not added to Store.');
+            }).finally(() => {
+                this.storeLoading = null;
+                this.refreshPage();
+            });
         }
     },
     mounted() {
         this.getUsers(this.page, this.per_page, this.usergroup.id);
         this.listLocalbodies();
+        this.listDistricts();
     }
 };
 </script>

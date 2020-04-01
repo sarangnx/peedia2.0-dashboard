@@ -21,6 +21,33 @@
                 class="col-12 col-md-6" maxlength="200"
                 :disabled="loading"
             ></base-input>
+            <base-input
+                v-model="user.state"
+                label="State"
+                class="col-12 col-md-6"
+                maxlength="200"
+                :disabled="loading"
+                :error="$v.user.state.$error ? 'State Required' : null"
+            ></base-input>
+            <div class="form-group col-12 col-md-6">
+                <label class="form-control-label">District</label>
+                <select v-model="user.district" class="custom-select mr-sm-2"
+                    @change="selectedDistrict = user.district"
+                    :class="[{'is-invalid': $v.user.district.$error}]"
+                    :disabled="loading"
+                >
+                    <option
+                        class="text-capitalize"
+                        v-for="(district, index) in districts"
+                        :key="index"
+                    >
+                        {{ district.name }}
+                    </option>
+                </select>
+                <div class="text-danger invalid-feedback" style="display: block;" v-if="$v.user.district.$error">
+                    District Required
+                </div>
+            </div>
             <div class="col-12 col-md-6">
                 <base-dropdown class="w-100" menuClasses="drop__down">
                     <base-input
@@ -48,22 +75,6 @@
                 type="number" label="Ward"
                 class="col-12 col-md-6" maxlength="200"
                 :disabled="loading"
-                :error="$v.user.ward.$error ? 'Ward Required' : null"
-            ></base-input>
-            <base-input
-                v-model="user.district"
-                label="District"
-                class="col-12 col-md-6" maxlength="200"
-                :disabled="loading"
-                :error="$v.user.district.$error ? 'District Required' : null"
-            ></base-input>
-            <base-input
-                v-model="user.state"
-                label="State"
-                class="col-12 col-md-6"
-                maxlength="200"
-                :disabled="loading"
-                :error="$v.user.state.$error ? 'State Required' : null"
             ></base-input>
             <div class="col-12">
                 <base-dropdown class="w-100" direction="up" menuClasses="drop__down">
@@ -89,7 +100,7 @@
             <base-button :disabled="loading" block @click="upload">Add User</base-button>
         </div>
         <div class="over__lay d-flex align-items-center" v-if="loading">
-            <loading/>
+            <loading color="dark"/>
         </div>
     </div>
 </template>
@@ -124,12 +135,23 @@ export default {
             { id: 'superadmin', name: 'Super Admin', rank: 4 },
         ],
         loading: false,
+        selectedDistrict: null,
+        activeLocalbodies: [], // localbodies in a district
     }),
     props: {
         localbodies: {
             type: Array,
             default: () => ([]),
         },
+        districts: {
+            type: Array,
+            default: () => ([]),
+        },
+    },
+    watch: {
+        selectedDistrict() {
+            this.filterLocalbodies();
+        }
     },
     validations() {
         let schema = {
@@ -154,9 +176,6 @@ export default {
             this.user.usergroup.id === 'storeowner'
         ) {
             schema.user = Object.assign({}, schema.user, {
-                ward: {
-                    required,
-                },
                 district: {
                     required,
                 },
@@ -171,7 +190,6 @@ export default {
             });
         } else {
             schema.user = Object.assign({}, schema.user, {
-                ward: {},
                 district: {},
                 state: {},
                 localbody: {
@@ -208,8 +226,15 @@ export default {
 
             const regEx = new RegExp(search, 'i');
 
-            this.localbodyDropdown = this.localbodies.filter(item => item.name.match(regEx));
+            this.localbodyDropdown = this.activeLocalbodies.filter(item => item.name.match(regEx));
             this.searchDropdown = true;
+        },
+        filterLocalbodies() {
+            this.activeLocalbodies = this.localbodies.filter((item) => {
+                if (item.district === this.selectedDistrict) {
+                    return item;
+                }
+            });
         },
         upload() {
             this.$v.$touch();
@@ -247,7 +272,7 @@ export default {
             }).finally(() => {
                 this.loading = false;
             });
-        }
+        },
     },
 }
 </script>
@@ -269,15 +294,5 @@ export default {
 .drop__down.dropdown-menu::-webkit-scrollbar-thumb {
     border-radius: 10px;
     box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-}
-.over__lay {
-    opacity: 0.4;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: black;
-    width: 100%;
-    z-index: 5000;
-    height: 100%;
 }
 </style>

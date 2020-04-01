@@ -108,7 +108,7 @@
                                 </template>
                             </base-table> <!-- Table -->
                             <div class="over__lay d-flex align-items-center" v-if="pageLoading">
-                                <loading color="white"/>
+                                <loading color="dark"/>
                             </div>
                         </div> <!-- card body -->
                         <div class="card-footer">
@@ -291,17 +291,5 @@ th, td {
 .drop__down.dropdown-menu {
     max-height: 250px;
     overflow: auto;
-}
-
-.over__lay {
-    opacity: 0.4;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: black;
-    width: 100%;
-    z-index: 5000;
-    height: 100%;
-    border-radius: 0.375rem;
 }
 </style>
