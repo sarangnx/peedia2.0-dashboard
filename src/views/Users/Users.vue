@@ -126,6 +126,7 @@ export default {
         localbodies: [],
         districts: [],
         storeLoading: null,
+        currentUserProfile: {},
     }),
     computed: {
         currentUser() {
@@ -153,7 +154,7 @@ export default {
         }
     },
     methods: {
-        getUsers(page, per_page, usergroup = null) {
+        getUsers(page, per_page, usergroup = null, localbody_id = null) {
             this.loading = true;
 
             this.$axios({
@@ -163,14 +164,46 @@ export default {
                     page,
                     per_page,
                     ...(usergroup && { usergroup }),
+                    localbody_id
                 },
             }).then((response) => {
                 const data = response.data.data;
                 this.users = data.rows;
                 this.count = data.count;
                 this.total_pages = data.total_pages;
+                console.log(this.users);
             }).finally(() => {
                 this.loading = false;
+            });
+        },
+        getCurrentUserProfile() {
+            const userId = this.currentUser.user_id;
+
+            this.$axios({
+                method: 'get',
+                url: `/users/profile/${userId}`,
+            }).then((response) => {
+                const data = response.data.data;
+                this.currentUserProfile = data.user;
+                if(
+                    this.currentUserProfile.localbody &&
+                    this.currentUserProfile.localbody.localbody_id &&
+                    this.currentUserProfile.usergroup != 'admin' &&
+                    this.currentUserProfile.usergroup != 'superadmin'
+                ) {
+                    this.getUsers(
+                        this.page,
+                        this.per_page,
+                        this.usergroup.id,
+                        this.currentUserProfile.localbody.localbody_id
+                    );
+                } else {
+                    this.getUsers(
+                        this.page,
+                        this.per_page,
+                        this.usergroup.id
+                    );
+                }
             });
         },
         listLocalbodies() {
@@ -194,7 +227,23 @@ export default {
             });
         },
         refreshPage() {
-            this.getUsers(this.page, this.per_page, this.usergroup.id);
+            if(
+                this.currentUserProfile.usergroup != 'admin' &&
+                this.currentUserProfile.usergroup != 'superadmin'
+            ) {
+                this.getUsers(
+                    this.page,
+                    this.per_page,
+                    this.usergroup.id,
+                    this.currentUserProfile.localbody.localbody_id
+                );
+            } else {
+                this.getUsers(
+                    this.page,
+                    this.per_page,
+                    this.usergroup.id
+                );
+            }
         },
         addStore(user_id) {
             this.storeLoading = user_id;
@@ -220,7 +269,7 @@ export default {
         }
     },
     mounted() {
-        this.getUsers(this.page, this.per_page, this.usergroup.id);
+        this.getCurrentUserProfile()
         this.listLocalbodies();
         this.listDistricts();
     }
