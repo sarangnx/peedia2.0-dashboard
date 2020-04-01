@@ -10,6 +10,52 @@
                             <h3>Send Notifications</h3>
                         </div>
                         <div class="card-body">
+                            <!-- FILTER BY DISTRICT -->
+                            <div class="col-12 mb-2 d-flex flex-column">
+                                <label class="form-control-label">Audience</label>
+                                <div class="d-flex flex-row align-items-baseline">
+                                    <div>
+                                        <base-dropdown position="left" menuClasses="drop__down m-0">
+                                            <base-button slot="title" type="primary" class="dropdown-toggle" size="sm"
+                                                :disabled="selectedLocalbody.name"
+                                            >
+                                                {{ selectedDistrict || 'District' }}
+                                            </base-button>
+                                            <a class="dropdown-item text-black" @click="selectedDistrict = null">None</a>
+                                            <a class="dropdown-item text-black"
+                                                v-for="(district, index) in districts"
+                                                :key="index"
+                                                @click="selectedDistrict = district.name"
+                                            >
+                                                <span class="text-capitalize">{{ district.name }}</span>
+                                            </a>
+                                        </base-dropdown>
+                                    </div>
+                                    <div class="p-2 mr-2">
+                                        <h3 class="text-muted">OR</h3>
+                                    </div>
+                                    <div>
+                                        <base-dropdown position="left" menuClasses="drop__down">
+                                            <base-button slot="title" type="primary" class="dropdown-toggle" size="sm"
+                                                :disabled="selectedDistrict"
+                                            >
+                                                {{ selectedLocalbody.name || 'Localbody' }}
+                                            </base-button>
+                                            <a class="dropdown-item text-black" @click="selectedLocalbody = Object.assign({})">None</a>
+                                            <a class="dropdown-item text-black"
+                                                v-for="(localbody, index) in localbodies"
+                                                :key="index"
+                                                @click="selectedLocalbody = Object.assign({}, localbody)"
+                                            >
+                                                <span class="text-capitalize">{{ localbody.name }}</span>
+                                            </a>
+                                        </base-dropdown>
+                                    </div>
+                                </div>
+                                <div>
+                                    <mark><small>If no options are selected, Notifications are sent to all users.</small></mark>
+                                </div>
+                            </div>
                             <div class="col-12">
                                 <label class="form-control-label">Notification Title</label>
                                 <base-input v-model="notif_title" placeholder="Keep it very short!"></base-input>
@@ -47,7 +93,11 @@ export default {
     data: () => ({
         notif_title: '',
         notif_body: '',
-        loading: false
+        loading: false,
+        districts: [],
+        localbodies: [],
+        selectedDistrict: null,
+        selectedLocalbody: {},
     }),
     methods: {
         sendNotification() {
@@ -86,10 +136,36 @@ export default {
             });
 
         },
+        listLocalbodies() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/list',
+            }).then((response) => {
+                const localbodies = response.data.localbodies.rows;
+
+                this.localbodies = localbodies;
+                console.log(this.localbodies);
+            });
+        },
+        listDistricts() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/districts',
+            }).then((response) => {
+                const districts = response.data.districts;
+
+                this.districts = districts.rows;
+                console.log(this.districts);
+            });
+        },
+    },
+    mounted() {
+        this.listDistricts();
+        this.listLocalbodies();
     }
 };
 </script>
-<style scoped>
+<style>
 .search-container {
     position: relative;
     width: 100%;
@@ -130,5 +206,24 @@ export default {
 }
 .search-results > a:hover {
     background: #e8e8e8;
+}
+
+.drop__down.dropdown-menu {
+    max-height: 250px;
+    overflow: auto;
+}
+
+.drop__down.dropdown-menu::-webkit-scrollbar {
+    width: 5px;
+}
+
+.drop__down.dropdown-menu::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+
+.drop__down.dropdown-menu::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 </style>
