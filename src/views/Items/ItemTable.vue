@@ -1,12 +1,10 @@
 <template>
-    <div>
-        <div class="card-header border-0">
+    <div class="card shadow">
+        <div class="card-header col-12 border-0">
             <div class="row align-items-center">
                 <div class="col">
-                    <h3 class="mb-0">
-                        Add Items
-                    </h3>
-                    <div class="col-md-6 col-12 p-0">
+                    <h3>Add Items</h3>
+                    <div class="col-md-6 col-12 p-0" v-if="!excel.length">
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="custom-file">
@@ -24,76 +22,86 @@
                 </div>
             </div>
         </div>
-        <div class="table-responsive" ref="table">
-            <base-table class="table align-items-center table-flush"
-                tbody-classes="list"
-                :data="excel"
-            >
-                <template slot="columns">
-                    <th class="minwidth">Product Name</th>
-                    <th class="minwidth">Quantity</th>
-                    <th class="minwidth">Unit</th>
-                    <th class="minwidth">Market Price</th>
-                    <th class="minwidth">Category</th>
-                    <th class="minwidth">Product Image</th>
-                    <th class="minwidth">Actions</th>
-                </template>
+        <div class="card-body p-0" v-show="excel.length">
+            <div class="table-responsive" ref="table">
+                <base-table class="table align-items-center table-flush"
+                    tbody-classes="list"
+                    :data="excel"
+                >
+                    <template slot="columns">
+                        <th class="minwidth">Product Name</th>
+                        <th class="minwidth">Quantity</th>
+                        <th class="minwidth">Unit</th>
+                        <th class="minwidth">Market Price</th>
+                        <th class="minwidth">Category</th>
+                        <th class="minwidth">Product Image</th>
+                        <th class="minwidth">Actions</th>
+                    </template>
 
-                <template slot-scope="{row, index}">
-                    <td>
-                        <base-input v-model="row.item_name"></base-input>
-                    </td>
-                    <td>
-                        <base-input v-model="row.quantity"></base-input>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <select v-model="row.unit" class="custom-select mr-sm-2">
-                                <option>kg</option>
-                                <option>g</option>
-                                <option>l</option>
-                                <option>ml</option>
-                                <option>count</option>
-                            </select>
-                        </div>
-                    </td>
-                    <td>
-                        <base-input v-model="row.market_price"></base-input>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <base-input
-                                v-model="row.category_name"
-                                class="mr-sm-2"
-                                @focus="selectCategoryModal = true;selectedIndex = index;"
-                            >
-                            </base-input>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <div class="input-group">
-                                <div class="custom-file">
-                                    <input type="file"
-                                        @change="loadImage($event, index)"
-                                        class="custom-file-input"
-                                    >
-                                    <label class="custom-file-label">Choose file</label>
+                    <template slot-scope="{row, index}">
+                        <td>
+                            <base-input v-model="row.item_name"></base-input>
+                        </td>
+                        <td>
+                            <base-input v-model="row.quantity"></base-input>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <select v-model="row.unit" class="custom-select mr-sm-2">
+                                    <option>kg</option>
+                                    <option>g</option>
+                                    <option>l</option>
+                                    <option>ml</option>
+                                    <option>count</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <base-input v-model="row.market_price"></base-input>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <base-input
+                                    v-model="row.category_name"
+                                    class="mr-sm-2"
+                                    @focus="selectCategoryModal = true;selectedIndex = index;"
+                                >
+                                </base-input>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file"
+                                            @change="loadImage($event, index)"
+                                            class="custom-file-input"
+                                        >
+                                        <label class="custom-file-label">Choose file</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="form-group">
-                            <base-button
-                                type="success"
-                                icon="ni ni-cloud-upload-96"
-                                @click.prevent.stop="uploadSingle(index)"
-                            ></base-button>
-                        </div>
-                    </td>
-                </template>
-            </base-table>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <base-button
+                                    type="success"
+                                    icon="ni ni-cloud-upload-96"
+                                    @click.prevent.stop="uploadSingle(index)"
+                                ></base-button>
+                            </div>
+                        </td>
+                    </template>
+                </base-table>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-end mb-3">
+                    <base-button type="warning" @click="resetTable">
+                        <font-awesome-icon icon="sync" class="mr-2"/>
+                        Reset
+                    </base-button>
+                </div>
+            </div> <!-- card footer -->
         </div>
         <modal :show.sync="selectCategoryModal" bodyClasses="pt-0">
             <template slot="header">
@@ -135,6 +143,9 @@ export default {
         }
     },
     methods: {
+        resetTable() {
+            this.excel = [];
+        },
         handleExcel(file) {
             let files = file.target.files, f = files[0];
             let reader = new FileReader();
