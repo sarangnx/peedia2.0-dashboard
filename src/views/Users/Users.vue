@@ -48,22 +48,17 @@
                                         {{ row.phone || 'N/A' }}
                                     </td>
                                     <td>
-                                        <base-button
-                                            v-if="!row.blocked"
-                                            icon="fa fa-user-slash"
-                                            size="sm"
-                                            type="danger"
-                                            title="Block User"
-                                            @click="true"
-                                        ></base-button>
-                                        <base-button
-                                            v-else
-                                            icon="fa fa-user"
-                                            size="sm"
-                                            type="success"
-                                            title="Unblock User"
-                                            @click="true"
-                                        ></base-button>
+                                        <div v-if="currentUsergroup.rank > 2 && ( row.usergroup === 'delivery' || row.usergroup === 'storeowner')">
+                                            <base-button
+                                                v-if="!row.store.length && !storeLoading && ( row.usergroup === 'delivery' || row.usergroup === 'storeowner')"
+                                                icon="fa fa-store"
+                                                size="sm"
+                                                type="success"
+                                                title="Add User to a store in their localbody. Localbody store has to be created first."
+                                                @click="addStore(row.user_id)"
+                                            ></base-button>
+                                            <loading v-if="storeLoading === row.user_id" size="sm"/>
+                                        </div>
                                     </td>
                                 </template>
                             </base-table> <!-- Table -->
@@ -130,6 +125,7 @@ export default {
         addModal: false,
         localbodies: [],
         districts: [],
+        storeLoading: null,
     }),
     computed: {
         currentUser() {
@@ -141,6 +137,11 @@ export default {
             return this.usergroups.filter((usergroup) => {
                 return usergroup.rank < currentGroup.rank;
             });
+        },
+        currentUsergroup() {
+            const currentUsergroup = this.currentUser.usergroup;
+            const currentGroup = this.usergroups.find((item) => item.id === currentUsergroup );
+            return currentGroup;
         }
     },
     watch: {
@@ -194,6 +195,28 @@ export default {
         },
         refreshPage() {
             this.getUsers(this.page, this.per_page, this.usergroup.id);
+        },
+        addStore(user_id) {
+            this.storeLoading = user_id;
+
+            this.$axios({
+                method: 'post',
+                url: '/users/store/add',
+                data: {
+                    user_id,
+                }
+            }).then((response) => {
+                if(response.data && response.data.status === 'success'){
+                    this.$success('Added to Store.');
+                } else {
+                    throw new Error('User not added to Store.');
+                }
+            }).catch(() => {
+                this.$error('User not added to Store.');
+            }).finally(() => {
+                this.storeLoading = null;
+                this.refreshPage();
+            });
         }
     },
     mounted() {
