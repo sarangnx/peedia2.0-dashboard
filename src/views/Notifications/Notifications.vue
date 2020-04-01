@@ -127,13 +127,12 @@ export default {
 
                     this.$success('Notifications sent successfully');
 
-                    this.loading = false;
                     this.notif_title = '';
                     this.notif_body = '';
                 }
             }).catch(() => {
-
                 this.$error('Notification not sent');
+            }).finally(() => {
                 this.loading = false;
             });
 
