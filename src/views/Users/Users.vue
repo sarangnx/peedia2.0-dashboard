@@ -25,7 +25,7 @@
                                 </base-dropdown>
                             </div>
                         </div> <!-- Outer Header -->
-                        <div class="card-body table-responsive">
+                        <div class="card-body table-responsive p-0 custom__scrollbar">
                             <base-table
                                 :data="users"
                                 type="hover table-striped table-sm"
