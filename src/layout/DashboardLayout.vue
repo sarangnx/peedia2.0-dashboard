@@ -55,7 +55,7 @@ export default {
             sidebarItems: [
                 { name: 'Dashboard', icon: 'fas fa-desktop text-primary', path: '/dashboard', type: 'sidebaritem', minrank: 1, maxrank: 2 },
                 { name: 'Dashboard', icon: 'fas fa-desktop text-primary', path: '/admin', type: 'sidebaritem', minrank: 3, maxrank: 4 },
-                { name: 'Orders', icon: 'fas fa-shopping-basket text-blue', path: '/orders', type: 'sidebaritem', minrank: 1, maxrank: 2 },
+                { name: 'Orders', icon: 'fas fa-shopping-basket text-blue', path: '/orders', type: 'sidebaritem', minrank: 1, maxrank: 4 },
                 { name: 'Ration', icon: 'fas fa-warehouse text-blue', path: '/ration', type: 'sidebaritem', minrank: 1, maxrank: 2 },
                 // { name: 'Category', icon: 'fa fa-th text-blue', path: '/category', type: 'sidebaritem', minrank: 2, maxrank: 2 },
                 { name: 'Items', icon:'fa fa-book text-blue', type: 'sidebardropdown',
@@ -65,7 +65,7 @@ export default {
                         { name: 'Add Item From Excel', path: '/items/add-excel' }
                     ],
                     minrank: 2,
-                    maxrank: 2
+                    maxrank: 4
                 },
                 { name: 'Notifications', icon: 'fas fa-bell text-blue', path: '/notifications', type: 'sidebaritem', minrank: 2, maxrank: 4 },
                 { name: 'Localbody', icon: 'fas fa-store text-blue', path: '/localbody', type: 'sidebaritem', minrank: 3, maxrank: 4 },
