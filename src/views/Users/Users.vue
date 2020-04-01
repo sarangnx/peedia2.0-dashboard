@@ -227,6 +227,8 @@ export default {
         },
         refreshPage() {
             if(
+                this.currentUserProfile.localbody &&
+                this.currentUserProfile.localbody.localbody_id &&
                 this.currentUserProfile.usergroup != 'admin' &&
                 this.currentUserProfile.usergroup != 'superadmin'
             ) {
