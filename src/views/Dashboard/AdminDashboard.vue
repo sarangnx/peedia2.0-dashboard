@@ -27,10 +27,45 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card shadow">
-                        <div  class="card-header d-flex justify-content-between">
-                            <h2>Most Sold Products</h2>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <base-table
+                                    :data="localbodies"
+                                    type="hover table-striped table-sm"
+                                >
+                                    <template slot="columns">
+                                        <th>#</th>
+                                        <th>Localbody Name</th>
+                                        <th class="text-center">Customers</th>
+                                        <th class="text-center">Delivery Personnel</th>
+                                        <th class="text-center">Managers</th>
+                                    </template>
+
+                                    <template slot-scope="{row, index}">
+                                        <td class="text-left">
+                                            {{ index + 1 }}
+                                        </td>
+                                        <td class="text-left">
+                                            {{ row.name }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ row.user.count }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ row.delivery.count }}
+                                        </td>
+                                        <td class="text-center">
+                                            {{ row.manager.count }}
+                                        </td>
+                                    </template>
+                                </base-table> <!-- Table -->
+                            </div> <!-- responsive-table -->
                         </div>
-                        <div class="card-body">
+                    </div>
+                </div>
+                <div class="col-12 mt-5">
+                    <div class="card shadow">
+                        <div class="card-body p-0">
                             <div class="table-responsive">
                                 <base-table
                                     :data="most_sold"
@@ -69,7 +104,9 @@
     data: () => ({
         total_orders: 0,
         total_users: 0,
-        most_sold: []
+        most_sold: [],
+        stats: {},
+        localbodies: [],
     }),
     computed: {
         baseUrl() {
@@ -77,7 +114,13 @@
             return this.$store.getters.serverUrl;
         },
         storeId() {
-            return this.$store.getters.getUser.store[0].store_id;
+            const user = this.$store.getters.getUser;
+            if( user.store && user.store.length ){
+                return user.store[0].store_id;
+            }
+            else {
+                return null;
+            }
         }
     },
     methods: {
@@ -94,10 +137,27 @@
                 this.total_users = stats.total_users;
                 this.most_sold = stats.most_sold_items;
             });
+        },
+        getUserStats(store_id) {
+            this.$axios({
+                method: 'get',
+                url: '/users/stats',
+            
+            }).then((response) => {
+                const stats = response.data.stats;
+                this.localbodies = stats.localbodies.map((localbody) =>{
+                    localbody.user = stats.user.find((item) => item.localbody_id === localbody.localbody_id);
+                    localbody.manager = stats.manager.find((item) => item.localbody_id === localbody.localbody_id);
+                    localbody.delivery = stats.delivery.find((item) => item.localbody_id === localbody.localbody_id);
+                    return localbody;
+                });
+                this.stats = stats
+            });
         }
     },
     mounted() {
-        // this.getStats(this.storeId);
+        this.getStats(this.storeId);
+        this.getUserStats();
     }
   };
 </script>
