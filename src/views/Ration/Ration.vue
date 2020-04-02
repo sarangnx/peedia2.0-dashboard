@@ -287,9 +287,4 @@ export default {
 th, td {
     text-align: center;
 }
-
-.drop__down.dropdown-menu {
-    max-height: 250px;
-    overflow: auto;
-}
 </style>

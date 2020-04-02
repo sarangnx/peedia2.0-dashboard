@@ -206,23 +206,4 @@ export default {
 .search-results > a:hover {
     background: #e8e8e8;
 }
-
-.drop__down.dropdown-menu {
-    max-height: 250px;
-    overflow: auto;
-}
-
-.drop__down.dropdown-menu::-webkit-scrollbar {
-    width: 5px;
-}
-
-.drop__down.dropdown-menu::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    border-radius: 10px;
-}
-
-.drop__down.dropdown-menu::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-}
 </style>
