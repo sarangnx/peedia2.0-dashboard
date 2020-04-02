@@ -3,7 +3,21 @@
         <div  class="card-header d-flex justify-content-between">
             <h3>Items</h3>
             <div>
-                <span class="pr-3">Filter</span>
+                <!-- FILTER BY LOCALBODY -->
+                <base-button size="sm" v-if="pageLoading && isAdmin"><i class="ni ni-settings-gear-65 spin"></i></base-button>
+                <base-dropdown v-else-if="localbodies.length && isAdmin" position="right" class="mb-2 mb-md-0">
+                    <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
+                        {{ selectedLocalbody ? selectedLocalbody.name : 'Panchayath or Municipality' }}
+                    </base-button>
+                    <a class="dropdown-item text-black" @click="selectedLocalbody = null">All</a>
+                    <a class="dropdown-item text-black"
+                        v-for="(localbody, index) in localbodies"
+                        :key="index"
+                        @click="selectedLocalbody = Object.assign({}, localbody)"
+                    >
+                        {{ localbody.name }}
+                    </a>
+                </base-dropdown>
                 <base-button size="sm" v-if="pageLoading"><i class="ni ni-settings-gear-65 spin"></i></base-button>
                 <base-dropdown v-else position="right">
                     <base-button slot="title" type="primary" class="dropdown-toggle" size="sm">
@@ -149,8 +163,18 @@ export default {
         deleteModal: false,
         editModal: false,
         editID: null,
+        localbodies: [],
+        activeLocalbodies: [],
+        selectedLocalbody: null,
     }),
     computed: {
+        isAdmin() {
+            const usergroup = this.$store.getters.getUser.usergroup;
+            if(usergroup === 'admin' || usergroup === 'superadmin'){
+                return true;
+            }
+            return false;
+        },
         storeId() {
             const user = this.$store.getters.getUser;
             if( user.store && user.store.length ){
@@ -196,11 +220,26 @@ export default {
                 });
             }
         },
+        selectedLocalbody() {
+            this.reloadData();
+        }
     },
     methods: {
         getItemsByCategory({category_id, page, per_page, recursive}) {
             this.pageLoading = true;
-            const store_id = this.storeId;
+            let store_id = this.storeId;
+
+            if(this.isAdmin && this.selectedLocalbody && this.selectedLocalbody.store_id) {
+                store_id = this.selectedLocalbody.store_id;
+            } else if( this.isAdmin && this.selectedLocalbody ) {
+                this.$set(this.items, []);
+
+                this.total_pages = 0;
+                this.page = 1;
+                this.count = 0;
+                this.pageLoading = false;
+                return;
+            }
 
             this.$axios({
                 method: 'get',
@@ -228,7 +267,19 @@ export default {
         },
         getAllItems(page, per_page = 12){
             this.pageLoading = true;
-            const store_id = this.storeId;
+            let store_id = this.storeId;
+
+            if(this.isAdmin && this.selectedLocalbody && this.selectedLocalbody.store_id) {
+                store_id = this.selectedLocalbody.store_id;
+            } else if( this.isAdmin && this.selectedLocalbody ) {
+                this.$set(this.items, []);
+
+                this.total_pages = 0;
+                this.page = 1;
+                this.count = 0;
+                this.pageLoading = false;
+                return;
+            }
 
             this.$axios({
                 method: 'get',
@@ -315,15 +366,19 @@ export default {
                 });
             }
         },
-        badgeClass(available) {
-            if(available){
-                return 'success'
-            } else {
-                return 'danger'
-            }
+        listLocalbodies() {
+            this.$axios({
+                method: 'get',
+                url: '/localbodies/list',
+            }).then((response) => {
+                const localbodies = response.data.localbodies;
+
+                this.localbodies = localbodies.rows;
+            });
         },
     },
     mounted(){
+        this.listLocalbodies();
         this.getAllItems();
         this.getCategories();
     }
