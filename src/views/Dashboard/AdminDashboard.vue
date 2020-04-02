@@ -72,21 +72,21 @@
                                     type="hover table-striped table-sm"
                                 >
                                     <template slot="columns">
-                                        <th>#</th>
-                                        <th>Item</th>
-                                        <th>Total  Orders</th>
+                                        <th class="text-left">#</th>
+                                        <th class="text-center">Item</th>
+                                        <th class="text-center">Total  Orders</th>
                                     </template>
 
                                     <template slot-scope="{row, index}">
                                         <td class="text-left">
                                             {{ index + 1 }}
                                         </td>
-                                        <td>
+                                        <td class="d-flex flex-row align-items-center justify-content-between">
                                             <img v-if="row.item_details.image_path" :src="`${baseUrl}/images/inventory/${row.item_details.image_path}`" class="item-image">
                                             <i v-else class="fa fa-image"></i> <!-- Alt Image -->
                                             {{ row.item_details.item_name }}
                                         </td>
-                                        <td>
+                                        <td class="text-center">
                                             {{ parseInt(row.occurance) }}
                                         </td>
                                     </template>
