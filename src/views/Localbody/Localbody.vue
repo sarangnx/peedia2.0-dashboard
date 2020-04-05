@@ -77,6 +77,14 @@
                                     </td>
                                     <td>
                                         <base-button
+                                            v-if="!storeLoading"
+                                            icon="fa fa-edit"
+                                            size="sm"
+                                            type="primary"
+                                            title="Edit localbody."
+                                            @click="editLocalbody(row.localbody_id)"
+                                        ></base-button>
+                                        <base-button
                                             v-if="!row.store_id && !storeLoading"
                                             icon="fa fa-store"
                                             size="sm"
@@ -121,15 +129,30 @@
                 ></add-localbody>
             </div>
         </modal>
+        <!-- EDIT LOCALBODY MODAL -->
+        <modal :show.sync="editModal" modalClasses="modal-dialog-scrollable" :clickOut="false">
+            <template slot="header">
+                <h1 class="modal-title">Edit Localbody</h1>
+            </template>
+            <div class="container">
+                <edit-localbody :key="Date.now()"
+                    @close="closeModal"
+                    :localbodyId.sync="editId"
+                    :districts.sync="districts"
+                ></edit-localbody>
+            </div>
+        </modal>
     </div>
 </template>
 <script>
 import AddLocalbody from './AddLocalbody';
+import EditLocalbody from './EditLocalbody';
 
 export default {
     name: 'localbody',
     components: {
         AddLocalbody,
+        EditLocalbody,
     },
     data: () => ({
         page: 1,
@@ -142,6 +165,8 @@ export default {
         districts: [],
         selectedDistrict: null,
         storeLoading: null,
+        editModal: false,
+        editId: null,
     }),
     watch: {
         page() {
@@ -154,7 +179,12 @@ export default {
     methods: {
         closeModal() {
             this.addModal = false;
+            this.editModal = false;
             this.refreshPage()
+        },
+        editLocalbody(localbody_id) {
+            this.editModal = true;
+            this.editId = localbody_id;
         },
         listLocalbodies() {
             this.pageLoading = true;
