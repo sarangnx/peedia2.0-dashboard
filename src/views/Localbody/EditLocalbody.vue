@@ -163,18 +163,18 @@ export default {
             const data = Object.assign({}, this.localbody);
 
             this.$axios({
-                method: 'post',
-                url: `/localbodies/add`,
+                method: 'patch',
+                url: `/localbodies/localbody`,
                 data: data,
             }).then((response) => {
                 if (response.data && response.data.status === "success") {
-                    this.$success('Localbody Added.');
+                    this.$success('Localbody Updated.');
                     this.$emit('close');
                 } else {
-                    throw new Error('Localbody Not Added.')
+                    throw new Error('Localbody Not Updated.')
                 }
             }).catch(() => {
-                this.$error('Localbody Not Added.');
+                this.$error('Localbody Not Updated.');
             }).finally(() => {
                 this.loading = false;
             });
